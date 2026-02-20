@@ -20,6 +20,13 @@
         "files"
       ]
     },
+    "LogoMob": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
     "Menu": {
       "type": "component",
       "component": "menu.menu-items",

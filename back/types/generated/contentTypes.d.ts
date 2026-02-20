@@ -503,6 +503,7 @@ export interface ApiHeaderHeader extends Struct.SingleTypeSchema {
     > &
       Schema.Attribute.Private;
     Logo: Schema.Attribute.Media<'images' | 'files'>;
+    LogoMob: Schema.Attribute.Media<'images'>;
     Menu: Schema.Attribute.Component<'menu.menu-items', true>;
     publishedAt: Schema.Attribute.DateTime;
     Socials: Schema.Attribute.Component<'img.icon', true>;

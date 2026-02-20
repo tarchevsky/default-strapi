@@ -14,6 +14,12 @@ export const mapStrapiHeaderToHeader = (strapiHeader: StrapiHeader): Header => {
 					alt: strapiHeader.Logo.alternativeText || 'Logo',
 			  }
 			: undefined,
+		logoMob: strapiHeader.LogoMob
+			? {
+					url: getAbsoluteUrl(strapiHeader.LogoMob.url),
+					alt: strapiHeader.LogoMob.alternativeText || 'Logo mobile',
+			  }
+			: undefined,
 		menu: Array.isArray(strapiHeader.Menu)
 			? strapiHeader.Menu.map(item => ({
 					order: item.Order,

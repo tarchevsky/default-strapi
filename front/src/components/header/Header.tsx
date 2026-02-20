@@ -65,14 +65,19 @@ const Header = ({ headerData }: HeaderProps) => {
 		>
 			{/* Логотип */}
 			<div className='flex-shrink-0'>
-				<Logo logo={header?.logo} />
+				<div className='md:hidden'>
+					<Logo logo={header?.logoMob || header?.logo} />
+				</div>
+				<div className='hidden md:block'>
+					<Logo logo={header?.logo} />
+				</div>
 			</div>
 
 			{/* Навигация */}
 			<motion.nav
 				className={cn(
 					{ [styles.active]: isMenuActive },
-					'h-full transition-all duration-300 ml-4 sm:ml-[86px]',
+					'hidden md:flex h-full transition-all duration-300 ml-4 sm:ml-[86px]',
 				)}
 				initial={false}
 				animate={
@@ -88,13 +93,12 @@ const Header = ({ headerData }: HeaderProps) => {
 					minWidth: 0,
 					flexShrink: 1,
 					flexGrow: 1,
-					display: 'flex',
 				}}
 				transition={{ type: 'spring', stiffness: 190, damping: 24 }}
 			>
 				<ul
 					tabIndex={0}
-					className='menu p-0 flex md:flex-row justify-between items-end w-full uppercase font-bold'
+					className='menu p-0 flex md:flex-row justify-between items-end w-full'
 				>
 					{isLoading ? (
 						// Показываем загрузку или дефолтное меню

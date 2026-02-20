@@ -44,6 +44,7 @@ export interface StrapiHeader {
 	updatedAt: string
 	publishedAt: string
 	Logo?: StrapiMedia | null
+	LogoMob?: StrapiMedia | null
 	Menu: MenuItem[]
 	Socials: SocialIcon[]
 	Tel?: {
@@ -61,6 +62,10 @@ export interface StrapiHeader {
 // Тип для преобразованного хеддера
 export interface Header {
 	logo?: {
+		url: string
+		alt: string
+	}
+	logoMob?: {
 		url: string
 		alt: string
 	}

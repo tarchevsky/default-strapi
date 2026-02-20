@@ -26,7 +26,7 @@ export const Logo: FC<LogoProps> = ({ logo }) => {
 				/>
 			) : (
 				<div className='flex items-center'>
-					<span className='font-bold'>Logo</span>
+					<span className='text-2xl'>Logo</span>
 				</div>
 			)}
 		</Link>
