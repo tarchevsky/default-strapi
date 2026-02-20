@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_layout_grids",
+  "info": {
+    "displayName": "Grid",
+    "icon": "apps"
+  },
+  "options": {},
+  "attributes": {
+    "BlockName": {
+      "type": "string"
+    },
+    "Columns": {
+      "type": "component",
+      "component": "layout.column",
+      "repeatable": true
+    },
+    "Gap": {
+      "type": "integer"
+    },
+    "Container": {
+      "type": "boolean",
+      "default": true
+    },
+    "Indent": {
+      "type": "boolean",
+      "default": true
+    },
+    "Wrap": {
+      "type": "boolean"
+    },
+    "MobWrap": {
+      "type": "boolean"
+    }
+  },
+  "config": {}
+}

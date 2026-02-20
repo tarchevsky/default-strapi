@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_text_paragraphs",
+  "info": {
+    "displayName": "Paragraph",
+    "icon": "layer"
+  },
+  "options": {},
+  "attributes": {
+    "BlockName": {
+      "type": "string"
+    },
+    "Paragraph": {
+      "type": "richtext"
+    },
+    "Container": {
+      "type": "boolean",
+      "default": true
+    },
+    "Indent": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "config": {}
+}

@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_menu_menu_items",
+  "info": {
+    "displayName": "MenuItems",
+    "icon": "book"
+  },
+  "options": {},
+  "attributes": {
+    "MenuItem": {
+      "type": "string",
+      "required": true
+    },
+    "Url": {
+      "type": "string"
+    },
+    "Order": {
+      "type": "integer"
+    }
+  },
+  "config": {}
+}

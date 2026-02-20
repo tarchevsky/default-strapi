@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_interactivity_cases_carousels",
+  "info": {
+    "displayName": "CasesCarousel",
+    "icon": "apps"
+  },
+  "options": {},
+  "attributes": {
+    "OnOff": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "config": {}
+}

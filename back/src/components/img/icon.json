@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_img_icons",
+  "info": {
+    "displayName": "Icon",
+    "icon": "landscape"
+  },
+  "options": {},
+  "attributes": {
+    "SingleIcon": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Link": {
+      "type": "string"
+    },
+    "SingleIconText": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

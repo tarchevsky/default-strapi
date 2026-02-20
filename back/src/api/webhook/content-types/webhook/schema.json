@@ -1,0 +1,26 @@
+{
+	"kind": "collectionType",
+	"collectionName": "webhooks",
+	"info": {
+		"singularName": "webhook",
+		"pluralName": "webhooks",
+		"displayName": "Webhook"
+	},
+	"options": {
+		"draftAndPublish": false
+	},
+	"pluginOptions": {},
+	"attributes": {
+		"url": {
+			"type": "string",
+			"required": true
+		},
+		"events": {
+			"type": "json"
+		},
+		"isActive": {
+			"type": "boolean",
+			"default": true
+		}
+	}
+}

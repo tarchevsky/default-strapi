@@ -1,0 +1,44 @@
+{
+  "kind": "singleType",
+  "collectionName": "headers",
+  "info": {
+    "singularName": "header",
+    "pluralName": "headers",
+    "displayName": "Header"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Logo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    },
+    "Menu": {
+      "type": "component",
+      "component": "menu.menu-items",
+      "repeatable": true
+    },
+    "Socials": {
+      "type": "component",
+      "component": "img.icon",
+      "repeatable": true
+    },
+    "Tel": {
+      "type": "component",
+      "component": "links.tel",
+      "repeatable": false
+    },
+    "Email": {
+      "type": "component",
+      "component": "links.email",
+      "repeatable": false
+    }
+  }
+}

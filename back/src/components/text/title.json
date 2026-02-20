@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_text_titles",
+  "info": {
+    "displayName": "Title",
+    "icon": "bold"
+  },
+  "options": {},
+  "attributes": {
+    "Title": {
+      "type": "string"
+    },
+    "OnOff": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "config": {}
+}

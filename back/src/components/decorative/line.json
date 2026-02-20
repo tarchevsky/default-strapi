@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_decorative_lines",
+  "info": {
+    "displayName": "Line",
+    "icon": "oneToOne"
+  },
+  "options": {},
+  "attributes": {
+    "OnOff": {
+      "type": "boolean",
+      "default": true
+    },
+    "Container": {
+      "type": "boolean",
+      "default": false
+    },
+    "Indentations": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_links_emails",
+  "info": {
+    "displayName": "Email",
+    "icon": "envelop"
+  },
+  "options": {},
+  "attributes": {
+    "Email": {
+      "type": "string",
+      "default": "welcome@adel.pro"
+    },
+    "EmailLink": {
+      "type": "string",
+      "default": "mailto:welcome@adel.pro"
+    }
+  },
+  "config": {}
+}

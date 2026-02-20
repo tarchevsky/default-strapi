@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_img_imgs",
+  "info": {
+    "displayName": "Img",
+    "icon": "landscape"
+  },
+  "options": {},
+  "attributes": {
+    "ImageName": {
+      "type": "string"
+    },
+    "Img": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Container": {
+      "type": "boolean",
+      "default": false
+    },
+    "Indent": {
+      "type": "boolean",
+      "default": true
+    },
+    "Box": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "config": {}
+}

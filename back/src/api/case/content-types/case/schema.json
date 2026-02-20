@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cases",
+  "info": {
+    "singularName": "case",
+    "pluralName": "cases",
+    "displayName": "Case"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Title": {
+      "type": "string",
+      "maxLength": 60,
+      "required": true,
+      "unique": false
+    },
+    "Description": {
+      "type": "string",
+      "maxLength": 160,
+      "required": true
+    },
+    "Slug": {
+      "type": "uid",
+      "targetField": "Title",
+      "required": true,
+      "maxLength": 50
+    },
+    "Announce": {
+      "type": "richtext",
+      "required": true
+    },
+    "dynamic": {
+      "type": "dynamiczone",
+      "components": [
+        "text.paragraph",
+        "text.heading",
+        "interactivity.cases-carousel",
+        "img.img",
+        "layout.column",
+        "text.title"
+      ]
+    },
+    "CaseImage": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

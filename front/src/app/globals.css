@@ -1,0 +1,108 @@
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+@plugin "daisyui" {
+	themes: light --default, dark --prefersdark, cupcake;
+}
+
+@theme {
+	--ind-xs: 0 0 25px 0;
+	--ind-sm: 0 0 50px 0;
+	--ind-md: 0 0 100px 0;
+	--ind-xxl: 0 0 250px 0;
+
+	--cont-xs: 16px;
+	--cont-sm: 20px;
+	--cont-md: 30px;
+	--cont-xxl: 40px;
+}
+
+@layer utilities {
+	.ind {
+		margin: var(--ind-xs);
+	}
+	.ind-sm {
+		margin: var(--ind-sm);
+	}
+	.ind-md {
+		margin: var(--ind-md);
+	}
+	.ind-2xl {
+		margin: var(--ind-xxl);
+	}
+
+	.cont {
+		@apply px-[var(--cont-xs)];
+	}
+	.cont-sm {
+		@apply px-[var(--cont-sm)];
+	}
+	.cont-md {
+		@apply px-[var(--cont-md)];
+	}
+	.cont-2xl {
+		@apply px-[var(--cont-xxl)];
+	}
+
+	.cont-left {
+		@apply pl-[var(--cont-xs)];
+	}
+	.cont-left-sm {
+		@apply pl-[var(--cont-sm)];
+	}
+	.cont-left-md {
+		@apply pl-[var(--cont-md)];
+	}
+	.cont-left-2xl {
+		@apply pl-[var(--cont-xxl)];
+	}
+
+	.cont-right {
+		@apply pr-[var(--cont-xs)];
+	}
+	.cont-right-sm {
+		@apply pr-[var(--cont-sm)];
+	}
+	.cont-right-md {
+		@apply pr-[var(--cont-md)];
+	}
+	.cont-right-2xl {
+		@apply pr-[var(--cont-xxl)];
+	}
+}
+
+/* @layer base {
+	.fancybox__caption {
+		@apply font-sans;
+	}
+} */
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	color: #333;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	@apply text-5xl md:text-8xl capitalize;
+	font-weight: 400;
+	line-height: 1.2;
+	margin: 0;
+}
+
+p {
+	font-weight: 600;
+	line-height: 1.2;
+	margin: 0;
+	font-size: 24px;
+}
+
+main {
+	@apply mb-24;
+}

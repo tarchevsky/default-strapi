@@ -1,0 +1,84 @@
+{
+  "collectionName": "components_layout_columns",
+  "info": {
+    "displayName": "Column",
+    "icon": "apps"
+  },
+  "options": {},
+  "attributes": {
+    "Img": {
+      "type": "component",
+      "component": "img.img",
+      "repeatable": true
+    },
+    "Heading": {
+      "type": "component",
+      "component": "text.heading",
+      "repeatable": true
+    },
+    "Paragraph": {
+      "type": "component",
+      "component": "text.paragraph",
+      "repeatable": true
+    },
+    "Width": {
+      "type": "enumeration",
+      "enum": [
+        "w-1-4",
+        "w-1-3",
+        "w-1-2",
+        "w-2-3",
+        "w-3-4",
+        "w-1-1",
+        "w-fit",
+        "w-min",
+        "w-max"
+      ]
+    },
+    "Justify": {
+      "type": "enumeration",
+      "enum": [
+        "start",
+        "end",
+        "center",
+        "between"
+      ]
+    },
+    "Align": {
+      "type": "enumeration",
+      "enum": [
+        "start",
+        "end",
+        "center",
+        "stretch"
+      ]
+    },
+    "Direction": {
+      "type": "enumeration",
+      "enum": [
+        "column",
+        "row"
+      ]
+    },
+    "Icon": {
+      "type": "component",
+      "component": "img.icon",
+      "repeatable": true
+    },
+    "MobWidth": {
+      "type": "enumeration",
+      "enum": [
+        "w-1-4",
+        "w-1-3",
+        "w-1-2",
+        "w-2-3",
+        "w-3-4",
+        "w-1-1",
+        "w-fit",
+        "w-min",
+        "w-max"
+      ]
+    }
+  },
+  "config": {}
+}
