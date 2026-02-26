@@ -76,7 +76,7 @@ https://sereja-art.ru/blog/deploj-prilozheniya-next-js-na-ubuntu-vps
 - `cd ~/puhovvv.ru/back`, выполни `set +H && set -a && source ../.env && set +a && set -H`.
 - Собери админку: `bun run build`.
 - Зарегистрируй сервис в pm2: `pm2 start --name adel-back "bun run start" --cwd ~/adel.pro/back --update-env`; затем `pm2 save && pm2 startup`.
-- Для первичного входа пробрось порт: `ssh -L 1337:127.0.0.1:1337 ivan@109.73.194.128` и открой `http://localhost:1337/admin`, создай админа через веб-интерфейс.
+- Для первичного входа пробрось порт: `ssh -L 1337:127.0.0.1:1337 itdev3@193.233.102.91` и открой `http://localhost:1337/admin`, создай админа через веб-интерфейс.
 - В админке включи публичные права: Settings → Users & Permissions → Roles → Public → Case (`find`, `findOne`), сохрани.
 - Если права уже включены, проверь Strapi: `pm2 status adel-back`, при необходимости `pm2 restart adel-back`, затем `curl http://127.0.0.1:1337/api/cases?populate=*` должен вернуть 200.
 - После настройки nginx и SSL админка откроется по `https://adel.webtm.ru/admin`.
