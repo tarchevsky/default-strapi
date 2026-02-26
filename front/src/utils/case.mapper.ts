@@ -1,4 +1,4 @@
-import { Case } from '@/types/case.types'
+import { Case, CaseService } from '@/types/case.types'
 import { DynamicComponent } from '@/types/dynamic.types'
 import { StrapiMedia } from '@/types/media.types'
 
@@ -11,9 +11,12 @@ interface StrapiCaseData {
 	Title: string
 	Description: string
 	Slug: string
-	Announce: string | null
+	Services?: CaseService | null
 	dynamic?: unknown[]
 	CaseImage?: StrapiMedia | null
+	PopupImage?: StrapiMedia | null
+	Process?: string | null
+	Materials?: string | null
 }
 
 export const mapStrapiCaseToCase = (item: StrapiCaseData): Case => ({
@@ -25,7 +28,10 @@ export const mapStrapiCaseToCase = (item: StrapiCaseData): Case => ({
 	title: item.Title,
 	description: item.Description,
 	slug: item.Slug,
-	announce: item.Announce || '',
+	popupImage: item.PopupImage || null,
+	process: item.Process || '',
+	materials: item.Materials || '',
+	services: item.Services ?? undefined,
 	dynamic: (item.dynamic || []) as DynamicComponent[],
 	caseImage: item.CaseImage || null,
 })

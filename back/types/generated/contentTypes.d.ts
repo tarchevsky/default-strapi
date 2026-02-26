@@ -441,7 +441,6 @@ export interface ApiCaseCase extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    Announce: Schema.Attribute.RichText & Schema.Attribute.Required;
     CaseImage: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -464,7 +463,16 @@ export interface ApiCaseCase extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::case.case'> &
       Schema.Attribute.Private;
+    Materials: Schema.Attribute.RichText & Schema.Attribute.Required;
+    PopupImage: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    Process: Schema.Attribute.RichText & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
+    Services: Schema.Attribute.Enumeration<
+      [
+        '\u0443\u043F\u0430\u043A\u043E\u0432\u043A\u0430',
+        '\u043F\u043E\u043B\u0438\u0433\u0440\u0430\u0444\u0438\u044F',
+      ]
+    >;
     Slug: Schema.Attribute.UID<'Title'> &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
@@ -475,6 +483,36 @@ export interface ApiCaseCase extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 60;
       }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiFooterFooter extends Struct.SingleTypeSchema {
+  collectionName: 'footers';
+  info: {
+    displayName: 'Footer';
+    pluralName: 'footers';
+    singularName: 'footer';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Company_details: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::footer.footer'
+    > &
+      Schema.Attribute.Private;
+    Logo: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    Text: Schema.Attribute.RichText & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1136,6 +1174,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::case.case': ApiCaseCase;
+      'api::footer.footer': ApiFooterFooter;
       'api::header.header': ApiHeaderHeader;
       'api::page.page': ApiPagePage;
       'api::site-setting.site-setting': ApiSiteSettingSiteSetting;

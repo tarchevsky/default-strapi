@@ -1,4 +1,5 @@
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
+import Image from 'next/image'
 import { ReactNode } from 'react'
 
 interface ModalProps {
@@ -27,31 +28,26 @@ const Modal = ({
 
 			{/* Модальное окно */}
 			<div
-				className={`relative bg-white rounded-lg shadow-xl w-full p-6 ${width}`}
+				className={`relative bg-[#002B49] shadow-xl w-full px-3.5 py-[8.66px] ${width}`}
 				style={height ? { height } : {}}
 			>
-				{/* Кнопка закрытия */}
-				<button
-					onClick={onClose}
-					className='absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer'
-				>
-					<svg
-						className='w-6 h-6'
-						fill='none'
-						stroke='currentColor'
-						viewBox='0 0 24 24'
+				<div className='relative bg-white w-full'>
+					{/* Кнопка закрытия: /close.png, 40×40. Как вернуть SVG — см. docs/Modal/close.md */}
+					<button
+						onClick={onClose}
+						className='absolute top-4 right-4 w-10 h-10 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity'
+						aria-label='Закрыть'
 					>
-						<path
-							strokeLinecap='round'
-							strokeLinejoin='round'
-							strokeWidth={2}
-							d='M6 18L18 6M6 6l12 12'
+						<Image
+							src='/close.png'
+							alt=''
+							width={40}
+							height={40}
 						/>
-					</svg>
-				</button>
-
-				{/* Контент */}
-				{children}
+					</button>
+					{/* Контент */}
+					{children}
+				</div>
 			</div>
 		</div>
 	)

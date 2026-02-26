@@ -104,11 +104,15 @@ export const DynamicComponentRenderer = ({
 				galleryWrapped
 			)
 		}
-		case 'interactivity.cases-carousel':
-			if (component.OnOff && cases) {
-				return <CasesCarousel cases={cases} />
-			}
-			return null
+		case 'interactivity.cases-carousel': {
+			if (!component.OnOff || !cases) return null
+			const service = component.Service ?? undefined
+			const filtered =
+				service === undefined
+					? cases
+					: cases.filter(c => c.services === service)
+			return <CasesCarousel cases={filtered} />
+		}
 		case 'layout.grid': {
 			const gapPx = (component.Gap ?? 0) * 8
 

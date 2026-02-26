@@ -9,6 +9,13 @@
     "OnOff": {
       "type": "boolean",
       "default": true
+    },
+    "Service": {
+      "type": "enumeration",
+      "enum": [
+        "упаковка",
+        "полиграфия"
+      ]
     }
   },
   "config": {}

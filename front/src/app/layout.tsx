@@ -2,6 +2,7 @@ import FancyboxBinder from '@/components/FancyboxBinder'
 import Footer from '@/components/footer/Footer'
 import Header from '@/components/header/Header'
 import PageTransition from '@/components/ui/PageTransition'
+import { getFooter } from '@/services/footer.service'
 import { getHeader } from '@/services/header.service'
 import { getSiteSetting } from '@/services/site-setting.service'
 import { mapSiteSetting } from '@/utils/site-setting.mapper'
@@ -28,13 +29,12 @@ export default async function RootLayout({
 	const siteSettingResponse = await getSiteSetting()
 	const siteSetting = mapSiteSetting(siteSettingResponse)
 
-	// Загружаем header с обработкой ошибок
 	let headerData = null
+	let footerData = null
 	try {
-		headerData = await getHeader()
+		;[headerData, footerData] = await Promise.all([getHeader(), getFooter()])
 	} catch (error) {
-		console.error('Ошибка при загрузке header в layout:', error)
-		// Продолжаем работу без header данных - компонент сам обработает fallback
+		console.error('Ошибка при загрузке header/footer в layout:', error)
 	}
 
 	return (
@@ -53,7 +53,7 @@ export default async function RootLayout({
 					<PageTransition>
 						<Header headerData={headerData || undefined} />
 						{children}
-						<Footer />
+						<Footer footerData={footerData ?? undefined} />
 					</PageTransition>
 				</AnimatePresence>
 			</body>

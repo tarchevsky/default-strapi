@@ -41,9 +41,12 @@ interface StrapiCaseData {
 	Title: string
 	Description: string
 	Slug: string
-	Announce: string | null
+	Services?: 'упаковка' | 'полиграфия' | null
 	dynamic?: unknown[]
 	CaseImage?: StrapiCaseImageData | null
+	PopupImage?: StrapiCaseImageData | null
+	Process?: string | null
+	Materials?: string | null
 }
 
 // Тип для ответа Strapi API

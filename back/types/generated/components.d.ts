@@ -49,6 +49,12 @@ export interface InteractivityCasesCarousel extends Struct.ComponentSchema {
   };
   attributes: {
     OnOff: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    Service: Schema.Attribute.Enumeration<
+      [
+        '\u0443\u043F\u0430\u043A\u043E\u0432\u043A\u0430',
+        '\u043F\u043E\u043B\u0438\u0433\u0440\u0430\u0444\u0438\u044F',
+      ]
+    >;
   };
 }
 

@@ -47,10 +47,15 @@ export interface LineComponent {
 	Indentations?: string
 }
 
+/** Совпадает с CaseService в case.types — какой сервис показывать в карусели */
+export type CasesCarouselService = 'упаковка' | 'полиграфия'
+
 export interface CasesCarouselComponent {
 	__component: 'interactivity.cases-carousel'
 	id: number
 	OnOff: boolean
+	/** Показывать только кейсы с этим сервисом; без значения — все кейсы */
+	Service?: CasesCarouselService | null
 }
 
 export type GridWidth =

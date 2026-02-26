@@ -1,7 +1,10 @@
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 @plugin "daisyui" {
-	themes: light --default, dark --prefersdark, cupcake;
+	themes:
+		light --default,
+		dark --prefersdark,
+		cupcake;
 }
 
 @theme {
@@ -81,7 +84,8 @@ html {
 }
 
 body {
-	color: #333;
+	@apply text-base md:text-[21.33px];
+	color: #0f4271;
 }
 
 h1,
@@ -90,17 +94,11 @@ h3,
 h4,
 h5,
 h6 {
-	@apply text-5xl md:text-8xl capitalize;
-	font-weight: 400;
-	line-height: 1.2;
-	margin: 0;
+	@apply mb-[25.23px] pt-[28.77px];
 }
 
 p {
-	font-weight: 600;
-	line-height: 1.2;
 	margin: 0;
-	font-size: 24px;
 }
 
 main {

@@ -5,9 +5,11 @@ import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
+
 import Btn from '@/components/ui/Btn'
 import Modal from '@/components/ui/Modal'
 import { STRAPI_URL } from '@/constants/admin.constant'
+import { USE_CUSTOM_CAROUSEL_ARROWS } from '@/constants/carousel.constant'
 import { Case } from '@/types/case.types'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -50,21 +52,21 @@ const CasesCarousel = ({ cases }: CasesCarouselProps) => {
 						slidesPerView={1}
 						spaceBetween={30}
 						loop={mobileSlidesData.length > 1}
-						pagination={{ clickable: true }}
+						pagination={false}
 						navigation={true}
 						modules={[Pagination, Navigation]}
-						className='cases-carousel'
+						className={`cases-carousel${USE_CUSTOM_CAROUSEL_ARROWS ? ' cases-carousel--custom-arrows' : ''}`}
 					>
 						{mobileSlidesData.map((slideCases, slideIndex) => (
 							<SwiperSlide key={slideIndex}>
-								<div className='flex flex-col gap-4 py-[40px] px-14'>
+								<div className='flex flex-col gap-4 py-[55px] px-10'>
 									{slideCases.map(caseItem => (
 										<div
 											key={caseItem.id}
 											className={styles.caseItem}
 											onClick={() => handleCaseClick(caseItem)}
 										>
-											<div className='relative aspect-[3/2] overflow-hidden rounded-lg'>
+											<div className='relative aspect-[3/2] overflow-hidden'>
 												{caseItem.caseImage ? (
 													<Image
 														src={`${STRAPI_URL}${caseItem.caseImage.url}`}
@@ -96,26 +98,26 @@ const CasesCarousel = ({ cases }: CasesCarouselProps) => {
 				</FadeIn>
 
 				{/* Десктопная версия */}
-				<FadeIn className='hidden md:block cont-md'>
+				<FadeIn className='hidden md:block'>
 					<Swiper
 						slidesPerView={1}
-						spaceBetween={30}
+						spaceBetween={50}
 						loop={desktopSlidesData.length > 1}
-						pagination={{ clickable: true }}
+						pagination={false}
 						navigation={true}
 						modules={[Pagination, Navigation]}
-						className='cases-carousel'
+						className={`cases-carousel${USE_CUSTOM_CAROUSEL_ARROWS ? ' cases-carousel--custom-arrows' : ''}`}
 					>
 						{desktopSlidesData.map((slideCases, slideIndex) => (
 							<SwiperSlide key={slideIndex}>
-								<div className='grid grid-cols-3 gap-6 py-10 px-20'>
+								<div className='grid grid-cols-3 gap-[50px] py-[50px] px-32'>
 									{slideCases.map(caseItem => (
 										<div
 											key={caseItem.id}
 											className={styles.caseItem}
 											onClick={() => handleCaseClick(caseItem)}
 										>
-											<div className='relative aspect-[3/2] overflow-hidden rounded-lg'>
+											<div className='relative aspect-[3/2] overflow-hidden'>
 												{caseItem.caseImage ? (
 													<Image
 														src={`${STRAPI_URL}${caseItem.caseImage.url}`}
@@ -149,21 +151,58 @@ const CasesCarousel = ({ cases }: CasesCarouselProps) => {
 			<Modal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				width='max-w-3xl'
+				width='max-w-[1078px]'
 			>
 				{selectedCase && (
 					<>
-						<h2 className='text-xl font-bold mb-4'>{selectedCase.title}</h2>
-						{selectedCase.announce && (
-							<MarkdownRenderer
-								content={selectedCase.announce}
-								className='mb-6'
-								useCont={false}
-							/>
-						)}
-						<Link href={`/cases/${selectedCase.slug}`}>
-							<Btn text='Подробнее' />
-						</Link>
+						<h2 className='text-xl font-bold text-center uppercase'>
+							{selectedCase.title}
+						</h2>
+						<div className='grid grid-cols-[774px_1fr] gap-[15px]'>
+							<div className='flex shrink-0'>
+								<div className='w-[18px] shrink-0 bg-[#002B49]' />
+								<div className='relative w-[756px] h-[504px] overflow-hidden'>
+									{selectedCase.popupImage ? (
+										<Image
+											src={`${STRAPI_URL}${selectedCase.popupImage.url}`}
+											alt={
+												selectedCase.popupImage.alternativeText ||
+												selectedCase.title
+											}
+											fill
+											className='object-cover'
+										/>
+									) : (
+										<div className='w-full h-full bg-gray-200 flex items-center justify-center'>
+											<span className='text-gray-400'>Нет изображения</span>
+										</div>
+									)}
+								</div>
+							</div>
+							<div className='flex flex-col text-[21.33px] text-[#0F4271]'>
+								<span className='font-semibold'>Материалы:</span>
+								<div className='mt-[15px]'>
+									<MarkdownRenderer
+										content={selectedCase.materials}
+										useCont={false}
+									/>
+								</div>
+								<div className='mt-[92px]'>
+									<span className='font-semibold'>Процессы:</span>
+									<div className='mt-[15px]'>
+										<MarkdownRenderer
+											content={selectedCase.process}
+											useCont={false}
+										/>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className='mt-6'>
+							<Link href={`/cases/${selectedCase.slug}`}>
+								<Btn text='Подробнее' />
+							</Link>
+						</div>
 					</>
 				)}
 			</Modal>

@@ -47,9 +47,78 @@
 	height: 24px;
 }
 
+.cases-carousel .swiper-button-prev svg {
+	margin-left: 20px;
+}
+
+.cases-carousel .swiper-button-next svg {
+	margin-right: 20px;
+}
+
 .cases-carousel .swiper-button-next:after,
 .cases-carousel .swiper-button-prev:after {
 	font-size: 24px !important;
+}
+
+/* Кастомные стрелки (arrow-next.png, arrow-prev.png). Выключить: USE_CUSTOM_CAROUSEL_ARROWS = false в carousel.constant.ts */
+.cases-carousel--custom-arrows .swiper-button-next::after,
+.cases-carousel--custom-arrows .swiper-button-prev::after {
+	content: none;
+}
+
+.cases-carousel--custom-arrows .swiper-button-next,
+.cases-carousel--custom-arrows .swiper-button-prev {
+	width: 18px;
+	height: 106px;
+	margin-top: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 18px 106px;
+}
+
+@media (min-width: 1024px) {
+	.cases-carousel--custom-arrows .swiper-button-next,
+	.cases-carousel--custom-arrows .swiper-button-prev {
+		width: 38px;
+		height: 212px;
+		background-size: 38px 212px;
+	}
+
+	.cases-carousel--custom-arrows.swiper-horizontal .swiper-button-prev {
+		left: 39px;
+	}
+
+	.cases-carousel--custom-arrows.swiper-horizontal .swiper-button-next {
+		right: 39px;
+	}
+}
+
+/* специфичность выше, чем у .swiper-horizontal .swiper-button-prev/next */
+.cases-carousel--custom-arrows.swiper-horizontal .swiper-button-prev {
+	right: auto;
+	background-image: url('/arrow-prev.png');
+}
+
+.cases-carousel--custom-arrows.swiper-horizontal .swiper-button-next {
+	left: auto;
+	background-image: url('/arrow-next.png');
+}
+
+@media (max-width: 1023px) {
+	.cases-carousel--custom-arrows.swiper-horizontal .swiper-button-prev {
+		left: 15px;
+	}
+
+	.cases-carousel--custom-arrows.swiper-horizontal .swiper-button-next {
+		right: 15px;
+	}
+}
+
+.cases-carousel--custom-arrows .swiper-button-prev svg,
+.cases-carousel--custom-arrows .swiper-button-next svg {
+	display: none;
 }
 
 .cases-carousel .swiper-pagination {

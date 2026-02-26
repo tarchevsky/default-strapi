@@ -61,9 +61,7 @@ export default async function Page({ params }: PageProps) {
 						metaTitle={page.title}
 					/>
 				) : (
-					<h1 className='cont text-2xl font-bold mb-4 text-right'>
-						{page.title}
-					</h1>
+					<h1 className='cont mb-4'>{page.title}</h1>
 				)}
 			</FadeIn>
 			{restComponents.length > 0 && (

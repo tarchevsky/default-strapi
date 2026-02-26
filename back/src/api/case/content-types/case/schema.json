@@ -28,9 +28,12 @@
       "required": true,
       "maxLength": 50
     },
-    "Announce": {
-      "type": "richtext",
-      "required": true
+    "Services": {
+      "type": "enumeration",
+      "enum": [
+        "упаковка",
+        "полиграфия"
+      ]
     },
     "dynamic": {
       "type": "dynamiczone",
@@ -50,6 +53,22 @@
       "allowedTypes": [
         "images"
       ]
+    },
+    "PopupImage": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Process": {
+      "type": "richtext",
+      "required": true
+    },
+    "Materials": {
+      "type": "richtext",
+      "required": true
     }
   }
 }
