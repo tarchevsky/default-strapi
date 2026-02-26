@@ -59,6 +59,7 @@ export const getPageBySlug = async (
 				`&populate[Dynamic][on][text.paragraph][populate]=*` +
 				`&populate[Dynamic][on][text.heading][populate]=*` +
 				`&populate[Dynamic][on][text.title][populate]=*` +
+				`&populate[Dynamic][on][text.blockquote][populate]=*` +
 				`&populate[Dynamic][on][img.img][populate]=*` +
 				`&populate[Dynamic][on][img.icon][populate]=*` +
 				`&populate[Dynamic][on][decorative.line][populate]=*` +

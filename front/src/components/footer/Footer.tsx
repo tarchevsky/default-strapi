@@ -37,6 +37,7 @@ const Footer = ({ footerData }: FooterProps) => {
 							alt={footer.logo.alt ?? 'Logo'}
 							width={123}
 							height={118}
+							className='rounded-3xl'
 						/>
 					</Link>
 				)}

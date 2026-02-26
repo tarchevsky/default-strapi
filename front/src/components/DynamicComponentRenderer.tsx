@@ -7,6 +7,7 @@ import {
 } from '@/types/dynamic.types'
 import Image from 'next/image'
 import type { JSX } from 'react'
+import { Blockquote } from './Blockquote'
 import { IconRenderer } from './IconRenderer'
 import { MarkdownRenderer } from './MarkdownRenderer'
 import CasesCarousel from './ui/carousel/CasesCarousel'
@@ -35,6 +36,14 @@ export const DynamicComponentRenderer = ({
 					content={component.Paragraph}
 					useCont={component.Container === true}
 					useInd={component.Indent === true}
+				/>
+			)
+		case 'text.blockquote':
+			return (
+				<Blockquote
+					quote={component.Quote}
+					caption={component.Caption}
+					fullPage={component.FullPage !== false}
 				/>
 			)
 		case 'text.title': {
@@ -77,6 +86,7 @@ export const DynamicComponentRenderer = ({
 					alt={alt}
 					width={img.width}
 					height={img.height}
+					className='rounded-3xl'
 					style={{ maxWidth: '100%', height: '100%' }}
 				/>
 			)
@@ -252,7 +262,7 @@ export const DynamicComponentRenderer = ({
 										alt={alt}
 										width={iconMedia.width}
 										height={iconMedia.height}
-										className='w-6 h-6 object-contain'
+										className='w-6 h-6 object-contain rounded-3xl'
 									/>
 								)
 							}
@@ -289,7 +299,7 @@ export const DynamicComponentRenderer = ({
 
 										if (shouldUseBox) {
 											const fancyboxImageClasses = [
-												'h-full object-cover transition-all duration-300 ease-in',
+												'h-full object-cover transition-all duration-300 ease-in rounded-3xl',
 												component.Indent === true && 'ind',
 											]
 												.filter(Boolean)
@@ -322,7 +332,7 @@ export const DynamicComponentRenderer = ({
 												width={img.width}
 												height={img.height}
 												style={{ width: '100%' }}
-												className='h-full object-cover transition-all duration-300 ease-in'
+												className='h-full object-cover transition-all duration-300 ease-in rounded-3xl'
 											/>
 										)
 									})}

@@ -51,6 +51,7 @@ const FullSlider = () => {
 						alt='Slide 2'
 						width={1920}
 						height={800}
+						className='rounded-3xl'
 						style={{ width: '100%', height: '100%', objectFit: 'cover' }}
 					/>
 				</SwiperSlide>

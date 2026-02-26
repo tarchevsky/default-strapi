@@ -21,7 +21,7 @@ export const Logo: FC<LogoProps> = ({ logo }) => {
 					width={150}
 					height={150}
 					priority
-					className='w-auto'
+					className='w-auto rounded-3xl'
 					onError={() => setLogoError(true)}
 				/>
 			) : (

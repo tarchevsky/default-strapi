@@ -47,6 +47,15 @@ export interface LineComponent {
 	Indentations?: string
 }
 
+export interface BlockquoteComponent {
+	__component: 'text.blockquote'
+	id: number
+	Quote: string
+	Caption?: string | null
+	/** Цитата на весь экран по вертикали */
+	FullPage?: boolean
+}
+
 /** Совпадает с CaseService в case.types — какой сервис показывать в карусели */
 export type CasesCarouselService = 'услуга 1' | 'услуга 2'
 
@@ -121,6 +130,7 @@ export interface GridComponent {
 export type DynamicComponent =
 	| HeadingComponent
 	| ParagraphComponent
+	| BlockquoteComponent
 	| CasesCarouselComponent
 	| ImgComponent
 	| IconComponent

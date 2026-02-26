@@ -588,6 +588,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'text.title',
         'decorative.line',
         'img.icon',
+        'text.blockquote',
       ]
     >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;

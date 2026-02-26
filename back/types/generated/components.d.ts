@@ -162,6 +162,18 @@ export interface MenuMenuItems extends Struct.ComponentSchema {
   };
 }
 
+export interface TextBlockquote extends Struct.ComponentSchema {
+  collectionName: 'components_text_blockquotes';
+  info: {
+    displayName: 'Blockquote';
+    icon: 'brush';
+  };
+  attributes: {
+    BlockquoteSubtext: Schema.Attribute.Text;
+    BlockquoteText: Schema.Attribute.Text & Schema.Attribute.Required;
+  };
+}
+
 export interface TextHeading extends Struct.ComponentSchema {
   collectionName: 'components_text_headings';
   info: {
@@ -215,6 +227,7 @@ declare module '@strapi/strapi' {
       'links.email': LinksEmail;
       'links.tel': LinksTel;
       'menu.menu-items': MenuMenuItems;
+      'text.blockquote': TextBlockquote;
       'text.heading': TextHeading;
       'text.paragraph': TextParagraph;
       'text.title': TextTitle;

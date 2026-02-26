@@ -80,10 +80,10 @@ const CasesCarousel = ({ cases }: CasesCarouselProps) => {
 														}
 														fill
 														sizes='100vw'
-														className='object-cover group-hover:scale-105 transition-transform duration-300'
+														className='object-cover rounded-3xl group-hover:scale-105 transition-transform duration-300'
 													/>
 												) : (
-													<div className='w-full h-full bg-gray-200 flex items-center justify-center'>
+													<div className='w-full h-full bg-gray-200 flex items-center justify-center rounded-3xl'>
 														<span className='text-gray-400'>
 															Нет изображения
 														</span>
@@ -135,10 +135,10 @@ const CasesCarousel = ({ cases }: CasesCarouselProps) => {
 														}
 														fill
 														sizes='33vw'
-														className='object-cover group-hover:scale-105 transition-transform duration-300'
+														className='object-cover rounded-3xl group-hover:scale-105 transition-transform duration-300'
 													/>
 												) : (
-													<div className='w-full h-full bg-gray-200 flex items-center justify-center'>
+													<div className='w-full h-full bg-gray-200 flex items-center justify-center rounded-3xl'>
 														<span className='text-gray-400'>
 															Нет изображения
 														</span>
@@ -179,10 +179,10 @@ const CasesCarousel = ({ cases }: CasesCarouselProps) => {
 										selectedCase.title
 									}
 									fill
-									className='object-cover'
+									className='object-cover rounded-3xl'
 								/>
 							) : (
-								<div className='w-full h-full bg-gray-200 flex items-center justify-center'>
+								<div className='w-full h-full bg-gray-200 flex items-center justify-center rounded-3xl'>
 									<span className='text-gray-400'>Нет изображения</span>
 								</div>
 							)}

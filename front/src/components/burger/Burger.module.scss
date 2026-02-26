@@ -9,10 +9,16 @@
 	width: 2rem;
 	height: 2rem;
 	padding: 0;
-	border: none;
+	border: 2px solid transparent;
 	background: none;
 	cursor: pointer;
 	z-index: 20;
+	outline: none;
+	transition: border-color 0.2s ease;
+
+	&:focus-visible {
+		border-color: currentColor;
+	}
 
 	@media (min-width: 768px) {
 		display: none;

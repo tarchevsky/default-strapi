@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_text_blockquotes",
+  "info": {
+    "displayName": "Blockquote",
+    "icon": "brush"
+  },
+  "options": {},
+  "attributes": {
+    "BlockquoteText": {
+      "type": "text",
+      "required": true
+    },
+    "BlockquoteSubtext": {
+      "type": "text"
+    }
+  },
+  "config": {}
+}

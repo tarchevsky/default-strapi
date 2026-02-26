@@ -29,7 +29,7 @@ const Hero = ({
 				className={`relative w-full max-w-full hero-content flex-col-reverse items-start lg:items-center lg:flex-row ${heroContentClassName}`}
 			>
 				<Image
-					className={`absolute top-0 left-0 w-full object-cover ${imgClassName}`}
+					className={`absolute top-0 left-0 w-full object-cover rounded-3xl ${imgClassName}`}
 					src={src}
 					alt={alt}
 					width={1400}
