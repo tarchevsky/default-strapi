@@ -105,12 +105,13 @@ export const DynamicComponentRenderer = ({
 			)
 		}
 		case 'interactivity.cases-carousel': {
-			if (!component.OnOff || !cases) return null
+			if (!component.OnOff || !cases?.length) return null
 			const service = component.Service ?? undefined
 			const filtered =
 				service === undefined
 					? cases
 					: cases.filter(c => c.services === service)
+			if (!filtered.length) return null
 			return <CasesCarousel cases={filtered} />
 		}
 		case 'layout.grid': {
@@ -142,7 +143,7 @@ export const DynamicComponentRenderer = ({
 
 			const buildWidthClasses = (
 				desktopWidth?: GridWidth,
-				mobileWidth?: GridWidth
+				mobileWidth?: GridWidth,
 			) => {
 				const mobileClass = mobileWidth
 					? widthTokenToClass(mobileWidth)
@@ -201,7 +202,7 @@ export const DynamicComponentRenderer = ({
 
 			const buildWrapClasses = (
 				mobWrap?: boolean | null,
-				wrap?: boolean | null
+				wrap?: boolean | null,
 			) => {
 				const classes: string[] = ['flex']
 

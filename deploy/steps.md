@@ -97,8 +97,9 @@ https://sereja-art.ru/blog/deploj-prilozheniya-next-js-na-ubuntu-vps
 
 8.  SSL
 
-- установи `sudo apt update && sudo snap install core && sudo snap refresh core`
-- затем поставь сам certbot: `sudo snap install --classic certbot`
+- Установи snap (на многих серверах его нет по умолчанию): `sudo apt update && sudo apt install -y snapd`. Затем перелогинься или выполни `exec $SHELL -l`, чтобы `snap` был в PATH.
+- Установи core и обнови: `sudo snap install core && sudo snap refresh core`.
+- Затем поставь сам certbot: `sudo snap install --classic certbot`
 - затем сделай ссылку `sudo ln -s /snap/bin/certbot /usr/bin/certbot`
 - Выполни `sudo certbot --nginx -d puhovvv.ru`, включи автоматический редирект на HTTPS и проверь таймер обновления.
 - Для проверки продления запусти `sudo certbot renew --dry-run`, затем `sudo certbot certificates`, открой конфиг `sudo nano /etc/nginx/sites-available/puhovvv` и сравни `Certificate Path` и `Private Key Path` с директивами `ssl_certificate` и `ssl_certificate_key`; при расхождении обнови файл, проверь `sudo nginx -t` и перегрузи `sudo systemctl reload nginx`.

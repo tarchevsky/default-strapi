@@ -126,30 +126,30 @@ const fetchWithFallback = async <T>(url: string): Promise<T | null> => {
 
 export const getCases = async (): Promise<Case[]> => {
 	const data = await fetchWithFallback<StrapiResponse<unknown>>(
-		'/api/cases?populate=*'
+		'/api/cases?populate=*',
 	)
 
-	if (!data || !data.data) {
-		console.warn('API недоступен или некорректный ответ для кейсов')
+	if (!data?.data || !Array.isArray(data.data)) return []
+
+	try {
+		return data.data
+			.map((item: unknown) => mapStrapiCaseToCase(item as StrapiCaseData))
+			.filter((c): c is Case => !!c.slug)
+	} catch {
 		return []
 	}
-
-	// Маппинг полей из Strapi в наши типы
-	const mappedCases = data.data.map((item: unknown) =>
-		mapStrapiCaseToCase(item as StrapiCaseData)
-	)
-	return mappedCases
 }
 
 export const getCaseBySlug = async (slug: string): Promise<Case | null> => {
 	const data = await fetchWithFallback<StrapiResponse<unknown>>(
-		`/api/cases?filters[Slug][$eq]=${slug}&populate=*`
+		`/api/cases?filters[Slug][$eq]=${slug}&populate=*`,
 	)
 
-	if (!data || !data.data || data.data.length === 0) {
-		console.warn(`Кейс с slug "${slug}" не найден или API недоступен`)
+	if (!data?.data?.length) return null
+
+	try {
+		return mapStrapiCaseToCase(data.data[0] as StrapiCaseData)
+	} catch {
 		return null
 	}
-
-	return mapStrapiCaseToCase(data.data[0] as StrapiCaseData)
 }

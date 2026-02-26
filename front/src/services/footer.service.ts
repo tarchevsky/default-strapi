@@ -53,10 +53,11 @@ export const getFooter = async (): Promise<Footer | null> => {
 		'/api/footer?populate=*'
 	)
 
-	if (!data?.data) {
-		console.warn('API недоступен или footer не настроен')
+	if (!data?.data) return null
+
+	try {
+		return mapStrapiFooterToFooter(data.data)
+	} catch {
 		return null
 	}
-
-	return mapStrapiFooterToFooter(data.data)
 }

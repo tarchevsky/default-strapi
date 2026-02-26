@@ -30,11 +30,11 @@ const Footer = ({ footerData }: FooterProps) => {
 				{footer.text && (
 					<div dangerouslySetInnerHTML={{ __html: footer.text }} />
 				)}
-				{footer.logo && (
+				{footer.logo?.url && (
 					<Link href='/' target='_self' rel='noopener noreferrer'>
 						<Image
 							src={footer.logo.url}
-							alt={footer.logo.alt}
+							alt={footer.logo.alt ?? 'Logo'}
 							width={123}
 							height={118}
 						/>

@@ -27,6 +27,8 @@ const CasesCarousel = ({ cases }: CasesCarouselProps) => {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedCase, setSelectedCase] = useState<Case | null>(null)
 
+	if (!cases?.length) return null
+
 	const handleCaseClick = (caseItem: Case) => {
 		setSelectedCase(caseItem)
 		setIsModalOpen(true)
@@ -67,9 +69,9 @@ const CasesCarousel = ({ cases }: CasesCarouselProps) => {
 											onClick={() => handleCaseClick(caseItem)}
 										>
 											<div className='relative aspect-[3/2] overflow-hidden'>
-												{caseItem.caseImage ? (
+												{caseItem.caseImage?.url ? (
 													<Image
-														src={`${STRAPI_URL}${caseItem.caseImage.url}`}
+														src={caseItem.caseImage.url.startsWith('http') ? caseItem.caseImage.url : `${STRAPI_URL}${caseItem.caseImage.url}`}
 														alt={
 															caseItem.caseImage.alternativeText ||
 															caseItem.title
@@ -118,9 +120,9 @@ const CasesCarousel = ({ cases }: CasesCarouselProps) => {
 											onClick={() => handleCaseClick(caseItem)}
 										>
 											<div className='relative aspect-[3/2] overflow-hidden'>
-												{caseItem.caseImage ? (
+												{caseItem.caseImage?.url ? (
 													<Image
-														src={`${STRAPI_URL}${caseItem.caseImage.url}`}
+														src={caseItem.caseImage.url.startsWith('http') ? caseItem.caseImage.url : `${STRAPI_URL}${caseItem.caseImage.url}`}
 														alt={
 															caseItem.caseImage.alternativeText ||
 															caseItem.title
@@ -162,9 +164,9 @@ const CasesCarousel = ({ cases }: CasesCarouselProps) => {
 							<div className='flex shrink-0'>
 								<div className='w-[18px] shrink-0 bg-[#002B49]' />
 								<div className='relative w-[756px] h-[504px] overflow-hidden'>
-									{selectedCase.popupImage ? (
+									{selectedCase.popupImage?.url ? (
 										<Image
-											src={`${STRAPI_URL}${selectedCase.popupImage.url}`}
+											src={selectedCase.popupImage.url.startsWith('http') ? selectedCase.popupImage.url : `${STRAPI_URL}${selectedCase.popupImage.url}`}
 											alt={
 												selectedCase.popupImage.alternativeText ||
 												selectedCase.title
