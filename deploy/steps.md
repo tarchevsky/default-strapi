@@ -67,13 +67,13 @@ https://sereja-art.ru/blog/deploj-prilozheniya-next-js-na-ubuntu-vps
 
 4.  Репозиторий
 
-- Клонируй проект: `git clone git@github.com:tarchevsky/adel.pro.git .`.
+- Клонируй проект: `git clone git@github.com:tarchevsky/default-strapi.git .`.
 - Создай корневой `.env` (единственный по проекту из `deploy/constants.md`) и задай продовые переменные для бэка и фронта; блок публичных URL Strapi оставь пустым до настройки nginx/SSL.
 - В `back` и `front` выполни `bun install`; проверь что каталоги `public/uploads` доступны для записи.
 
 5.  Strapi
 
-- `cd ~/adel.pro/back`, выполни `set +H && set -a && source ../.env && set +a && set -H`.
+- `cd ~/puhovvv.ru/back`, выполни `set +H && set -a && source ../.env && set +a && set -H`.
 - Собери админку: `bun run build`.
 - Зарегистрируй сервис в pm2: `pm2 start --name adel-back "bun run start" --cwd ~/adel.pro/back --update-env`; затем `pm2 save && pm2 startup`.
 - Для первичного входа пробрось порт: `ssh -L 1337:127.0.0.1:1337 ivan@109.73.194.128` и открой `http://localhost:1337/admin`, создай админа через веб-интерфейс.
