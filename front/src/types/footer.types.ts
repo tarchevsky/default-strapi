@@ -3,8 +3,8 @@ import { StrapiMedia } from './media.types'
 export interface StrapiFooter {
 	id: number
 	documentId: string
-	Company_details: string
-	Text: string
+	Company_details?: string | null
+	Text?: string | null
 	Logo?: StrapiMedia | null
 }
 

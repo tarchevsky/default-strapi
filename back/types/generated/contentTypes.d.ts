@@ -463,14 +463,11 @@ export interface ApiCaseCase extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::case.case'> &
       Schema.Attribute.Private;
-    Materials: Schema.Attribute.RichText & Schema.Attribute.Required;
-    PopupImage: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
-    Process: Schema.Attribute.RichText & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     Services: Schema.Attribute.Enumeration<
       [
-        '\u0443\u043F\u0430\u043A\u043E\u0432\u043A\u0430',
-        '\u043F\u043E\u043B\u0438\u0433\u0440\u0430\u0444\u0438\u044F',
+        '\u0443\u0441\u043B\u0443\u0433\u0430 1',
+        '\u0443\u0441\u043B\u0443\u0433\u0430 2',
       ]
     >;
     Slug: Schema.Attribute.UID<'Title'> &
@@ -510,9 +507,9 @@ export interface ApiFooterFooter extends Struct.SingleTypeSchema {
       'api::footer.footer'
     > &
       Schema.Attribute.Private;
-    Logo: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    Logo: Schema.Attribute.Media<'images'>;
     publishedAt: Schema.Attribute.DateTime;
-    Text: Schema.Attribute.RichText & Schema.Attribute.Required;
+    Text: Schema.Attribute.RichText;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -546,6 +543,7 @@ export interface ApiHeaderHeader extends Struct.SingleTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     Socials: Schema.Attribute.Component<'img.icon', true>;
     Tel: Schema.Attribute.Component<'links.tel', false>;
+    TextLogo: Schema.Attribute.RichText;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -563,6 +561,15 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    Category: Schema.Attribute.Enumeration<
+      [
+        '\u041C\u0435\u0442\u043E\u0434\u0438\u0447\u0435\u0441\u043A\u0438\u0435 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u044B',
+        '\u0413\u043B\u043E\u0441\u0441\u0430\u0440\u0438\u0439',
+        '\u0421\u0442\u0430\u0442\u044C\u044F',
+        '\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430',
+        '\u041C\u044B\u0441\u043B\u0438',
+      ]
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -598,6 +605,9 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 60;
       }>;
+    TypeOfPage: Schema.Attribute.Enumeration<
+      ['\u0431\u043B\u043E\u0433', '\u0441\u0442\u0430\u0442\u044C\u044F']
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

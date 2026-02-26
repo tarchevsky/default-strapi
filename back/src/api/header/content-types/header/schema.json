@@ -27,6 +27,9 @@
         "images"
       ]
     },
+    "TextLogo": {
+      "type": "richtext"
+    },
     "Menu": {
       "type": "component",
       "component": "menu.menu-items",

@@ -31,8 +31,8 @@
     "Services": {
       "type": "enumeration",
       "enum": [
-        "упаковка",
-        "полиграфия"
+        "услуга 1",
+        "услуга 2"
       ]
     },
     "dynamic": {
@@ -53,22 +53,6 @@
       "allowedTypes": [
         "images"
       ]
-    },
-    "PopupImage": {
-      "type": "media",
-      "multiple": false,
-      "required": true,
-      "allowedTypes": [
-        "images"
-      ]
-    },
-    "Process": {
-      "type": "richtext",
-      "required": true
-    },
-    "Materials": {
-      "type": "richtext",
-      "required": true
     }
   }
 }

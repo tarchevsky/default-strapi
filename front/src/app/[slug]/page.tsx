@@ -1,9 +1,15 @@
 import { DynamicComponentRenderer } from '@/components/DynamicComponentRenderer'
+import BlogLayout from '@/components/layout/BlogLayout'
 import FadeIn from '@/components/ui/FadeIn'
 import { getCases } from '@/services/case.service'
-import { getAllPageSlugs, getPageBySlug } from '@/services/page.service'
+import {
+	getAllPageSlugs,
+	getArticlePages,
+	getPageBySlug,
+} from '@/services/page.service'
+import { getCategorySlug } from '@/types/page.types'
 import { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
 interface PageProps {
 	params: Promise<{
@@ -41,10 +47,20 @@ export async function generateMetadata({
 
 export default async function Page({ params }: PageProps) {
 	const { slug } = await params
-	const page = await getPageBySlug(slug)
-	const cases = await getCases()
+	const [page, cases] = await Promise.all([
+		getPageBySlug(slug),
+		getCases(),
+	])
 
 	if (!page) {
+		notFound()
+	}
+
+	// Статьи живут только по /blog/[category]/[slug] — редирект со старого URL
+	if (page.typeOfPage === 'статья') {
+		if (page.category) {
+			redirect(`/blog/${getCategorySlug(page.category)}/${slug}`)
+		}
 		notFound()
 	}
 
@@ -52,16 +68,18 @@ export default async function Page({ params }: PageProps) {
 	const restComponents =
 		page.dynamic?.filter(c => c.__component !== 'text.title') || []
 
-	return (
+	const isBlog = page.typeOfPage === 'блог'
+
+	const content = (
 		<>
-			<FadeIn className='cont'>
+			<FadeIn className={isBlog ? undefined : 'cont'}>
 				{titleComponent ? (
 					<DynamicComponentRenderer
 						component={titleComponent}
 						metaTitle={page.title}
 					/>
 				) : (
-					<h1 className='cont mb-4'>{page.title}</h1>
+					<h1 className={isBlog ? 'mb-4' : 'cont mb-4'}>{page.title}</h1>
 				)}
 			</FadeIn>
 			{restComponents.length > 0 && (
@@ -78,4 +96,11 @@ export default async function Page({ params }: PageProps) {
 			)}
 		</>
 	)
+
+	if (isBlog) {
+		const articles = await getArticlePages()
+		return <BlogLayout articles={articles}>{content}</BlogLayout>
+	}
+
+	return <>{content}</>
 }

@@ -5,9 +5,7 @@
       "name": "front",
       "dependencies": {
         "@fancyapps/ui": "5",
-        "@fontsource-variable/noto-serif": "^5.2.9",
-        "@fontsource-variable/roboto-slab": "^5.2.8",
-        "@fontsource/yeseva-one": "^5.2.7",
+        "@fontsource-variable/raleway": "^5.2.8",
         "axios": "^1.12.2",
         "clsx": "^2.1.1",
         "framer-motion": "^12.23.22",
@@ -67,11 +65,7 @@
 
     "@fancyapps/ui": ["@fancyapps/ui@5.0.36", "", {}, "sha512-GMygQzp1MBTFNTT6AzpbL6pXTD6bTxwjmmpI1fe8Ozmmiseu8/g82Sudl1YhcbZmS4bJgaBOF5THDFGpXQ1fDw=="],
 
-    "@fontsource-variable/noto-serif": ["@fontsource-variable/noto-serif@5.2.9", "", {}, "sha512-9McZzWeOjD/Gsko+w6A2lpGlHXZw5J2JmxaSMgopiIHoMYI1m6DAyFrzG9QQ0WjdWxj5jZfKM0EGSBVZHC6+nw=="],
-
-    "@fontsource-variable/roboto-slab": ["@fontsource-variable/roboto-slab@5.2.8", "", {}, "sha512-cdvOSwocP50xS01gXqnGxw7uFcCZQgn1IDlqiAmNuZP4uEVScYAKMDC+aWsbP1grn9QdMJ2frhcuVBNXniBVGA=="],
-
-    "@fontsource/yeseva-one": ["@fontsource/yeseva-one@5.2.7", "", {}, "sha512-gfw5644Oawl6ySvUSH+DO+UBoYigzp4FCNKyd/BSy/md38qf6KDB/5pprnuValNDH5+rO4RYcyfB9FIcD2VrKg=="],
+    "@fontsource-variable/raleway": ["@fontsource-variable/raleway@5.2.8", "", {}, "sha512-PahqGI7bkz4a80m91Jt65DRsuFQmRip5vGDbI9sChVSKjLrdDfXbeGIwnTPi/ZVCOoQrbLnqzBOLQpLohnz+WA=="],
 
     "@humanfs/core": ["@humanfs/core@0.19.1", "", {}, "sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA=="],
 

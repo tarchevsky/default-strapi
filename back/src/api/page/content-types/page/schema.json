@@ -40,6 +40,33 @@
         "decorative.line",
         "img.icon"
       ]
+    },
+    "TypeOfPage": {
+      "type": "enumeration",
+      "enum": [
+        "блог",
+        "статья"
+      ]
+    },
+    "Category": {
+      "type": "enumeration",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "TypeOfPage"
+            },
+            "статья"
+          ]
+        }
+      },
+      "enum": [
+        "Методические материалы",
+        "Глоссарий",
+        "Статья",
+        "Поддержка",
+        "Мысли"
+      ]
     }
   }
 }

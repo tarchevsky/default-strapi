@@ -4,8 +4,6 @@ import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 
-import { MarkdownRenderer } from '@/components/MarkdownRenderer'
-
 import Btn from '@/components/ui/Btn'
 import Modal from '@/components/ui/Modal'
 import { STRAPI_URL } from '@/constants/admin.constant'
@@ -71,7 +69,11 @@ const CasesCarousel = ({ cases }: CasesCarouselProps) => {
 											<div className='relative aspect-[3/2] overflow-hidden'>
 												{caseItem.caseImage?.url ? (
 													<Image
-														src={caseItem.caseImage.url.startsWith('http') ? caseItem.caseImage.url : `${STRAPI_URL}${caseItem.caseImage.url}`}
+														src={
+															caseItem.caseImage.url.startsWith('http')
+																? caseItem.caseImage.url
+																: `${STRAPI_URL}${caseItem.caseImage.url}`
+														}
 														alt={
 															caseItem.caseImage.alternativeText ||
 															caseItem.title
@@ -122,7 +124,11 @@ const CasesCarousel = ({ cases }: CasesCarouselProps) => {
 											<div className='relative aspect-[3/2] overflow-hidden'>
 												{caseItem.caseImage?.url ? (
 													<Image
-														src={caseItem.caseImage.url.startsWith('http') ? caseItem.caseImage.url : `${STRAPI_URL}${caseItem.caseImage.url}`}
+														src={
+															caseItem.caseImage.url.startsWith('http')
+																? caseItem.caseImage.url
+																: `${STRAPI_URL}${caseItem.caseImage.url}`
+														}
 														alt={
 															caseItem.caseImage.alternativeText ||
 															caseItem.title
@@ -160,45 +166,26 @@ const CasesCarousel = ({ cases }: CasesCarouselProps) => {
 						<h2 className='text-xl font-bold text-center uppercase'>
 							{selectedCase.title}
 						</h2>
-						<div className='grid grid-cols-[774px_1fr] gap-[15px]'>
-							<div className='flex shrink-0'>
-								<div className='w-[18px] shrink-0 bg-[#002B49]' />
-								<div className='relative w-[756px] h-[504px] overflow-hidden'>
-									{selectedCase.popupImage?.url ? (
-										<Image
-											src={selectedCase.popupImage.url.startsWith('http') ? selectedCase.popupImage.url : `${STRAPI_URL}${selectedCase.popupImage.url}`}
-											alt={
-												selectedCase.popupImage.alternativeText ||
-												selectedCase.title
-											}
-											fill
-											className='object-cover'
-										/>
-									) : (
-										<div className='w-full h-full bg-gray-200 flex items-center justify-center'>
-											<span className='text-gray-400'>Нет изображения</span>
-										</div>
-									)}
+						<div className='relative w-full max-w-[756px] aspect-[3/2] mx-auto overflow-hidden'>
+							{selectedCase.caseImage?.url ? (
+								<Image
+									src={
+										selectedCase.caseImage.url.startsWith('http')
+											? selectedCase.caseImage.url
+											: `${STRAPI_URL}${selectedCase.caseImage.url}`
+									}
+									alt={
+										selectedCase.caseImage.alternativeText ||
+										selectedCase.title
+									}
+									fill
+									className='object-cover'
+								/>
+							) : (
+								<div className='w-full h-full bg-gray-200 flex items-center justify-center'>
+									<span className='text-gray-400'>Нет изображения</span>
 								</div>
-							</div>
-							<div className='flex flex-col text-[21.33px] text-[#0F4271]'>
-								<span className='font-semibold'>Материалы:</span>
-								<div className='mt-[15px]'>
-									<MarkdownRenderer
-										content={selectedCase.materials}
-										useCont={false}
-									/>
-								</div>
-								<div className='mt-[92px]'>
-									<span className='font-semibold'>Процессы:</span>
-									<div className='mt-[15px]'>
-										<MarkdownRenderer
-											content={selectedCase.process}
-											useCont={false}
-										/>
-									</div>
-								</div>
-							</div>
+							)}
 						</div>
 						<div className='mt-6'>
 							<Link href={`/cases/${selectedCase.slug}`}>

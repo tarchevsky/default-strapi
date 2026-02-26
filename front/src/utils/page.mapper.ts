@@ -8,6 +8,8 @@ export const mapStrapiPageToPage = (strapiPage: StrapiPage): Page => {
 		title: strapiPage.Title,
 		description: strapiPage.Description,
 		slug: strapiPage.Slug,
+		typeOfPage: strapiPage.TypeOfPage,
+		category: strapiPage.Category,
 		dynamic: strapiPage.Dynamic as unknown as DynamicComponent[],
 		createdAt: strapiPage.createdAt,
 		updatedAt: strapiPage.updatedAt,

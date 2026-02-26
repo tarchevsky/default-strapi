@@ -48,7 +48,7 @@ export interface LineComponent {
 }
 
 /** Совпадает с CaseService в case.types — какой сервис показывать в карусели */
-export type CasesCarouselService = 'упаковка' | 'полиграфия'
+export type CasesCarouselService = 'услуга 1' | 'услуга 2'
 
 export interface CasesCarouselComponent {
 	__component: 'interactivity.cases-carousel'

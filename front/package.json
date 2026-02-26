@@ -10,9 +10,7 @@
   },
   "dependencies": {
     "@fancyapps/ui": "5",
-    "@fontsource-variable/noto-serif": "^5.2.9",
-    "@fontsource-variable/roboto-slab": "^5.2.8",
-    "@fontsource/yeseva-one": "^5.2.7",
+    "@fontsource-variable/raleway": "^5.2.8",
     "axios": "^1.12.2",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.22",

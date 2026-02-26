@@ -1,15 +1,14 @@
 import FancyboxBinder from '@/components/FancyboxBinder'
 import Footer from '@/components/footer/Footer'
 import Header from '@/components/header/Header'
+import ScrollToTop from '@/components/scrollToTop/ScrollToTop'
 import PageTransition from '@/components/ui/PageTransition'
 import { getFooter } from '@/services/footer.service'
 import { getHeader } from '@/services/header.service'
 import { getSiteSetting } from '@/services/site-setting.service'
 import { mapSiteSetting } from '@/utils/site-setting.mapper'
 import '@fancyapps/ui/dist/fancybox/fancybox.css'
-import '@fontsource-variable/noto-serif'
-import '@fontsource-variable/roboto-slab'
-import '@fontsource/yeseva-one'
+import '@fontsource-variable/raleway'
 import { AnimatePresence } from 'framer-motion'
 import type { Metadata } from 'next'
 import { ReactNode } from 'react'
@@ -54,6 +53,7 @@ export default async function RootLayout({
 						<Header headerData={headerData || undefined} />
 						{children}
 						<Footer footerData={footerData ?? undefined} />
+						<ScrollToTop />
 					</PageTransition>
 				</AnimatePresence>
 			</body>

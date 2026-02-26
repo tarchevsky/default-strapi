@@ -21,7 +21,7 @@ let urlCache: UrlCache | null = null
 export const DEFAULT_HEADER: Header = {
 	menu: [
 		{ id: 1, url: '/', label: 'Главная', order: 1 },
-		{ id: 2, url: '/cases', label: 'Кейсы', order: 2 },
+		{ id: 2, url: '/', label: 'Кейсы', order: 2 },
 	],
 	socials: [],
 	contacts: {},

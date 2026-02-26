@@ -8,6 +8,10 @@
 }
 
 @theme {
+	--font-sans: 'Raleway Variable', sans-serif;
+	--font-serif: 'Raleway Variable', serif;
+	--font-mono: 'Raleway Variable', monospace;
+
 	--ind-xs: 0 0 25px 0;
 	--ind-sm: 0 0 50px 0;
 	--ind-md: 0 0 100px 0;
@@ -21,7 +25,12 @@
 
 @layer utilities {
 	.ind {
-		margin: var(--ind-xs);
+		margin: 0 0 12px 0;
+	}
+	@media (min-width: 768px) {
+		.ind {
+			margin: var(--ind-xs);
+		}
 	}
 	.ind-sm {
 		margin: var(--ind-sm);
@@ -84,8 +93,7 @@ html {
 }
 
 body {
-	@apply text-base md:text-[21.33px];
-	color: #0f4271;
+	@apply font-sans;
 }
 
 h1,
@@ -94,7 +102,37 @@ h3,
 h4,
 h5,
 h6 {
-	@apply mb-[25.23px] pt-[28.77px];
+	@apply mb-3 pt-3 md:mb-[25.23px] md:pt-[28.77px];
+}
+
+h1 {
+	@apply text-xl md:text-2xl;
+}
+h2 {
+	@apply text-lg md:text-xl;
+}
+h3 {
+	@apply text-base md:text-lg;
+}
+h4,
+h5,
+h6 {
+	@apply text-sm md:text-base;
+}
+
+.prose h1 {
+	@apply text-xl md:text-2xl;
+}
+.prose h2 {
+	@apply text-lg md:text-xl;
+}
+.prose h3 {
+	@apply text-base md:text-lg;
+}
+.prose h4,
+.prose h5,
+.prose h6 {
+	@apply text-sm md:text-base;
 }
 
 p {
@@ -103,4 +141,10 @@ p {
 
 main {
 	@apply mb-24;
+}
+
+/* Крестик очистки в поле поиска — прижат к правому краю */
+input[type='search']::-webkit-search-cancel-button {
+	position: relative;
+	left: 2rem;
 }

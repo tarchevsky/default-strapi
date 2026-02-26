@@ -26,9 +26,7 @@ export const DynamicComponentRenderer = ({
 		case 'text.heading': {
 			const HeadingTag = component.headinglevel
 			return (
-				<HeadingTag className='cont font-bold mb-2'>
-					{component.Heading}
-				</HeadingTag>
+				<HeadingTag className='font-bold mb-2'>{component.Heading}</HeadingTag>
 			)
 		}
 		case 'text.paragraph':
@@ -45,7 +43,7 @@ export const DynamicComponentRenderer = ({
 			const title =
 				(component.Title?.trim()?.length ? component.Title : metaTitle) || ''
 			return (
-				<h1 className='cont text-2xl font-bold mb-4 text-right'>{title}</h1>
+				<h1 className='cont text-xl md:text-2xl font-bold mb-3 md:mb-4 text-right'>{title}</h1>
 			)
 		}
 		case 'decorative.line': {
@@ -234,12 +232,7 @@ export const DynamicComponentRenderer = ({
 						const renderIconContent = (iconData: GridIconItem) => {
 							const iconName = iconData.SingleIconText?.trim()
 							if (iconName) {
-								return (
-									<IconRenderer
-										iconName={iconName}
-										className='w-6 h-6 text-[#893829]'
-									/>
-								)
+								return <IconRenderer iconName={iconName} className='w-6 h-6' />
 							}
 
 							const iconMedia = iconData.SingleIcon
@@ -339,7 +332,7 @@ export const DynamicComponentRenderer = ({
 									col.Heading.map(h => {
 										const Tag = h.headinglevel as keyof JSX.IntrinsicElements
 										return (
-											<Tag key={h.id} className='text-lg font-semibold mb-2'>
+											<Tag key={h.id} className='text-base md:text-lg font-semibold mb-2'>
 												{h.Heading}
 											</Tag>
 										)
@@ -365,7 +358,7 @@ export const DynamicComponentRenderer = ({
 											const key = iconItem.id ?? `${col.id}-icon-${index}`
 											const href = iconItem.Link?.trim()
 											const wrapperClasses =
-												'inline-flex items-center justify-center text-[#893829]'
+												'inline-flex items-center justify-center'
 
 											return href ? (
 												<a
