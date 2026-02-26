@@ -23,12 +23,14 @@ function mapStrapiDynamicItem(item: StrapiDynamicItem): DynamicComponent {
 			item.Caption ??
 			item.caption ??
 			null
+		const fullPage =
+			item.FullPage === false || item.fullPage === false ? false : true
 		return {
 			__component: 'text.blockquote',
 			id: item.id,
 			Quote: String(quote),
 			Caption: caption != null && caption !== '' ? String(caption) : null,
-			FullPage: item.FullPage ?? item.fullPage ?? true,
+			FullPage: fullPage,
 		} satisfies BlockquoteComponent
 	}
 	return item as DynamicComponent

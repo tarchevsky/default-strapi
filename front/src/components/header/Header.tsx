@@ -69,7 +69,9 @@ const Header = ({ headerData }: HeaderProps) => {
 		: sortedMenu
 
 	return (
-		<header className={cn(styles.header, 'relative z-40 cont items-end flex py-5')}>
+		<header
+			className={cn(styles.header, 'relative z-40 cont items-end flex py-5')}
+		>
 			{/* Логотип */}
 			<div className='flex-shrink-0'>
 				{header?.textLogo ? (
