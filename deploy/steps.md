@@ -7,11 +7,10 @@ https://sereja-art.ru/blog/deploj-prilozheniya-next-js-na-ubuntu-vps
 
 1.  Подготовка сервера
     - Под root обнови систему: `sudo apt update && sudo apt upgrade && sudo apt install nginx`.
-    - Создай пользователя `deploy` с sudo, добавь SSH-ключи, отключи парольный вход.
+    - Создай пользователя `user` с sudo, добавь SSH-ключи, отключи парольный вход.
     - Включи UFW: `sudo ufw allow OpenSSH && sudo ufw allow 'Nginx Full' && sudo ufw enable`.
-    - Создай каталог проекта: `mkdir -p ~/adel.pro && cd ~/adel.pro`.
+    - Создай каталог проекта: `mkdir -p ~/puhovvv.ru && cd ~/puhovvv.ru`.
 2.  Установка окружения
-
     - Поставь Node 20: `curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -`, затем `sudo apt install -y nodejs build-essential git unzip`.
     - Установи zshrc:
 
@@ -32,12 +31,18 @@ https://sereja-art.ru/blog/deploj-prilozheniya-next-js-na-ubuntu-vps
     - Сделайте zsh shell по умолчанию для вашего пользователя:
 
     ```shell
-    chsh -s /bin/zsh
+    chsh -s $(which zsh)
+    ```
+
+    - создай пустой конфиг zsh, чтобы при первом входе не показывался мастер настройки:
+
+    ```shell
+    touch ~/.zshrc
     ```
 
     - перезагрузите сервер
 
-    - делаем как раньше в бэш - путь и пользователя цветной
+    - после входа делаем цветной промпт (путь и пользователь). _Если при первом входе в zsh появился мастер «zsh-newuser-install» — нажми `0` и Enter (создаст пустой ~/.zshrc), затем продолжай._
 
     ```ssh
     echo "PROMPT='%F{green}%n@%m%f:%F{blue}%~%f%# '" >> ~/.zshrc
@@ -47,7 +52,7 @@ https://sereja-art.ru/blog/deploj-prilozheniya-next-js-na-ubuntu-vps
 - Установи Bun: `curl -fsSL https://bun.sh/install | bash`, затем добавь путь в `~/.zshrc`:
   `echo 'export BUN_INSTALL="$HOME/.bun"' >> ~/.zshrc && echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> ~/.zshrc`
   После этого перезапусти shell: `exec $SHELL -l`.
-- Установи pm2 глобально: `bun install --global pm2` (если Bun не ставится — `sudo npm i -g pm2`).
+- Установи pm2 глобально: `bun install --global pm2`
 
 3.  PostgreSQL
 
@@ -55,9 +60,9 @@ https://sereja-art.ru/blog/deploj-prilozheniya-next-js-na-ubuntu-vps
   `sudo apt install locales && sudo locale-gen ru_RU.UTF-8 && sudo update-locale LC_ALL=ru_RU.UTF-8 LANG=ru_RU.UTF-8`
   После этого перелогинься и проверь `locale`.
 - Создай пользователя и базу:
-  `sudo -u postgres psql -c "CREATE ROLE manager WITH LOGIN PASSWORD 'ZmxNcvb-\!10';"` - здесь. экранируем ! обратным \
-  Если надо поменять пароль
-  `sudo -u postgres psql -c "ALTER ROLE manager WITH PASSWORD 'ZmxNcvb-\!10';"`
+  `sudo -u postgres psql -c "CREATE ROLE crPdu WITH LOGIN PASSWORD 'Mg8nQwR5tY7xZ2pL';"`
+  Если надо поменять пароль:
+  `sudo -u postgres psql -c "ALTER ROLE crPdu WITH PASSWORD 'Mg8nQwR5tY7xZ2pL';"`
   `sudo -u postgres psql -c "CREATE DATABASE strapi OWNER manager ENCODING 'UTF8';"`
 
 4.  Репозиторий
