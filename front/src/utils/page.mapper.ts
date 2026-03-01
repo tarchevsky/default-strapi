@@ -3,6 +3,7 @@ import {
 	DynamicComponent,
 	FeaturedPostsComponent,
 	HeroBlockComponent,
+	HeroImage,
 	ImgComponent,
 	ParagraphComponent,
 } from '@/types/dynamic.types'
@@ -73,13 +74,7 @@ function mapStrapiDynamicItem(item: StrapiDynamicItem): DynamicComponent {
 	if (item.__component === 'blocks.hero') {
 		const imageComponent = item.Image as
 			| {
-					Img?: {
-						id: number
-						url: string
-						alternativeText?: string | null
-						caption?: string | null
-						name?: string
-					} | null
+					Img?: HeroImage | null
 			  }
 			| undefined
 
@@ -95,10 +90,12 @@ function mapStrapiDynamicItem(item: StrapiDynamicItem): DynamicComponent {
 			  }
 			| undefined
 
+		const image = (imageComponent?.Img ?? null) as HeroImage | null
+
 		return {
 			__component: 'blocks.hero',
 			id: item.id,
-			image: imageComponent?.Img ?? null,
+			image,
 			title: String(titleComponent?.Heading ?? ''),
 			subtitle:
 				subtitleComponent?.Paragraph != null

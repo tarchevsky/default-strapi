@@ -64,10 +64,15 @@ export interface FeaturedPostsComponent {
 	FeaturedPosts: boolean
 }
 
+export type HeroImage = Pick<
+	StrapiMedia,
+	'id' | 'url' | 'alternativeText' | 'caption' | 'name'
+>
+
 export interface HeroBlockComponent {
 	__component: 'blocks.hero'
 	id: number
-	image: StrapiMedia | null
+	image: HeroImage | null
 	title: string
 	subtitle?: string | null
 }
