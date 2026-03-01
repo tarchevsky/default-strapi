@@ -29,6 +29,8 @@ export interface ImgComponent {
 	Container?: boolean
 	Indent?: boolean
 	Box?: boolean
+	/** Показывать подпись (берётся из media.caption / alternativeText / name) */
+	Caption?: boolean
 }
 
 export interface IconComponent {
@@ -62,6 +64,14 @@ export interface FeaturedPostsComponent {
 	FeaturedPosts: boolean
 }
 
+export interface HeroBlockComponent {
+	__component: 'blocks.hero'
+	id: number
+	image: StrapiMedia | null
+	title: string
+	subtitle?: string | null
+}
+
 export type GridWidth =
 	| 'w-1-4'
 	| 'w-1-3'
@@ -91,7 +101,7 @@ export type GridParagraph = Pick<
 >
 export type GridImageItem = Pick<
 	ImgComponent,
-	'id' | 'Img' | 'Container' | 'Indent' | 'Box'
+	'id' | 'Img' | 'Container' | 'Indent' | 'Box' | 'Caption'
 >
 export type GridIconItem = Pick<
 	IconComponent,
@@ -132,3 +142,4 @@ export type DynamicComponent =
 	| GridComponent
 	| TitleComponent
 	| LineComponent
+	| HeroBlockComponent

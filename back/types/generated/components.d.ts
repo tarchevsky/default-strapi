@@ -1,5 +1,18 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface BlocksHero extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_heroes';
+  info: {
+    displayName: 'Hero';
+    icon: 'dashboard';
+  };
+  attributes: {
+    Image: Schema.Attribute.Component<'img.img', false>;
+    Subtitle: Schema.Attribute.Component<'text.paragraph', false>;
+    Title: Schema.Attribute.Component<'text.heading', false>;
+  };
+}
+
 export interface DecorativeLine extends Struct.ComponentSchema {
   collectionName: 'components_decorative_lines';
   info: {
@@ -20,6 +33,8 @@ export interface ImgIcon extends Struct.ComponentSchema {
     icon: 'landscape';
   };
   attributes: {
+    IconHeight: Schema.Attribute.Integer;
+    IconWidth: Schema.Attribute.Integer;
     Link: Schema.Attribute.String;
     SingleIcon: Schema.Attribute.Media<'images'>;
     SingleIconText: Schema.Attribute.String;
@@ -34,6 +49,7 @@ export interface ImgImg extends Struct.ComponentSchema {
   };
   attributes: {
     Box: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    Caption: Schema.Attribute.Boolean;
     Container: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     ImageName: Schema.Attribute.String;
     Img: Schema.Attribute.Media<'images'>;
@@ -212,6 +228,7 @@ export interface TextTitle extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'blocks.hero': BlocksHero;
       'decorative.line': DecorativeLine;
       'img.icon': ImgIcon;
       'img.img': ImgImg;

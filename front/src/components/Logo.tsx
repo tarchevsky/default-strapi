@@ -12,14 +12,18 @@ interface LogoProps {
 export const Logo: FC<LogoProps> = ({ logo }) => {
 	const [logoError, setLogoError] = useState(false)
 
+	const fallbackSize = 150
+	const width = logo?.width ?? fallbackSize
+	const height = logo?.height ?? fallbackSize
+
 	return (
 		<Link href='/' className='flex items-center'>
 			{logo && !logoError ? (
 				<Image
 					src={logo.url}
 					alt={logo.alt || 'Logo'}
-					width={150}
-					height={150}
+					width={width}
+					height={height}
 					priority
 					className='w-auto rounded-3xl'
 					onError={() => setLogoError(true)}

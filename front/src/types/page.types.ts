@@ -8,16 +8,12 @@ export type PageCategory =
 	| 'Методические материалы'
 	| 'Глоссарий'
 	| 'Статья'
-	| 'Поддержка'
-	| 'Мысли'
 
 /** Все категории статей — для фильтров, селектов, меток */
 export const PAGE_CATEGORIES: PageCategory[] = [
 	'Методические материалы',
 	'Глоссарий',
 	'Статья',
-	'Поддержка',
-	'Мысли',
 ]
 
 /** Маппинг категория → URL-слаг для /blog/[category]/[slug]. Добавление новой категории: + запись сюда. */
@@ -25,8 +21,6 @@ export const CATEGORY_SLUG_MAP: Record<PageCategory, string> = {
 	'Методические материалы': 'metodika',
 	Глоссарий: 'glossary',
 	Статья: 'article',
-	Поддержка: 'support',
-	Мысли: 'thoughts',
 }
 
 const SLUG_TO_CATEGORY = Object.fromEntries(

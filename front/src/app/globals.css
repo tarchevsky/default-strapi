@@ -103,10 +103,11 @@ h4,
 h5,
 h6 {
 	@apply mb-3 pt-3 md:mb-[25.23px] md:pt-[28.77px];
+	font-family: 'Lora Variable', serif;
 }
 
 h1 {
-	@apply text-xl md:text-2xl;
+	@apply text-4xl md:text-5xl;
 }
 h2 {
 	@apply text-lg md:text-xl;
@@ -137,10 +138,6 @@ h6 {
 
 p {
 	margin: 0;
-}
-
-main {
-	@apply mb-24;
 }
 
 /* Крестик очистки в поле поиска — прижат к правому краю */

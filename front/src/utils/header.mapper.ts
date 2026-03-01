@@ -51,12 +51,16 @@ export const mapStrapiHeaderToHeader = (strapiHeader: StrapiHeader): Header => {
 			? {
 					url: getAbsoluteUrl(strapiHeader.Logo.url),
 					alt: strapiHeader.Logo.alternativeText || 'Logo',
+					width: strapiHeader.LogoWidth ?? undefined,
+					height: strapiHeader.LogoHeight ?? undefined,
 			  }
 			: undefined,
 		logoMob: strapiHeader.LogoMob
 			? {
 					url: getAbsoluteUrl(strapiHeader.LogoMob.url),
 					alt: strapiHeader.LogoMob.alternativeText || 'Logo mobile',
+					width: strapiHeader.LogoMobWidth ?? undefined,
+					height: strapiHeader.LogoMobHeight ?? undefined,
 			  }
 			: undefined,
 		textLogo: mapTextLogo(strapiHeader.TextLogo),
@@ -73,6 +77,8 @@ export const mapStrapiHeaderToHeader = (strapiHeader: StrapiHeader): Header => {
 					id: social.id,
 					link: social.Link ?? '',
 					iconName: social.SingleIconText ?? '',
+					width: social.IconWidth ?? undefined,
+					height: social.IconHeight ?? undefined,
 			  }))
 			: [],
 		contacts: {

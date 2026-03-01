@@ -77,7 +77,10 @@ export const getPageBySlug = async (
 				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Img][populate]=*` +
 				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Heading][populate]=*` +
 				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Paragraph][populate]=*` +
-				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Icon][populate]=*`,
+				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Icon][populate]=*` +
+				`&populate[Dynamic][on][blocks.hero][populate][Image][populate]=*` +
+				`&populate[Dynamic][on][blocks.hero][populate][Title][populate]=*` +
+				`&populate[Dynamic][on][blocks.hero][populate][Subtitle][populate]=*`,
 			{
 				next: {
 					tags: ['pages'],

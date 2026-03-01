@@ -18,6 +18,12 @@
     },
     "SingleIconText": {
       "type": "string"
+    },
+    "IconWidth": {
+      "type": "integer"
+    },
+    "IconHeight": {
+      "type": "integer"
     }
   },
   "config": {}

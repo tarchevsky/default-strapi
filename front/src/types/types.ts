@@ -10,22 +10,19 @@ export interface LayoutProps {
 	style?: string
 }
 
+export interface ModalContentProps {
+	onSuccess?: (message: string) => void
+	closeIcon?: boolean
+}
+
 export interface HeroProps {
-	title?: string
+	title: string
 	src: string
-	buttonText?: string
 	alt: string
+	buttonText?: string
 	subtitle?: string
 	unoptimized?: boolean
-	heroContentClassName?: string
-	imgClassName?: string
-	slider?: boolean
-	text1?: string
-	textLink1?: string
-	text2?: string
-	textLink2?: string
-	text3?: string
-	textLink3?: string
-	text4?: string
-	textLink4?: string
+	modalContent?: ReactNode | React.ReactElement<ModalContentProps>
+	closeIcon?: boolean
+	config?: 'center' | 'cover'
 }

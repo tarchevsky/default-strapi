@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_blocks_heroes",
+  "info": {
+    "displayName": "Hero",
+    "icon": "dashboard"
+  },
+  "options": {},
+  "attributes": {
+    "Image": {
+      "type": "component",
+      "component": "img.img",
+      "repeatable": false,
+      "required": false
+    },
+    "Title": {
+      "type": "component",
+      "component": "text.heading",
+      "repeatable": false
+    },
+    "Subtitle": {
+      "type": "component",
+      "component": "text.paragraph",
+      "repeatable": false
+    }
+  },
+  "config": {}
+}

@@ -5,6 +5,7 @@
       "name": "front",
       "dependencies": {
         "@fancyapps/ui": "5",
+        "@fontsource-variable/lora": "^5.2.8",
         "@fontsource-variable/raleway": "^5.2.8",
         "axios": "^1.12.2",
         "clsx": "^2.1.1",
@@ -64,6 +65,8 @@
     "@eslint/plugin-kit": ["@eslint/plugin-kit@0.4.0", "", { "dependencies": { "@eslint/core": "^0.16.0", "levn": "^0.4.1" } }, "sha512-sB5uyeq+dwCWyPi31B2gQlVlo+j5brPlWx4yZBrEaRo/nhdDE8Xke1gsGgtiBdaBTxuTkceLVuVt/pclrasb0A=="],
 
     "@fancyapps/ui": ["@fancyapps/ui@5.0.36", "", {}, "sha512-GMygQzp1MBTFNTT6AzpbL6pXTD6bTxwjmmpI1fe8Ozmmiseu8/g82Sudl1YhcbZmS4bJgaBOF5THDFGpXQ1fDw=="],
+
+    "@fontsource-variable/lora": ["@fontsource-variable/lora@5.2.8", "", {}, "sha512-cxjTJ9BbOWIzusewR4UMBLVePvTSWV6dtNaNsCkF/oKoyA68fJGWfaYCILOOP1BObE4dmjfZ3xo6m9hdHhtYhg=="],
 
     "@fontsource-variable/raleway": ["@fontsource-variable/raleway@5.2.8", "", {}, "sha512-PahqGI7bkz4a80m91Jt65DRsuFQmRip5vGDbI9sChVSKjLrdDfXbeGIwnTPi/ZVCOoQrbLnqzBOLQpLohnz+WA=="],
 

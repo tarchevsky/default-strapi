@@ -32,8 +32,11 @@ interface MenuItem {
 // Тип для социальной иконки
 interface SocialIcon {
 	id: number
-	Link: string
-	SingleIconText: string
+	Link?: string | null
+	SingleIconText?: string | null
+	SingleIcon?: StrapiMedia | null
+	IconWidth?: number | null
+	IconHeight?: number | null
 }
 
 // Strapi Rich Text (Blocks) — один узел
@@ -50,6 +53,10 @@ export interface StrapiHeader {
 	publishedAt: string
 	Logo?: StrapiMedia | null
 	LogoMob?: StrapiMedia | null
+	LogoWidth?: number | null
+	LogoHeight?: number | null
+	LogoMobWidth?: number | null
+	LogoMobHeight?: number | null
 	TextLogo?: string | StrapiRichTextBlock[] | { content?: StrapiRichTextBlock[] } | null
 	Menu: MenuItem[]
 	Socials: SocialIcon[]
@@ -70,10 +77,14 @@ export interface Header {
 	logo?: {
 		url: string
 		alt: string
+		width?: number
+		height?: number
 	}
 	logoMob?: {
 		url: string
 		alt: string
+		width?: number
+		height?: number
 	}
 	/** HTML-строка логотипа (Rich Text с бэкенда) */
 	textLogo?: string | null
@@ -87,6 +98,8 @@ export interface Header {
 		id: number
 		link: string
 		iconName: string
+		width?: number
+		height?: number
 	}>
 	contacts: {
 		tel?: {

@@ -49,6 +49,18 @@
       "type": "component",
       "component": "links.email",
       "repeatable": false
+    },
+    "LogoWidth": {
+      "type": "integer"
+    },
+    "LogoHeight": {
+      "type": "integer"
+    },
+    "LogoMobWidth": {
+      "type": "integer"
+    },
+    "LogoMobHeight": {
+      "type": "integer"
     }
   }
 }

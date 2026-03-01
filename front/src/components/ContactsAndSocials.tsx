@@ -47,7 +47,20 @@ export const ContactsAndSocials: FC<ContactsAndSocialsProps> = ({
 					className='transition-colors'
 					title={`Перейти по ссылке: ${social.link}`}
 				>
-					<IconRenderer iconName={social.iconName} className='w-6 h-6' />
+					<IconRenderer
+						iconName={social.iconName}
+						className={
+							social.width === 16
+								? 'w-4 h-4'
+								: social.width === 20
+									? 'w-5 h-5'
+									: social.width === 28
+										? 'w-7 h-7'
+										: social.width === 32
+											? 'w-8 h-8'
+											: 'w-6 h-6'
+						}
+					/>
 				</Link>
 			))}
 		</div>

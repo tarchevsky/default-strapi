@@ -3,6 +3,7 @@
 import Burger from '@/components/burger/Burger'
 import { ContactsAndSocials } from '@/components/ContactsAndSocials'
 import { Logo } from '@/components/Logo'
+import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import SearchInput from '@/components/SearchInput'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { DEFAULT_HEADER, getHeader } from '@/services/header.service'
@@ -70,7 +71,10 @@ const Header = ({ headerData }: HeaderProps) => {
 
 	return (
 		<header
-			className={cn(styles.header, 'relative z-40 cont items-end flex py-5')}
+			className={cn(
+				styles.header,
+				'relative z-40 cont flex gap-4 items-center justify-center  py-5',
+			)}
 		>
 			{/* Логотип */}
 			<div className='flex-shrink-0'>
@@ -78,8 +82,13 @@ const Header = ({ headerData }: HeaderProps) => {
 					<Link
 						href='/'
 						className='text-logo-block [&_.text-logo-heading]:font-bold [&_p]:m-0 [&_p]:leading-tight'
-						dangerouslySetInnerHTML={{ __html: header.textLogo }}
-					/>
+					>
+						<MarkdownRenderer
+							content={header.textLogo}
+							useCont={false}
+							useInd={false}
+						/>
+					</Link>
 				) : (
 					<>
 						<div className='md:hidden'>
@@ -93,7 +102,7 @@ const Header = ({ headerData }: HeaderProps) => {
 			</div>
 
 			{/* Десктоп: навигация */}
-			<nav className='hidden md:flex h-full ml-4 sm:ml-[86px] py-1 flex-1 min-w-0'>
+			<nav className='hidden md:flex gap-4 h-full sm:ml-[86px] py-1 flex-1 min-w-0'>
 				<ul className='menu p-0 flex flex-row justify-center items-end flex-1 min-w-0'>
 					{menuItems.map(item => (
 						<li
@@ -109,7 +118,7 @@ const Header = ({ headerData }: HeaderProps) => {
 						</li>
 					))}
 				</ul>
-				<div className='flex flex-shrink-0 items-center ml-4 mr-1'>
+				<div className='flex flex-shrink-0 items-center'>
 					<SearchInput
 						inputClassName='input input-bordered w-40 sm:w-52 input-sm rounded-full pr-10 placeholder:opacity-60 border border-base-300'
 						aria-label='Поиск'
@@ -118,7 +127,7 @@ const Header = ({ headerData }: HeaderProps) => {
 			</nav>
 
 			{/* Десктоп: контакты и соцсети */}
-			<div className='hidden md:flex flex-shrink-0 items-center ml-4'>
+			<div className='hidden md:flex flex-shrink-0 items-center'>
 				{(header?.contacts?.tel ||
 					header?.contacts?.email ||
 					(header?.socials && header.socials.length > 0)) && (

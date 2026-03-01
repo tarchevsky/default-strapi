@@ -482,7 +482,11 @@ export interface ApiHeaderHeader extends Struct.SingleTypeSchema {
     > &
       Schema.Attribute.Private;
     Logo: Schema.Attribute.Media<'images' | 'files'>;
+    LogoHeight: Schema.Attribute.Integer;
     LogoMob: Schema.Attribute.Media<'images'>;
+    LogoMobHeight: Schema.Attribute.Integer;
+    LogoMobWidth: Schema.Attribute.Integer;
+    LogoWidth: Schema.Attribute.Integer;
     Menu: Schema.Attribute.Component<'menu.menu-items', true>;
     publishedAt: Schema.Attribute.DateTime;
     Socials: Schema.Attribute.Component<'img.icon', true>;
@@ -510,8 +514,6 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         '\u041C\u0435\u0442\u043E\u0434\u0438\u0447\u0435\u0441\u043A\u0438\u0435 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u044B',
         '\u0413\u043B\u043E\u0441\u0441\u0430\u0440\u0438\u0439',
         '\u0421\u0442\u0430\u0442\u044C\u044F',
-        '\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430',
-        '\u041C\u044B\u0441\u043B\u0438',
       ]
     >;
     createdAt: Schema.Attribute.DateTime;
@@ -533,12 +535,18 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'img.icon',
         'text.blockquote',
         'interactivity.featured-posts',
+        'blocks.hero',
       ]
     >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::page.page'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    Series: Schema.Attribute.Enumeration<
+      [
+        '\u041A\u043B\u0430\u0441\u0441\u0438\u0447\u0435\u0441\u043A\u0438\u0439 \u041A\u041F\u0422',
+      ]
+    >;
     Slug: Schema.Attribute.UID<'Title'> &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{

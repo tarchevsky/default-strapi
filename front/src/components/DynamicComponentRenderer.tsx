@@ -3,11 +3,13 @@ import {
 	DynamicComponent,
 	GridIconItem,
 	GridWidth,
+	HeroBlockComponent,
 } from '@/types/dynamic.types'
 import { ArticleListItem } from '@/types/page.types'
 import Image from 'next/image'
 import type { JSX } from 'react'
 import { Blockquote } from './Blockquote'
+import Hero from './Hero'
 import { IconRenderer } from './IconRenderer'
 import { MarkdownRenderer } from './MarkdownRenderer'
 import FeaturedPostsCarousel from './ui/carousel/FeaturedPostsCarousel'
@@ -79,7 +81,12 @@ export const DynamicComponentRenderer = ({
 			const wrapWithContainer = component.Container === true
 			const wrapWithInd = component.Indent === true
 			const withBox = component.Box === true
-			const caption = img.caption || img.alternativeText || img.name || ''
+			const shouldShowCaption = component.Caption === true
+			const captionText =
+				img.caption ||
+				img.alternativeText ||
+				img.name ||
+				''
 			const imageEl = (
 				<Image
 					src={src}
@@ -94,7 +101,9 @@ export const DynamicComponentRenderer = ({
 				<a
 					href={src}
 					data-fancybox='page-gallery'
-					data-caption={caption}
+					{...(shouldShowCaption && captionText
+						? { 'data-caption': captionText }
+						: {})}
 					className='block w-full h-full'
 				>
 					{imageEl}
@@ -102,19 +111,52 @@ export const DynamicComponentRenderer = ({
 			) : (
 				imageEl
 			)
+			const content = (
+				<>
+					{galleryWrapped}
+					{shouldShowCaption && captionText ? <p>{captionText}</p> : null}
+				</>
+			)
 			return wrapWithContainer && wrapWithInd ? (
-				<div className='cont ind'>{galleryWrapped}</div>
+				<div className='cont ind'>{content}</div>
 			) : wrapWithContainer ? (
-				<div className='cont'>{galleryWrapped}</div>
+				<div className='cont'>{content}</div>
 			) : wrapWithInd ? (
-				<div className='ind'>{galleryWrapped}</div>
+				<div className='ind'>{content}</div>
 			) : (
-				galleryWrapped
+				content
 			)
 		}
 		case 'interactivity.featured-posts':
 			if (!component.FeaturedPosts || !featuredArticles?.length) return null
 			return <FeaturedPostsCarousel articles={featuredArticles} />
+		case 'blocks.hero': {
+			const hero = component as HeroBlockComponent
+			const img = hero.image
+			if (!img || !img.url) return null
+
+			const src = img.url.startsWith('http')
+				? img.url
+				: `${STRAPI_URL}${img.url}`
+			const alt =
+				img.alternativeText ||
+				img.caption ||
+				img.name ||
+				hero.title ||
+				''
+
+			const title = hero.title?.trim() || ''
+			const subtitle = hero.subtitle?.trim() || undefined
+
+			return (
+				<Hero
+					title={title}
+					src={src}
+					alt={alt}
+					subtitle={subtitle}
+				/>
+			)
+		}
 		case 'layout.grid': {
 			const gapPx = (component.Gap ?? 0) * 8
 
@@ -286,8 +328,12 @@ export const DynamicComponentRenderer = ({
 											? img.url
 											: `${STRAPI_URL}${img.url}`
 										const alt = img.alternativeText || ''
-										const caption =
-											img.caption || img.alternativeText || img.name || ''
+										const shouldShowCaption = item?.Caption === true
+										const captionText =
+											img.caption ||
+											img.alternativeText ||
+											img.name ||
+											''
 										const shouldUseBox = item?.Box === true
 
 										if (shouldUseBox) {
@@ -298,35 +344,45 @@ export const DynamicComponentRenderer = ({
 												.filter(Boolean)
 												.join(' ')
 											return (
-												<a
-													key={item.id}
-													href={src}
-													data-fancybox='page-gallery'
-													data-caption={caption}
-													className='block w-full h-full'
-												>
-													<Image
-														src={src}
-														alt={alt}
-														width={img.width}
-														height={img.height}
-														style={{ width: '100%' }}
-														className={fancyboxImageClasses}
-													/>
-												</a>
+												<div key={item.id}>
+													<a
+														href={src}
+														data-fancybox='page-gallery'
+														{...(shouldShowCaption && captionText
+															? { 'data-caption': captionText }
+															: {})}
+														className='block w-full h-full'
+													>
+														<Image
+															src={src}
+															alt={alt}
+															width={img.width}
+															height={img.height}
+															style={{ width: '100%' }}
+															className={fancyboxImageClasses}
+														/>
+													</a>
+													{shouldShowCaption && captionText ? (
+														<p>{captionText}</p>
+													) : null}
+												</div>
 											)
 										}
 
 										return (
-											<Image
-												key={item.id}
-												src={src}
-												alt={alt}
-												width={img.width}
-												height={img.height}
-												style={{ width: '100%' }}
-												className='h-full object-cover transition-all duration-300 ease-in rounded-3xl'
-											/>
+											<div key={item.id}>
+												<Image
+													src={src}
+													alt={alt}
+													width={img.width}
+													height={img.height}
+													style={{ width: '100%' }}
+													className='h-full object-cover transition-all duration-300 ease-in rounded-3xl'
+												/>
+												{shouldShowCaption && captionText ? (
+													<p>{captionText}</p>
+												) : null}
+											</div>
 										)
 									})}
 
