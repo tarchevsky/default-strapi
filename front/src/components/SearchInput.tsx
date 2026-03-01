@@ -80,6 +80,7 @@ export default function SearchInput({
 	)
 
 	const showDropdown = open && (query.trim() !== '' || loading)
+	const listboxId = 'search-results-listbox'
 
 	return (
 		<div ref={wrapRef} className={`relative ${className ?? ''}`}>
@@ -92,11 +93,13 @@ export default function SearchInput({
 				className={inputClassName}
 				aria-label={ariaLabel}
 				aria-expanded={showDropdown}
+				aria-controls={showDropdown ? listboxId : undefined}
 				aria-autocomplete="list"
 				role="combobox"
 			/>
 			{showDropdown && (
 				<ul
+					id={listboxId}
 					className="absolute left-0 right-0 top-full z-50 mt-1 max-h-72 overflow-auto rounded-lg border border-base-300 bg-base-100 py-1 shadow-lg"
 					role="listbox"
 				>
@@ -108,7 +111,7 @@ export default function SearchInput({
 						</li>
 					) : (
 						results.map((item) => (
-							<li key={`${item.type}-${item.slug}`} role="option">
+							<li key={`${item.type}-${item.slug}`} role="option" aria-selected={false}>
 								<Link
 									href={item.href}
 									className="block px-3 py-2 text-sm hover:bg-base-200"

@@ -19,8 +19,8 @@ function mapStrapiDynamicItem(item: StrapiDynamicItem): DynamicComponent {
 			__component: 'text.paragraph',
 			id: item.id,
 			Paragraph: String(item.Paragraph ?? ''),
-			Container: item.Container,
-			Indent: item.Indent,
+			Container: typeof item.Container === 'boolean' ? item.Container : undefined,
+			Indent: typeof item.Indent === 'boolean' ? item.Indent : undefined,
 		} satisfies ParagraphComponent
 	}
 	if (item.__component === 'interactivity.featured-posts') {
