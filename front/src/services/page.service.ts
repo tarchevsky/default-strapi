@@ -66,6 +66,7 @@ export const getPageBySlug = async (
 	try {
 		const res = await fetchWithFallback(
 			`/api/pages?${slugFilter}${categoryFilter}` +
+				`&populate[Tags][fields][0]=Name` +
 				`&populate[Dynamic][on][text.paragraph][populate]=*` +
 				`&populate[Dynamic][on][text.heading][populate]=*` +
 				`&populate[Dynamic][on][text.title][populate]=*` +
@@ -156,51 +157,44 @@ export const searchPagesAndArticles = async (
 	if (!q) return []
 	const qLower = q.toLowerCase()
 	const mapToResults = (list: StrapiPagesResponse['data']) =>
-		list
-			.filter((p) => p.Title?.toLowerCase().includes(qLower))
-			.map((p): SearchResultItem => {
-				const isArticle = p.TypeOfPage === 'статья'
-				const categorySlug =
-					isArticle && p.Category != null
-						? getCategorySlug(p.Category as PageCategory)
-						: undefined
-				return {
-					title: p.Title,
-					slug: p.Slug,
-					href: isArticle && categorySlug
+		list.map((p): SearchResultItem => {
+			const isArticle = p.TypeOfPage === 'статья'
+			const categorySlug =
+				isArticle && p.Category != null
+					? getCategorySlug(p.Category as PageCategory)
+					: undefined
+			return {
+				title: p.Title,
+				slug: p.Slug,
+				href:
+					isArticle && categorySlug
 						? `/blog/${categorySlug}/${p.Slug}`
 						: `/${p.Slug}`,
-					type: isArticle ? 'article' : 'page',
-				}
-			})
+				type: isArticle ? 'article' : 'page',
+			}
+		})
 
 	try {
 		const opts = { next: { revalidate: 30 } as const }
 		const urlBase =
-			`/api/pages?fields[0]=Title&fields[1]=Slug&fields[2]=TypeOfPage&fields[3]=Category&pagination[pageSize]=50`
-		// Сначала $containsi; при пустом ответе — $contains (на случай если $containsi не поддерживается)
-		let res = await fetchWithFallback(
-			`${urlBase}&filters[Title][$containsi]=${encodeURIComponent(q)}`,
-			opts
-		)
+			`/api/pages?fields[0]=Title&fields[1]=Slug&fields[2]=TypeOfPage&fields[3]=Category&pagination[pageSize]=50&populate[Tags][fields][0]=Name`
+
+		const res = await fetchWithFallback(urlBase, opts)
 		if (!res) return []
-		let data: StrapiPagesResponse = await res.json()
-		if (!data.data?.length) {
-			res = await fetchWithFallback(
-				`${urlBase}&filters[Title][$contains]=${encodeURIComponent(q)}`,
-				opts
-			)
-			if (!res) return []
-			data = await res.json()
-		}
-		if (!data.data?.length) {
-			// Fallback: без фильтра по Title (на случай иного формата API)
-			res = await fetchWithFallback(urlBase, opts)
-			if (!res) return []
-			data = await res.json()
-		}
+
+		const data: StrapiPagesResponse = await res.json()
 		if (!data.data?.length) return []
-		return mapToResults(data.data)
+
+		const filtered = data.data.filter((p) => {
+			const titleMatch = p.Title?.toLowerCase().includes(qLower)
+			const tags = (p as any).Tags as { Name: string }[] | undefined
+			const tagsMatch = tags
+				?.some((t) => t.Name.toLowerCase().includes(qLower))
+			return Boolean(titleMatch || tagsMatch)
+		})
+
+		if (!filtered.length) return []
+		return mapToResults(filtered)
 	} catch (error) {
 		console.error('Error searching pages:', error)
 		return []
@@ -211,7 +205,7 @@ export const searchPagesAndArticles = async (
 export const getArticlePages = async (): Promise<ArticleListItem[]> => {
 	try {
 		const res = await fetchWithFallback(
-			'/api/pages?filters[TypeOfPage][$eq]=статья&fields[0]=Title&fields[1]=Slug&fields[2]=Category',
+			'/api/pages?filters[TypeOfPage][$eq]=статья&fields[0]=Title&fields[1]=Slug&fields[2]=Category&populate[Tags][fields][0]=Name',
 			{ next: { tags: ['pages'], revalidate: 60 } }
 		)
 		if (!res) return []
@@ -226,6 +220,7 @@ export const getArticlePages = async (): Promise<ArticleListItem[]> => {
 					p.Category != null
 						? getCategorySlug(p.Category as PageCategory)
 						: undefined,
+				tags: p.Tags?.map((t) => t.Name) ?? [],
 			})
 		)
 	} catch (error) {
@@ -240,7 +235,7 @@ export const getFeaturedArticles = async (
 ): Promise<ArticleListItem[]> => {
 	try {
 		const res = await fetchWithFallback(
-			`/api/pages?filters[TypeOfPage][$eq]=статья&fields[0]=Title&fields[1]=Slug&fields[2]=Category&fields[3]=Description&sort[0]=publishedAt:desc&pagination[pageSize]=${limit}`,
+			`/api/pages?filters[TypeOfPage][$eq]=статья&fields[0]=Title&fields[1]=Slug&fields[2]=Category&fields[3]=Description&sort[0]=publishedAt:desc&pagination[pageSize]=${limit}&populate[Tags][fields][0]=Name`,
 			{ next: { tags: ['pages'], revalidate: 60 } }
 		)
 		if (!res) return []
@@ -256,10 +251,50 @@ export const getFeaturedArticles = async (
 					p.Category != null
 						? getCategorySlug(p.Category as PageCategory)
 						: undefined,
+				tags: p.Tags?.map((t) => t.Name) ?? [],
 			})
 		)
 	} catch (error) {
 		console.error('Error fetching featured articles:', error)
+		return []
+	}
+}
+
+/** Статьи, отфильтрованные по имени тега (Name из коллекции Tag) */
+export const getArticlesByTag = async (
+	tagName: string
+): Promise<ArticleListItem[]> => {
+	const name = tagName.trim()
+	if (!name) return []
+
+	try {
+		const res = await fetchWithFallback(
+			`/api/pages?filters[TypeOfPage][$eq]=статья` +
+				`&filters[Tags][Name][$eq]=${encodeURIComponent(name)}` +
+				`&fields[0]=Title&fields[1]=Slug&fields[2]=Category` +
+				`&populate[Tags][fields][0]=Name`,
+			{ next: { tags: ['pages'], revalidate: 60 } }
+		)
+
+		if (!res) return []
+
+		const data: StrapiPagesResponse = await res.json()
+		if (!data.data?.length) return []
+
+		return data.data.map(
+			(p): ArticleListItem => ({
+				title: p.Title,
+				slug: p.Slug,
+				category: p.Category as PageCategory | undefined,
+				categorySlug:
+					p.Category != null
+						? getCategorySlug(p.Category as PageCategory)
+						: undefined,
+				tags: p.Tags?.map((t) => t.Name) ?? [],
+			})
+		)
+	} catch (error) {
+		console.error('Error fetching articles by tag:', error)
 		return []
 	}
 }

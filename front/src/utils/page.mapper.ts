@@ -120,6 +120,7 @@ export const mapStrapiPageToPage = (strapiPage: StrapiPage): Page => {
 		slug: strapiPage.Slug,
 		typeOfPage: strapiPage.TypeOfPage,
 		category: strapiPage.Category,
+		tags: strapiPage.Tags?.map((t) => t.Name) ?? [],
 		dynamic: rawDynamic.map(mapStrapiDynamicItem),
 		createdAt: strapiPage.createdAt,
 		updatedAt: strapiPage.updatedAt,

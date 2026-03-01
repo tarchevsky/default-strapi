@@ -55,6 +55,8 @@ export interface ArticleListItem {
 	category?: PageCategory
 	/** URL-слаг категории для ссылки /blog/[categorySlug]/[slug] */
 	categorySlug?: string
+	/** Теги статьи (имена тегов из Strapi) */
+	tags?: string[]
 }
 
 export interface StrapiPageAttributes {
@@ -82,6 +84,11 @@ export interface StrapiPage {
 	Slug: string
 	TypeOfPage?: TypeOfPage
 	Category?: PageCategory
+	/** Связанные теги (many-to-many Tag) */
+	Tags?: {
+		id: number
+		Name: string
+	}[]
 	Dynamic: Array<{
 		__component: string
 		id: number
@@ -110,6 +117,8 @@ export interface Page {
 	typeOfPage?: TypeOfPage
 	/** При typeOfPage === 'статья' */
 	category?: PageCategory
+	/** Теги статьи (имена тегов из Strapi) */
+	tags?: string[]
 	dynamic: DynamicComponent[]
 	createdAt: string
 	updatedAt: string
