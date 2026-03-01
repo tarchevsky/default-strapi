@@ -430,62 +430,6 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiCaseCase extends Struct.CollectionTypeSchema {
-  collectionName: 'cases';
-  info: {
-    displayName: 'Case';
-    pluralName: 'cases';
-    singularName: 'case';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    CaseImage: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    Description: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 160;
-      }>;
-    dynamic: Schema.Attribute.DynamicZone<
-      [
-        'text.paragraph',
-        'text.heading',
-        'interactivity.cases-carousel',
-        'img.img',
-        'layout.column',
-        'text.title',
-      ]
-    >;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::case.case'> &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
-    Services: Schema.Attribute.Enumeration<
-      [
-        '\u0443\u0441\u043B\u0443\u0433\u0430 1',
-        '\u0443\u0441\u043B\u0443\u0433\u0430 2',
-      ]
-    >;
-    Slug: Schema.Attribute.UID<'Title'> &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 50;
-      }>;
-    Title: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 60;
-      }>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiFooterFooter extends Struct.SingleTypeSchema {
   collectionName: 'footers';
   info: {
@@ -582,7 +526,6 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
       [
         'text.paragraph',
         'text.heading',
-        'interactivity.cases-carousel',
         'img.img',
         'layout.grid',
         'text.title',
@@ -1185,7 +1128,6 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
-      'api::case.case': ApiCaseCase;
       'api::footer.footer': ApiFooterFooter;
       'api::header.header': ApiHeaderHeader;
       'api::page.page': ApiPagePage;

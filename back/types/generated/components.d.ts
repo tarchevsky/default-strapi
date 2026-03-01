@@ -41,23 +41,6 @@ export interface ImgImg extends Struct.ComponentSchema {
   };
 }
 
-export interface InteractivityCasesCarousel extends Struct.ComponentSchema {
-  collectionName: 'components_interactivity_cases_carousels';
-  info: {
-    displayName: 'CasesCarousel';
-    icon: 'apps';
-  };
-  attributes: {
-    OnOff: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    Service: Schema.Attribute.Enumeration<
-      [
-        '\u0443\u043F\u0430\u043A\u043E\u0432\u043A\u0430',
-        '\u043F\u043E\u043B\u0438\u0433\u0440\u0430\u0444\u0438\u044F',
-      ]
-    >;
-  };
-}
-
 export interface InteractivityFeaturedPosts extends Struct.ComponentSchema {
   collectionName: 'components_interactivity_featured_posts';
   info: {
@@ -232,7 +215,6 @@ declare module '@strapi/strapi' {
       'decorative.line': DecorativeLine;
       'img.icon': ImgIcon;
       'img.img': ImgImg;
-      'interactivity.cases-carousel': InteractivityCasesCarousel;
       'interactivity.featured-posts': InteractivityFeaturedPosts;
       'layout.column': LayoutColumn;
       'layout.grid': LayoutGrid;

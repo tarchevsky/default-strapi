@@ -73,7 +73,6 @@ export const getPageBySlug = async (
 				`&populate[Dynamic][on][img.img][populate]=*` +
 				`&populate[Dynamic][on][img.icon][populate]=*` +
 				`&populate[Dynamic][on][decorative.line][populate]=*` +
-				`&populate[Dynamic][on][interactivity.cases-carousel][populate]=*` +
 				`&populate[Dynamic][on][interactivity.featured-posts][populate]=*` +
 				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Img][populate]=*` +
 				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Heading][populate]=*` +

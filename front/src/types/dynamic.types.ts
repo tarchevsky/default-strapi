@@ -56,17 +56,6 @@ export interface BlockquoteComponent {
 	FullPage?: boolean
 }
 
-/** Совпадает с CaseService в case.types — какой сервис показывать в карусели */
-export type CasesCarouselService = 'услуга 1' | 'услуга 2'
-
-export interface CasesCarouselComponent {
-	__component: 'interactivity.cases-carousel'
-	id: number
-	OnOff: boolean
-	/** Показывать только кейсы с этим сервисом; без значения — все кейсы */
-	Service?: CasesCarouselService | null
-}
-
 export interface FeaturedPostsComponent {
 	__component: 'interactivity.featured-posts'
 	id: number
@@ -137,7 +126,6 @@ export type DynamicComponent =
 	| HeadingComponent
 	| ParagraphComponent
 	| BlockquoteComponent
-	| CasesCarouselComponent
 	| FeaturedPostsComponent
 	| ImgComponent
 	| IconComponent

@@ -52,20 +52,6 @@ export async function POST(request: NextRequest) {
 		const revalidateActions = ['create', 'update', 'delete', 'publish', 'unpublish']
 
 		switch (contentType) {
-			case 'case':
-				if (revalidateActions.includes(action)) {
-					// Ревалидируем список кейсов
-					revalidateTag('cases')
-
-					// Если есть slug в данных, ревалидируем конкретный кейс
-					if (data?.attributes?.Slug) {
-						revalidateTag(`case-${data.attributes.Slug}`)
-					}
-
-					console.log('Ревалидированы теги: cases, case-*')
-				}
-				break
-
 			case 'header':
 				if (revalidateActions.includes(action)) {
 					// Ревалидируем хедер
@@ -93,16 +79,6 @@ export async function POST(request: NextRequest) {
 					// Проверяем тип контента
 					const modelName = data?.model || data?.__typename || ''
 
-					if (modelName === 'case' || modelName === 'api::case.case') {
-						revalidateTag('cases')
-
-						if (data?.attributes?.Slug) {
-							revalidateTag(`case-${data.attributes.Slug}`)
-						}
-
-						console.log('Ревалидированы теги для entry: cases, case-*')
-					}
-
 					if (modelName === 'header' || modelName === 'api::header.header') {
 						revalidateTag('header')
 						await rebuildProject()
@@ -122,13 +98,8 @@ export async function POST(request: NextRequest) {
 			// Обработка media событий (для Rich Text с изображениями)
 			case 'media':
 				if (revalidateActions.includes(action)) {
-					// Ревалидируем все кейсы, так как медиа может использоваться в Rich Text
-					revalidateTag('cases')
-
-					// Дополнительно ревалидируем главную страницу
 					revalidateTag('home')
-
-					console.log('Ревалидированы теги для media: cases, home')
+					console.log('Ревалидирован тег для media: home')
 				}
 				break
 

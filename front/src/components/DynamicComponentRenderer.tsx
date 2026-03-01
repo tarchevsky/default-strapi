@@ -1,5 +1,4 @@
 import { STRAPI_URL } from '@/constants/admin.constant'
-import { Case } from '@/types/case.types'
 import {
 	DynamicComponent,
 	GridIconItem,
@@ -12,18 +11,15 @@ import { Blockquote } from './Blockquote'
 import { IconRenderer } from './IconRenderer'
 import { MarkdownRenderer } from './MarkdownRenderer'
 import FeaturedPostsCarousel from './ui/carousel/FeaturedPostsCarousel'
-import CasesCarousel from './ui/carousel/CasesCarousel'
 
 interface DynamicComponentRendererProps {
 	component: DynamicComponent
-	cases?: Case[]
 	featuredArticles?: ArticleListItem[]
 	metaTitle?: string
 }
 
 export const DynamicComponentRenderer = ({
 	component,
-	cases,
 	featuredArticles,
 	metaTitle,
 }: DynamicComponentRendererProps) => {
@@ -115,16 +111,6 @@ export const DynamicComponentRenderer = ({
 			) : (
 				galleryWrapped
 			)
-		}
-		case 'interactivity.cases-carousel': {
-			if (!component.OnOff || !cases?.length) return null
-			const service = component.Service ?? undefined
-			const filtered =
-				service === undefined
-					? cases
-					: cases.filter(c => c.services === service)
-			if (!filtered.length) return null
-			return <CasesCarousel cases={filtered} />
 		}
 		case 'interactivity.featured-posts':
 			if (!component.FeaturedPosts || !featuredArticles?.length) return null
