@@ -8,7 +8,17 @@ import {
 	getCategoryBySlug,
 	getCategorySlug,
 } from '@/types/page.types'
+import type { DynamicComponent, FeaturedPostsComponent } from '@/types/dynamic.types'
 import { mapStrapiPageToPage } from '@/utils/page.mapper'
+
+export const hasFeaturedPostsInDynamic = (dynamic: DynamicComponent[]): boolean =>
+	Boolean(
+		dynamic?.some(
+			(c) =>
+				c.__component === 'interactivity.featured-posts' &&
+				(c as FeaturedPostsComponent).FeaturedPosts
+		)
+	)
 
 const fetchWithFallback = async (
 	url: string,
@@ -64,6 +74,7 @@ export const getPageBySlug = async (
 				`&populate[Dynamic][on][img.icon][populate]=*` +
 				`&populate[Dynamic][on][decorative.line][populate]=*` +
 				`&populate[Dynamic][on][interactivity.cases-carousel][populate]=*` +
+				`&populate[Dynamic][on][interactivity.featured-posts][populate]=*` +
 				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Img][populate]=*` +
 				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Heading][populate]=*` +
 				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Paragraph][populate]=*` +
@@ -217,6 +228,36 @@ export const getArticlePages = async (): Promise<ArticleListItem[]> => {
 		)
 	} catch (error) {
 		console.error('Error fetching article pages:', error)
+		return []
+	}
+}
+
+/** Последние N статей (для блока избранного в dynamic) */
+export const getFeaturedArticles = async (
+	limit = 10
+): Promise<ArticleListItem[]> => {
+	try {
+		const res = await fetchWithFallback(
+			`/api/pages?filters[TypeOfPage][$eq]=статья&fields[0]=Title&fields[1]=Slug&fields[2]=Category&fields[3]=Description&sort[0]=publishedAt:desc&pagination[pageSize]=${limit}`,
+			{ next: { tags: ['pages'], revalidate: 60 } }
+		)
+		if (!res) return []
+		const data: StrapiPagesResponse = await res.json()
+		if (!data.data?.length) return []
+		return data.data.map(
+			(p): ArticleListItem => ({
+				title: p.Title,
+				slug: p.Slug,
+				description: p.Description,
+				category: p.Category as PageCategory | undefined,
+				categorySlug:
+					p.Category != null
+						? getCategorySlug(p.Category as PageCategory)
+						: undefined,
+			})
+		)
+	} catch (error) {
+		console.error('Error fetching featured articles:', error)
 		return []
 	}
 }

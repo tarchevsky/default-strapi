@@ -589,6 +589,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'decorative.line',
         'img.icon',
         'text.blockquote',
+        'interactivity.featured-posts',
       ]
     >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;

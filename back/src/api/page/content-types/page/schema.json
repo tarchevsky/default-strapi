@@ -39,7 +39,8 @@
         "text.title",
         "decorative.line",
         "img.icon",
-        "text.blockquote"
+        "text.blockquote",
+        "interactivity.featured-posts"
       ]
     },
     "TypeOfPage": {

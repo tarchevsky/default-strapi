@@ -52,10 +52,12 @@ export interface SearchResultItem {
 	type: 'page' | 'article'
 }
 
-/** Элемент списка статей для сайдбара/ленты */
+/** Элемент списка статей для сайдбара/ленты и блока избранного */
 export interface ArticleListItem {
 	title: string
 	slug: string
+	/** Краткое описание (для блока избранного) */
+	description?: string
 	category?: PageCategory
 	/** URL-слаг категории для ссылки /blog/[categorySlug]/[slug] */
 	categorySlug?: string

@@ -2,7 +2,12 @@ import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs'
 import { DynamicComponentRenderer } from '@/components/DynamicComponentRenderer'
 import FadeIn from '@/components/ui/FadeIn'
 import { getCases } from '@/services/case.service'
-import { getArticlePathParams, getPageBySlug } from '@/services/page.service'
+import {
+	getArticlePathParams,
+	getFeaturedArticles,
+	getPageBySlug,
+	hasFeaturedPostsInDynamic,
+} from '@/services/page.service'
 import { getCategoryBySlug } from '@/types/page.types'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
@@ -32,9 +37,12 @@ export default async function Page({ params }: PageProps) {
 	const { category, slug } = await params
 	if (!getCategoryBySlug(category)) notFound()
 
-	const [page, cases] = await Promise.all([
-		getPageBySlug(slug, category),
+	const page = await getPageBySlug(slug, category)
+	const [cases, featuredArticles] = await Promise.all([
 		getCases(),
+		page?.dynamic && hasFeaturedPostsInDynamic(page.dynamic)
+			? getFeaturedArticles(10)
+			: Promise.resolve([]),
 	])
 
 	if (!page || page.typeOfPage !== 'статья') notFound()
@@ -75,6 +83,7 @@ export default async function Page({ params }: PageProps) {
 							key={`${component.__component}-${component.id}-${index}`}
 							component={component}
 							cases={cases}
+							featuredArticles={featuredArticles}
 							metaTitle={page.title}
 						/>
 					))}

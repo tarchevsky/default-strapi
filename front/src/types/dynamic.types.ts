@@ -67,6 +67,12 @@ export interface CasesCarouselComponent {
 	Service?: CasesCarouselService | null
 }
 
+export interface FeaturedPostsComponent {
+	__component: 'interactivity.featured-posts'
+	id: number
+	FeaturedPosts: boolean
+}
+
 export type GridWidth =
 	| 'w-1-4'
 	| 'w-1-3'
@@ -132,6 +138,7 @@ export type DynamicComponent =
 	| ParagraphComponent
 	| BlockquoteComponent
 	| CasesCarouselComponent
+	| FeaturedPostsComponent
 	| ImgComponent
 	| IconComponent
 	| GridComponent

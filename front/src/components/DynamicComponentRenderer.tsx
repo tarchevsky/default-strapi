@@ -5,22 +5,26 @@ import {
 	GridIconItem,
 	GridWidth,
 } from '@/types/dynamic.types'
+import { ArticleListItem } from '@/types/page.types'
 import Image from 'next/image'
 import type { JSX } from 'react'
 import { Blockquote } from './Blockquote'
 import { IconRenderer } from './IconRenderer'
 import { MarkdownRenderer } from './MarkdownRenderer'
+import FeaturedPostsCarousel from './ui/carousel/FeaturedPostsCarousel'
 import CasesCarousel from './ui/carousel/CasesCarousel'
 
 interface DynamicComponentRendererProps {
 	component: DynamicComponent
 	cases?: Case[]
+	featuredArticles?: ArticleListItem[]
 	metaTitle?: string
 }
 
 export const DynamicComponentRenderer = ({
 	component,
 	cases,
+	featuredArticles,
 	metaTitle,
 }: DynamicComponentRendererProps) => {
 	switch (component.__component) {
@@ -122,6 +126,9 @@ export const DynamicComponentRenderer = ({
 			if (!filtered.length) return null
 			return <CasesCarousel cases={filtered} />
 		}
+		case 'interactivity.featured-posts':
+			if (!component.FeaturedPosts || !featuredArticles?.length) return null
+			return <FeaturedPostsCarousel articles={featuredArticles} />
 		case 'layout.grid': {
 			const gapPx = (component.Gap ?? 0) * 8
 

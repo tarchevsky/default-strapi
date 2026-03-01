@@ -5,7 +5,9 @@ import { getCases } from '@/services/case.service'
 import {
 	getAllPageSlugs,
 	getArticlePages,
+	getFeaturedArticles,
 	getPageBySlug,
+	hasFeaturedPostsInDynamic,
 } from '@/services/page.service'
 import { getCategorySlug } from '@/types/page.types'
 import { Metadata } from 'next'
@@ -47,9 +49,12 @@ export async function generateMetadata({
 
 export default async function Page({ params }: PageProps) {
 	const { slug } = await params
-	const [page, cases] = await Promise.all([
-		getPageBySlug(slug),
+	const page = await getPageBySlug(slug)
+	const [cases, featuredArticles] = await Promise.all([
 		getCases(),
+		page?.dynamic && hasFeaturedPostsInDynamic(page.dynamic)
+			? getFeaturedArticles(10)
+			: Promise.resolve([]),
 	])
 
 	if (!page) {
@@ -85,12 +90,13 @@ export default async function Page({ params }: PageProps) {
 			{restComponents.length > 0 && (
 				<>
 					{restComponents.map((component, index) => (
-						<DynamicComponentRenderer
-							key={`${component.__component}-${component.id}-${index}`}
-							component={component}
-							cases={cases}
-							metaTitle={page.title}
-						/>
+					<DynamicComponentRenderer
+						key={`${component.__component}-${component.id}-${index}`}
+						component={component}
+						cases={cases}
+						featuredArticles={featuredArticles}
+						metaTitle={page.title}
+					/>
 					))}
 				</>
 			)}

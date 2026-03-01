@@ -58,6 +58,17 @@ export interface InteractivityCasesCarousel extends Struct.ComponentSchema {
   };
 }
 
+export interface InteractivityFeaturedPosts extends Struct.ComponentSchema {
+  collectionName: 'components_interactivity_featured_posts';
+  info: {
+    displayName: 'FeaturedPosts';
+    icon: 'apps';
+  };
+  attributes: {
+    FeaturedPosts: Schema.Attribute.Boolean;
+  };
+}
+
 export interface LayoutColumn extends Struct.ComponentSchema {
   collectionName: 'components_layout_columns';
   info: {
@@ -222,6 +233,7 @@ declare module '@strapi/strapi' {
       'img.icon': ImgIcon;
       'img.img': ImgImg;
       'interactivity.cases-carousel': InteractivityCasesCarousel;
+      'interactivity.featured-posts': InteractivityFeaturedPosts;
       'layout.column': LayoutColumn;
       'layout.grid': LayoutGrid;
       'links.email': LinksEmail;

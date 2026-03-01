@@ -1,6 +1,8 @@
 import {
 	BlockquoteComponent,
 	DynamicComponent,
+	FeaturedPostsComponent,
+	ParagraphComponent,
 } from '@/types/dynamic.types'
 import { Page, StrapiPage } from '@/types/page.types'
 
@@ -12,6 +14,22 @@ type StrapiDynamicItem = {
 }
 
 function mapStrapiDynamicItem(item: StrapiDynamicItem): DynamicComponent {
+	if (item.__component === 'text.paragraph') {
+		return {
+			__component: 'text.paragraph',
+			id: item.id,
+			Paragraph: String(item.Paragraph ?? ''),
+			Container: item.Container,
+			Indent: item.Indent,
+		} satisfies ParagraphComponent
+	}
+	if (item.__component === 'interactivity.featured-posts') {
+		return {
+			__component: 'interactivity.featured-posts',
+			id: item.id,
+			FeaturedPosts: Boolean(item.FeaturedPosts),
+		} satisfies FeaturedPostsComponent
+	}
 	if (item.__component === 'text.blockquote') {
 		const quote =
 			item.BlockquoteText ??

@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_interactivity_featured_posts",
+  "info": {
+    "displayName": "FeaturedPosts",
+    "icon": "apps"
+  },
+  "options": {},
+  "attributes": {
+    "FeaturedPosts": {
+      "type": "boolean"
+    }
+  },
+  "config": {}
+}

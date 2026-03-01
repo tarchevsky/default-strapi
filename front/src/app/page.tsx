@@ -1,8 +1,11 @@
 import { DynamicComponentRenderer } from '@/components/DynamicComponentRenderer'
 import FadeIn from '@/components/ui/FadeIn'
 import { getCases } from '@/services/case.service'
-import { getPageBySlug } from '@/services/page.service'
-
+import {
+	getFeaturedArticles,
+	getPageBySlug,
+	hasFeaturedPostsInDynamic,
+} from '@/services/page.service'
 import { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
@@ -24,7 +27,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
 	const page = await getPageBySlug('home')
-	const cases = await getCases()
+	const [cases, featuredArticles] = await Promise.all([
+		getCases(),
+		page?.dynamic && hasFeaturedPostsInDynamic(page.dynamic)
+			? getFeaturedArticles(10)
+			: Promise.resolve([]),
+	])
 
 	if (page) {
 		return (
@@ -36,6 +44,7 @@ export default async function Home() {
 								key={`${component.__component}-${component.id}-${index}`}
 								component={component}
 								cases={cases}
+								featuredArticles={featuredArticles}
 								metaTitle={page.title}
 							/>
 						))}
