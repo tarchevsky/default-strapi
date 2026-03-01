@@ -187,9 +187,10 @@ export const searchPagesAndArticles = async (
 
 		const filtered = data.data.filter((p) => {
 			const titleMatch = p.Title?.toLowerCase().includes(qLower)
-			const tags = (p as any).Tags as { Name: string }[] | undefined
-			const tagsMatch = tags
-				?.some((t) => t.Name.toLowerCase().includes(qLower))
+			const tags = p.Tags ?? []
+			const tagsMatch = tags.some((t) =>
+				t.Name.toLowerCase().includes(qLower)
+			)
 			return Boolean(titleMatch || tagsMatch)
 		})
 
