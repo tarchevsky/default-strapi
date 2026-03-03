@@ -17,10 +17,10 @@
 	--ind-md: 0 0 100px 0;
 	--ind-xxl: 0 0 250px 0;
 
-	--cont-xs: 16px;
-	--cont-sm: 20px;
-	--cont-md: 30px;
-	--cont-xxl: 40px;
+	--cont-xs: 20px;
+	--cont-sm: 80px;
+	--cont-md: 200px;
+	--cont-xxl: 300px;
 }
 
 @layer utilities {

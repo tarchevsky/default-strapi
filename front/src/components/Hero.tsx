@@ -43,9 +43,28 @@ const Hero = ({
 
 	return (
 		<FadeIn tag='main' className='hero my-12 md:my-20'>
-			<div className='max-w-3xl mx-auto flex flex-col items-center text-center gap-6 md:flex-row md:text-left md:gap-0'>
+			{/* Мобильная: колонка, картинка сверху, текст по центру снизу */}
+			<div className='cont flex flex-col items-center text-center gap-6 md:hidden'>
 				<Image
-					className='w-[220px] h-[220px] md:w-[300px] md:h-[300px] object-cover rounded-full shrink-0 shadow-2xl'
+					className='w-[220px] h-[220px] object-cover rounded-full shrink-0 shadow-2xl'
+					src={src}
+					alt={alt}
+					width={220}
+					height={220}
+					priority
+					unoptimized={unoptimized}
+				/>
+				<div>
+					<h1 className='text-4xl font-extrabold text-slate-800'>{title}</h1>
+					{subtitle ? (
+						<p className='mt-2 text-base text-slate-700'>{subtitle}</p>
+					) : null}
+				</div>
+			</div>
+			{/* Десктоп: первоначальная версия — круг слева, заголовок справа с наездом */}
+			<div className='max-w-3xl mx-auto hidden md:flex md:items-center md:gap-0'>
+				<Image
+					className='w-[300px] h-[300px] object-cover rounded-full shrink-0 shadow-2xl'
 					src={src}
 					alt={alt}
 					width={300}
@@ -53,15 +72,32 @@ const Hero = ({
 					priority
 					unoptimized={unoptimized}
 				/>
-				<div className='z-10 md:-ml-16'>
-					<h1 className='text-4xl md:text-7xl font-extrabold text-slate-800'>
-						{title}
-					</h1>
-					{subtitle ? (
-						<p className='mt-2 text-base md:text-lg text-slate-700'>
-							{subtitle}
-						</p>
-					) : null}
+				<div className='-ml-16 z-10 relative'>
+					{/* Базовый текст — тёмный (виден справа от круга) */}
+					<div className='text-slate-800'>
+						<h1 className='text-5xl md:text-7xl font-extrabold [text-shadow:0_1px_2px_rgba(0,0,0,0.08)]'>
+							{title}
+						</h1>
+						{subtitle ? (
+							<p className='mt-2 text-slate-700 [text-shadow:0_1px_2px_rgba(0,0,0,0.06)]'>
+								{subtitle}
+							</p>
+						) : null}
+					</div>
+					{/* Светлый текст только в зоне наложения на круг (заголовок и подзаголовок) */}
+					<div
+						className='absolute inset-0 text-white mix-blend-lighten pointer-events-none'
+						style={{ clipPath: 'inset(0 calc(100% - 4rem) 0 0)' }}
+					>
+						<h1 className='text-5xl md:text-7xl font-extrabold [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]'>
+							{title}
+						</h1>
+						{subtitle ? (
+							<p className='mt-2 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]'>
+								{subtitle}
+							</p>
+						) : null}
+					</div>
 				</div>
 			</div>
 			{modalContent && (

@@ -51,7 +51,7 @@ const Modal = forwardRef<ModalHandle, ModalProps>(
 				</div>
 			</dialog>
 		)
-	}
+	},
 )
 
 Modal.displayName = 'Modal'
