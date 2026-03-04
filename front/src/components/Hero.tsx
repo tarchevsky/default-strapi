@@ -84,10 +84,13 @@ const Hero = ({
 							</p>
 						) : null}
 					</div>
-					{/* Светлый текст только в зоне наложения на круг (заголовок и подзаголовок) */}
+					{/* Светлый текст только в зоне соприкосновения с кругом (clip по форме фото) */}
 					<div
-						className='absolute inset-0 text-white mix-blend-lighten pointer-events-none'
-						style={{ clipPath: 'inset(0 calc(100% - 4rem) 0 0)' }}
+						className='absolute inset-0 text-white pointer-events-none'
+						style={{
+							clipPath: 'circle(150px at -86px 50%)',
+							mixBlendMode: 'screen',
+						}}
 					>
 						<h1 className='text-5xl md:text-7xl font-extrabold [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]'>
 							{title}
