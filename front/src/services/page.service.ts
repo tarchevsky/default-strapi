@@ -69,6 +69,26 @@ const fetchWithFallback = async (
 	return null
 }
 
+const PAGE_POPULATE_BASE =
+	'&populate[Tags][fields][0]=Name' +
+	'&populate[Series][fields][0]=SeriesSlug' +
+	'&populate[Dynamic][on][text.paragraph][populate]=*' +
+	'&populate[Dynamic][on][text.heading][populate]=*' +
+	'&populate[Dynamic][on][text.title][populate]=*' +
+	'&populate[Dynamic][on][text.blockquote][populate]=*' +
+	'&populate[Dynamic][on][img.img][populate]=*' +
+	'&populate[Dynamic][on][img.icon][populate]=*' +
+	'&populate[Dynamic][on][decorative.line][populate]=*' +
+	'&populate[Dynamic][on][interactivity.featured-posts][populate]=*' +
+	'&populate[Dynamic][on][interactivity.featured-series][populate]=*' +
+	'&populate[Dynamic][on][layout.grid][populate][Columns][populate][Img][populate]=*' +
+	'&populate[Dynamic][on][layout.grid][populate][Columns][populate][Heading][populate]=*' +
+	'&populate[Dynamic][on][layout.grid][populate][Columns][populate][Paragraph][populate]=*' +
+	'&populate[Dynamic][on][layout.grid][populate][Columns][populate][Icon][populate]=*' +
+	'&populate[Dynamic][on][blocks.hero][populate][Image][populate]=*' +
+	'&populate[Dynamic][on][blocks.hero][populate][Title][populate]=*' +
+	'&populate[Dynamic][on][blocks.hero][populate][Subtitle][populate]=*'
+
 export const getPageBySlug = async (
 	slug: string,
 	categorySlug?: string,
@@ -81,45 +101,25 @@ export const getPageBySlug = async (
 					return cat ? `&filters[Category][$eq]=${encodeURIComponent(cat)}` : ''
 				})()
 			: ''
+	const opts = { next: { tags: ['pages'], revalidate: 60 } }
 	try {
-		const res = await fetchWithFallback(
-			`/api/pages?${slugFilter}${categoryFilter}` +
-				`&populate[Tags][fields][0]=Name` +
-				`&populate[Series][fields][0]=SeriesSlug` +
-				`&populate[Dynamic][on][text.paragraph][populate]=*` +
-				`&populate[Dynamic][on][text.heading][populate]=*` +
-				`&populate[Dynamic][on][text.title][populate]=*` +
-				`&populate[Dynamic][on][text.blockquote][populate]=*` +
-				`&populate[Dynamic][on][img.img][populate]=*` +
-				`&populate[Dynamic][on][img.icon][populate]=*` +
-				`&populate[Dynamic][on][decorative.line][populate]=*` +
-				`&populate[Dynamic][on][interactivity.featured-posts][populate]=*` +
-				`&populate[Dynamic][on][interactivity.featured-series][populate]=*` +
-				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Img][populate]=*` +
-				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Heading][populate]=*` +
-				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Paragraph][populate]=*` +
-				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Icon][populate]=*` +
-				`&populate[Dynamic][on][blocks.hero][populate][Image][populate]=*` +
-				`&populate[Dynamic][on][blocks.hero][populate][Title][populate]=*` +
-				`&populate[Dynamic][on][blocks.hero][populate][Subtitle][populate]=*`,
-			{
-				next: {
-					tags: ['pages'],
-					revalidate: 60,
-				},
-			},
+		let res = await fetchWithFallback(
+			`/api/pages?${slugFilter}${categoryFilter}${PAGE_POPULATE_BASE}`,
+			opts,
 		)
-
 		if (!res) {
-			return null
+			const withoutFeaturedSeries = PAGE_POPULATE_BASE.replace(
+				'&populate[Dynamic][on][interactivity.featured-series][populate]=*',
+				'',
+			)
+			res = await fetchWithFallback(
+				`/api/pages?${slugFilter}${categoryFilter}${withoutFeaturedSeries}`,
+				opts,
+			)
 		}
-
+		if (!res) return null
 		const data: StrapiPagesResponse = await res.json()
-
-		if (!data.data || data.data.length === 0) {
-			return null
-		}
-
+		if (!data.data || data.data.length === 0) return null
 		return mapStrapiPageToPage(data.data[0])
 	} catch (error) {
 		console.error('Error fetching page:', error)
