@@ -196,36 +196,70 @@ const Header = ({ headerData }: HeaderProps) => {
 			{/* Мобильное меню (раскрывающееся) */}
 			{hasMenu && (
 				<>
-					<div
-						className={cn(
-							'md:hidden absolute top-full left-0 right-0 z-50 cont bg-base-100 border-t border-base-300 shadow-lg overflow-hidden transition-[max-height] duration-300 ease-out',
-							isMenuActive ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0',
+					<AnimatePresence>
+						{isMenuActive && (
+							<motion.div
+								className='md:hidden absolute top-full left-0 right-0 z-50 cont bg-base-100 border-t border-base-300 shadow-lg overflow-hidden'
+								initial={{ opacity: 0, maxHeight: 0 }}
+								animate={{
+									opacity: 1,
+									maxHeight: '80vh',
+									transition: {
+										maxHeight: { duration: 0.35, ease: [0.32, 0.72, 0, 1] },
+										opacity: { duration: 0.2 },
+									},
+								}}
+								exit={{
+									opacity: 0,
+									maxHeight: 0,
+									transition: {
+										maxHeight: { duration: 0.28, ease: [0.32, 0.72, 0, 1] },
+										opacity: { duration: 0.18 },
+									},
+								}}
+							>
+								<nav className='p-4' aria-label='Мобильное меню'>
+									<ul className='flex flex-col gap-0 list-none p-0 m-0'>
+										{menuItems.map((item, i) => (
+											<li key={item.id}>
+												<motion.div
+													initial={{ opacity: 0, x: -8 }}
+													animate={{ opacity: 1, x: 0 }}
+													transition={{
+														delay: 0.05 + i * 0.03,
+														duration: 0.2,
+													}}
+												>
+													<Link
+														href={item.url ?? '#'}
+														className='block py-3 text-base font-medium transition-opacity hover:opacity-70'
+														onClick={() => setIsMenuActive(false)}
+													>
+														{item.label}
+													</Link>
+												</motion.div>
+											</li>
+										))}
+									</ul>
+									{(header?.contacts?.tel ||
+										header?.contacts?.email ||
+										(header?.socials && header.socials.length > 0)) && (
+										<motion.div
+											className='pt-3 mt-3 border-t border-base-300 flex flex-wrap items-center gap-3'
+											initial={{ opacity: 0 }}
+											animate={{ opacity: 1 }}
+											transition={{ delay: 0.15 + menuItems.length * 0.03 }}
+										>
+											<ContactsAndSocials
+												contacts={header?.contacts}
+												socials={header?.socials}
+											/>
+										</motion.div>
+									)}
+								</nav>
+							</motion.div>
 						)}
-					>
-						<ul className='menu p-4 flex flex-col gap-2'>
-							{menuItems.map(item => (
-								<li key={item.id}>
-									<Link
-										href={item.url ?? '#'}
-										className='block py-2'
-										onClick={() => setIsMenuActive(false)}
-									>
-										{item.label}
-									</Link>
-								</li>
-							))}
-						</ul>
-						{(header?.contacts?.tel ||
-							header?.contacts?.email ||
-							(header?.socials && header.socials.length > 0)) && (
-							<div className='px-4 pb-4'>
-								<ContactsAndSocials
-									contacts={header?.contacts}
-									socials={header?.socials}
-								/>
-							</div>
-						)}
-					</div>
+					</AnimatePresence>
 					<Burger
 						isActive={isMenuActive}
 						toggleMenu={toggleMenu}

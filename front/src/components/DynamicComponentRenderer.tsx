@@ -54,7 +54,9 @@ export const DynamicComponentRenderer = ({
 			const title =
 				(component.Title?.trim()?.length ? component.Title : metaTitle) || ''
 			return (
-				<h1 className='cont text-xl md:text-2xl font-bold mb-3 md:mb-4 text-right'>{title}</h1>
+				<h1 className='cont text-xl md:text-2xl font-bold mb-3 md:mb-4 text-right'>
+					{title}
+				</h1>
 			)
 		}
 		case 'decorative.line': {
@@ -82,11 +84,7 @@ export const DynamicComponentRenderer = ({
 			const wrapWithInd = component.Indent === true
 			const withBox = component.Box === true
 			const shouldShowCaption = component.Caption === true
-			const captionText =
-				img.caption ||
-				img.alternativeText ||
-				img.name ||
-				''
+			const captionText = img.caption || img.alternativeText || img.name || ''
 			const imageEl = (
 				<Image
 					src={src}
@@ -139,23 +137,12 @@ export const DynamicComponentRenderer = ({
 				? img.url
 				: `${STRAPI_URL}${img.url}`
 			const alt =
-				img.alternativeText ||
-				img.caption ||
-				img.name ||
-				hero.title ||
-				''
+				img.alternativeText || img.caption || img.name || hero.title || ''
 
 			const title = hero.title?.trim() || ''
 			const subtitle = hero.subtitle?.trim() || undefined
 
-			return (
-				<Hero
-					title={title}
-					src={src}
-					alt={alt}
-					subtitle={subtitle}
-				/>
-			)
+			return <Hero title={title} src={src} alt={alt} subtitle={subtitle} />
 		}
 		case 'layout.grid': {
 			const gapPx = (component.Gap ?? 0) * 8
@@ -197,7 +184,8 @@ export const DynamicComponentRenderer = ({
 					return mobileClass
 				}
 
-				return `${mobileClass} md:${desktopClass}`
+				// max-md: для мобилы, md: для десктопа — чтобы w-full не перебивал заданный Width
+				return `max-md:${mobileClass} md:${desktopClass}`
 			}
 
 			// Map justify values to Tailwind classes
@@ -273,6 +261,11 @@ export const DynamicComponentRenderer = ({
 				.join(' ')
 			return (
 				<div className={containerClasses} style={{ gap: `${gapPx}px` }}>
+					{/* Safelist: классы ширины задаются динамически из API */}
+					<div
+						className="hidden max-md:w-full max-md:w-1/4 max-md:w-1/3 max-md:w-1/2 max-md:w-2/3 max-md:w-3/4 max-md:w-fit max-md:w-min max-md:w-max md:w-full md:w-1/4 md:w-1/3 md:w-1/2 md:w-2/3 md:w-3/4 md:w-fit md:w-min md:w-max"
+						aria-hidden
+					/>
 					{component.Columns?.map(col => {
 						const renderIconContent = (iconData: GridIconItem) => {
 							const iconName = iconData.SingleIconText?.trim()
@@ -314,8 +307,8 @@ export const DynamicComponentRenderer = ({
 						const flexDirection = directionToTw(col.Direction)
 
 						const columnClasses = flexClasses
-							? `${baseClasses} flex ${flexDirection} ${flexClasses}`
-							: `${baseClasses} flex ${flexDirection}`
+							? `${baseClasses} min-w-0 flex ${flexDirection} ${flexClasses}`
+							: `${baseClasses} min-w-0 flex ${flexDirection}`
 
 						return (
 							<div key={col.id} className={columnClasses}>
@@ -330,10 +323,7 @@ export const DynamicComponentRenderer = ({
 										const alt = img.alternativeText || ''
 										const shouldShowCaption = item?.Caption === true
 										const captionText =
-											img.caption ||
-											img.alternativeText ||
-											img.name ||
-											''
+											img.caption || img.alternativeText || img.name || ''
 										const shouldUseBox = item?.Box === true
 
 										if (shouldUseBox) {
@@ -344,7 +334,7 @@ export const DynamicComponentRenderer = ({
 												.filter(Boolean)
 												.join(' ')
 											return (
-												<div key={item.id}>
+												<div key={item.id} className='w-full min-w-0'>
 													<a
 														href={src}
 														data-fancybox='page-gallery'
@@ -370,7 +360,7 @@ export const DynamicComponentRenderer = ({
 										}
 
 										return (
-											<div key={item.id}>
+											<div key={item.id} className='w-full min-w-0'>
 												<Image
 													src={src}
 													alt={alt}
@@ -391,7 +381,10 @@ export const DynamicComponentRenderer = ({
 									col.Heading.map(h => {
 										const Tag = h.headinglevel as keyof JSX.IntrinsicElements
 										return (
-											<Tag key={h.id} className='text-base md:text-lg font-semibold mb-2'>
+											<Tag
+												key={h.id}
+												className='text-base md:text-lg font-semibold mb-2'
+											>
 												{h.Heading}
 											</Tag>
 										)
