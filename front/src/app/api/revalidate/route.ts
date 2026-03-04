@@ -9,7 +9,7 @@ async function rebuildProject() {
 	try {
 		console.log('Начало пересборки проекта...')
 		const { stdout, stderr } = await execAsync(
-			'cd ~/dom/front && ~/.bun/bin/bun run build && ~/.bun/bin/bun pm2 restart dom-front',
+			'cd ~/puhovvv.ru/front && ~/.bun/bin/bun run build && ~/.bun/bin/bun pm2 restart puhovvv-front',
 			{
 				timeout: 120000, // 2 минуты максимум
 				shell: '/bin/bash',
@@ -17,7 +17,7 @@ async function rebuildProject() {
 					...process.env,
 					PATH: `${process.env.HOME}/.bun/bin:/usr/local/bin:/usr/bin:/bin`,
 				},
-			}
+			},
 		)
 
 		console.log('Пересборка завершена:', stdout)
@@ -42,41 +42,58 @@ export async function POST(request: NextRequest) {
 		if (webhookSecret !== expectedSecret) {
 			return NextResponse.json(
 				{ error: 'Неверный секретный ключ' },
-				{ status: 401 }
+				{ status: 401 },
 			)
 		}
 
 		console.log(`Получен webhook: ${contentType}:${action}`)
 
 		// Ревалидируем соответствующие теги кэша
-		const revalidateActions = ['create', 'update', 'delete', 'publish', 'unpublish']
+		const revalidateActions = [
+			'create',
+			'update',
+			'delete',
+			'publish',
+			'unpublish',
+		]
 
 		switch (contentType) {
 			case 'header':
+			case 'api::header.header':
 				if (revalidateActions.includes(action)) {
-					// Ревалидируем хедер
 					revalidateTag('header')
-
-					// Перестраиваем проект для пересборки иконок
 					await rebuildProject()
-
 					console.log('Ревалидирован header, запущена пересборка проекта')
 				}
 				break
 
 			case 'site-setting':
+			case 'api::site-setting.site-setting':
 				if (revalidateActions.includes(action)) {
-					// Ревалидируем настройки сайта
 					revalidateTag('site-setting')
-
 					console.log('Ревалидирован site-setting')
+				}
+				break
+
+			case 'page':
+			case 'api::page.page':
+				if (revalidateActions.includes(action)) {
+					revalidateTag('pages')
+					console.log('Ревалидирован pages (страницы и статьи)')
+				}
+				break
+
+			case 'series':
+			case 'api::series.series':
+				if (revalidateActions.includes(action)) {
+					revalidateTag('pages')
+					console.log('Ревалидирован pages (серии и списки по категориям)')
 				}
 				break
 
 			// Поддержка старых событий entry.*
 			case 'entry':
 				if (revalidateActions.includes(action)) {
-					// Проверяем тип контента
 					const modelName = data?.model || data?.__typename || ''
 
 					if (modelName === 'header' || modelName === 'api::header.header') {
@@ -84,7 +101,6 @@ export async function POST(request: NextRequest) {
 						await rebuildProject()
 						console.log('Ревалидирован header, запущена пересборка проекта')
 					}
-
 					if (
 						modelName === 'site-setting' ||
 						modelName === 'api::site-setting.site-setting'
@@ -92,14 +108,23 @@ export async function POST(request: NextRequest) {
 						revalidateTag('site-setting')
 						console.log('Ревалидирован site-setting')
 					}
+					if (modelName === 'page' || modelName === 'api::page.page') {
+						revalidateTag('pages')
+						console.log('Ревалидирован pages (entry)')
+					}
+					if (modelName === 'series' || modelName === 'api::series.series') {
+						revalidateTag('pages')
+						console.log('Ревалидирован pages (series entry)')
+					}
 				}
 				break
 
-			// Обработка media событий (для Rich Text с изображениями)
 			case 'media':
+			case 'api::plugin::upload.file':
 				if (revalidateActions.includes(action)) {
 					revalidateTag('home')
-					console.log('Ревалидирован тег для media: home')
+					revalidateTag('pages')
+					console.log('Ревалидирован home и pages для media')
 				}
 				break
 
@@ -117,7 +142,7 @@ export async function POST(request: NextRequest) {
 		console.error('Ошибка обработки webhook:', error)
 		return NextResponse.json(
 			{ error: 'Ошибка обработки webhook' },
-			{ status: 500 }
+			{ status: 500 },
 		)
 	}
 }
