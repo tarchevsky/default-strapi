@@ -3,6 +3,7 @@ import BlogLayout from '@/components/layout/BlogLayout'
 import FadeIn from '@/components/ui/FadeIn'
 import {
 	getAllPageSlugs,
+	getAllSeries,
 	getArticlePages,
 	getFeaturedArticles,
 	getPageBySlug,
@@ -104,8 +105,15 @@ export default async function Page({ params }: PageProps) {
 	)
 
 	if (isBlog) {
-		const articles = await getArticlePages()
-		return <BlogLayout articles={articles}>{content}</BlogLayout>
+		const [articles, seriesList] = await Promise.all([
+			getArticlePages(),
+			getAllSeries(),
+		])
+		return (
+			<BlogLayout articles={articles} seriesList={seriesList}>
+				{content}
+			</BlogLayout>
+		)
 	}
 
 	return <>{content}</>

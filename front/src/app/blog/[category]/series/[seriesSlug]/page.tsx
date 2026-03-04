@@ -1,3 +1,4 @@
+import BarLinkList from '@/components/BarLinkList'
 import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs'
 import {
 	getArticlesBySeries,
@@ -60,32 +61,24 @@ export default async function Page({ params }: PageProps) {
 			<Breadcrumbs items={breadcrumbItems} className='mb-4' />
 			<h1 className='mb-6'>{series.name}</h1>
 			{series.description && (
-				<p className='mb-6 text-sm opacity-80 whitespace-pre-line'>
+				<p className='prose mb-8 whitespace-pre-line'>
 					{series.description}
 				</p>
 			)}
-			{articles.length > 0 ? (
-				<ul className='list-none space-y-2 pl-0'>
-					{articles.map(article => (
-						<li key={article.slug}>
-							<Link
-								href={getArticleHref(article)}
-								className='link link-hover'
-							>
-								{article.title}
-							</Link>
-						</li>
-					))}
-				</ul>
-			) : (
-				<p className='text-sm opacity-80'>В этой серии пока нет статей.</p>
-			)}
-			<p className='mt-6'>
+			<BarLinkList
+				items={articles.map(article => ({
+					href: getArticleHref(article),
+					name: article.title,
+				}))}
+				className='list-none space-y-2 pl-0 pt-8 mb-20'
+				emptyMessage='В этой серии пока нет статей.'
+			/>
+			<p className='mt-10'>
 				<Link
 					href={`/blog/${category}/series`}
-					className='link link-hover text-sm'
+					className='text-xs text-gray-400 border-t-1 border-t-gray-400 pt-2 transition-colors ease-in duration-200 hover:text-gray-600 hover:border-t-gray-600'
 				>
-					← К списку серий
+					Обратно к сериям
 				</Link>
 			</p>
 		</div>

@@ -244,6 +244,38 @@ export const getArticlePages = async (): Promise<ArticleListItem[]> => {
 	}
 }
 
+/** Все серии, в которых есть статьи (для сайдбара блога). */
+export const getAllSeries = async (): Promise<
+	{ seriesSlug: string; name: string }[]
+> => {
+	try {
+		const res = await fetchWithFallback(
+			'/api/pages?filters[TypeOfPage][$eq]=статья' +
+				'&filters[Series][id][$notNull]=true' +
+				'&fields[0]=id' +
+				'&populate[Series][fields][0]=SeriesSlug&populate[Series][fields][1]=SeriesName',
+			{ next: { tags: ['pages'], revalidate: 60 } },
+		)
+		if (!res) return []
+		const data: StrapiPagesResponse = await res.json()
+		if (!data.data?.length) return []
+		const seen = new Set<string>()
+		const result: { seriesSlug: string; name: string }[] = []
+		for (const p of data.data) {
+			if (!p.Series?.SeriesSlug || seen.has(p.Series.SeriesSlug)) continue
+			seen.add(p.Series.SeriesSlug)
+			result.push({
+				seriesSlug: p.Series.SeriesSlug,
+				name: (p.Series as { SeriesName?: string }).SeriesName ?? p.Series.SeriesSlug,
+			})
+		}
+		return result
+	} catch (error) {
+		console.error('Error fetching all series:', error)
+		return []
+	}
+}
+
 /** Достаёт SeriesSlug из ответа Strapi (flat или data.attributes). */
 function getSeriesSlugFromPage(p: StrapiPagesResponse['data'][number]): string | undefined {
 	const s = p.Series as
@@ -384,7 +416,7 @@ export const getArticlesBySeries = async (
 /** Серии, в которых есть статьи данной категории (для страницы категории). */
 export const getSeriesInCategory = async (
 	categorySlug: string,
-): Promise<{ seriesSlug: string; name: string }[]> => {
+): Promise<{ seriesSlug: string; name: string; description?: string | null }[]> => {
 	const category = getCategoryBySlug(categorySlug)
 	if (!category) return []
 
@@ -394,20 +426,22 @@ export const getSeriesInCategory = async (
 				`&filters[Category][$eq]=${encodeURIComponent(category)}` +
 				`&filters[Series][id][$notNull]=true` +
 				`&fields[0]=id` +
-				`&populate[Series][fields][0]=SeriesSlug&populate[Series][fields][1]=SeriesName`,
+				`&populate[Series][fields][0]=SeriesSlug&populate[Series][fields][1]=SeriesName&populate[Series][fields][2]=SeriesDescription`,
 			{ next: { tags: ['pages'], revalidate: 60 } },
 		)
 		if (!res) return []
 		const data: StrapiPagesResponse = await res.json()
 		if (!data.data?.length) return []
 		const seen = new Set<string>()
-		const result: { seriesSlug: string; name: string }[] = []
+		const result: { seriesSlug: string; name: string; description?: string | null }[] = []
 		for (const p of data.data) {
 			if (!p.Series?.SeriesSlug || seen.has(p.Series.SeriesSlug)) continue
 			seen.add(p.Series.SeriesSlug)
+			const series = p.Series as { SeriesName?: string; SeriesDescription?: string | null }
 			result.push({
 				seriesSlug: p.Series.SeriesSlug,
-				name: (p.Series as { SeriesName?: string }).SeriesName ?? p.Series.SeriesSlug,
+				name: series.SeriesName ?? p.Series.SeriesSlug,
+				description: series.SeriesDescription ?? null,
 			})
 		}
 		return result

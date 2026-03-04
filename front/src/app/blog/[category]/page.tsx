@@ -1,3 +1,4 @@
+import BarLinkList from '@/components/BarLinkList'
 import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs'
 import {
 	getArticlesByCategory,
@@ -53,53 +54,40 @@ export default async function Page({ params }: PageProps) {
 			<Breadcrumbs items={breadcrumbItems} className='mb-4' />
 			<h1 className='mb-6'>{categoryLabel}</h1>
 
+			<BarLinkList
+				items={articles.map(article => ({
+					href: getArticleHref(article),
+					name: article.title,
+				}))}
+				className='list-none space-y-2 pl-0 pt-2 mb-10'
+				emptyMessage='В этой категории пока нет статей.'
+			/>
+
 			{seriesList.length > 0 && (
-				<section className='mb-8'>
+				<section className='border-l-2 border-base-content/20 pl-4 py-2 mb-16'>
 					<Link
 						href={`/blog/${category}/series`}
-						className='text-lg font-semibold link link-hover block mb-3'
+						className='text-base font-semibold link link-hover block mb-3'
 					>
-						Серии →
+						Серии
 					</Link>
-					<ul className='list-none space-y-2 pl-0'>
-						{seriesList.map(s => (
-							<li key={s.seriesSlug}>
-								<Link
-									href={`/blog/${category}/series/${s.seriesSlug}`}
-									className='link link-hover'
-								>
-									{s.name}
-								</Link>
-							</li>
-						))}
-					</ul>
+					<BarLinkList
+						items={seriesList.map(s => ({
+							href: `/blog/${category}/series/${s.seriesSlug}`,
+							name: s.name,
+							description: s.description ?? undefined,
+						}))}
+					/>
 				</section>
 			)}
 
-			<section>
-				<h2 className='text-lg font-semibold mb-3'>Статьи</h2>
-				{articles.length > 0 ? (
-					<ul className='list-none space-y-2 pl-0'>
-						{articles.map(article => (
-							<li key={article.slug}>
-								<Link
-									href={getArticleHref(article)}
-									className='link link-hover'
-								>
-									{article.title}
-								</Link>
-							</li>
-						))}
-					</ul>
-				) : (
-					<p className='text-sm opacity-80'>В этой категории пока нет статей.</p>
-				)}
-			</section>
-
-			<p className='mt-6'>
-				<Link href='/blog' className='link link-hover text-sm'>
-					← К всем статьям
-				</Link>
+			<p>
+				<Link
+				href='/blog'
+				className='text-xs text-gray-400 border-t-1 border-t-gray-400 pt-2 transition-colors ease-in duration-200 hover:text-gray-600 hover:border-t-gray-600'
+			>
+				Обратно к статьям
+			</Link>
 			</p>
 		</div>
 	)
