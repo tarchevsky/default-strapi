@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "series",
+  "info": {
+    "singularName": "serie",
+    "pluralName": "series",
+    "displayName": "Series"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "SeriesName": {
+      "type": "string",
+      "required": true
+    },
+    "SeriesSlug": {
+      "type": "uid",
+      "targetField": "SeriesName",
+      "required": true
+    },
+    "SeriesDescription": {
+      "type": "text"
+    },
+    "Pages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::page.page",
+      "mappedBy": "Series"
+    }
+  }
+}

@@ -513,7 +513,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
       [
         '\u041C\u0435\u0442\u043E\u0434\u0438\u0447\u0435\u0441\u043A\u0438\u0435 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u044B',
         '\u0413\u043B\u043E\u0441\u0441\u0430\u0440\u0438\u0439',
-        '\u0421\u0442\u0430\u0442\u044C\u044F',
+        '\u0421\u0442\u0430\u0442\u044C\u0438',
       ]
     >;
     createdAt: Schema.Attribute.DateTime;
@@ -542,11 +542,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::page.page'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    Series: Schema.Attribute.Enumeration<
-      [
-        '\u041A\u043B\u0430\u0441\u0441\u0438\u0447\u0435\u0441\u043A\u0438\u0439 \u041A\u041F\u0422',
-      ]
-    >;
+    Series: Schema.Attribute.Relation<'manyToOne', 'api::serie.serie'>;
     Slug: Schema.Attribute.UID<'Title'> &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
@@ -562,6 +558,34 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
     TypeOfPage: Schema.Attribute.Enumeration<
       ['\u0431\u043B\u043E\u0433', '\u0441\u0442\u0430\u0442\u044C\u044F']
     >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSerieSerie extends Struct.CollectionTypeSchema {
+  collectionName: 'series';
+  info: {
+    displayName: 'Series';
+    pluralName: 'series';
+    singularName: 'serie';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::serie.serie'> &
+      Schema.Attribute.Private;
+    Pages: Schema.Attribute.Relation<'oneToMany', 'api::page.page'>;
+    publishedAt: Schema.Attribute.DateTime;
+    SeriesDescription: Schema.Attribute.Text;
+    SeriesName: Schema.Attribute.String & Schema.Attribute.Required;
+    SeriesSlug: Schema.Attribute.UID<'SeriesName'> & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1168,6 +1192,7 @@ declare module '@strapi/strapi' {
       'api::footer.footer': ApiFooterFooter;
       'api::header.header': ApiHeaderHeader;
       'api::page.page': ApiPagePage;
+      'api::serie.serie': ApiSerieSerie;
       'api::site-setting.site-setting': ApiSiteSettingSiteSetting;
       'api::tag.tag': ApiTagTag;
       'api::webhook.webhook': ApiWebhookWebhook;

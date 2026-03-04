@@ -58,10 +58,14 @@ export default async function Page({ params }: PageProps) {
 		notFound()
 	}
 
-	// Статьи живут только по /blog/[category]/[slug] — редирект со старого URL
+	// Статьи живут по /blog/[category]/[slug] или /blog/[category]/[seriesSlug]/[slug]
 	if (page.typeOfPage === 'статья') {
 		if (page.category) {
-			redirect(`/blog/${getCategorySlug(page.category)}/${slug}`)
+			const catSlug = getCategorySlug(page.category)
+			const path = page.seriesSlug
+				? `/blog/${catSlug}/series/${page.seriesSlug}/${slug}`
+				: `/blog/${catSlug}/${slug}`
+			redirect(path)
 		}
 		notFound()
 	}

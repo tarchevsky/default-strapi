@@ -65,19 +65,29 @@
       "enum": [
         "Методические материалы",
         "Глоссарий",
-        "Статья"
-      ]
-    },
-    "Series": {
-      "type": "enumeration",
-      "enum": [
-        "Классический КПТ"
+        "Статьи"
       ]
     },
     "Tags": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::tag.tag",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "TypeOfPage"
+            },
+            "статья"
+          ]
+        }
+      },
+      "inversedBy": "Pages"
+    },
+    "Series": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::serie.serie",
       "conditions": {
         "visible": {
           "==": [

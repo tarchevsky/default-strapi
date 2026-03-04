@@ -22,7 +22,8 @@ function mapStrapiDynamicItem(item: StrapiDynamicItem): DynamicComponent {
 			__component: 'text.paragraph',
 			id: item.id,
 			Paragraph: String(item.Paragraph ?? ''),
-			Container: typeof item.Container === 'boolean' ? item.Container : undefined,
+			Container:
+				typeof item.Container === 'boolean' ? item.Container : undefined,
 			Indent: typeof item.Indent === 'boolean' ? item.Indent : undefined,
 		} satisfies ParagraphComponent
 	}
@@ -50,16 +51,9 @@ function mapStrapiDynamicItem(item: StrapiDynamicItem): DynamicComponent {
 		} satisfies ImgComponent
 	}
 	if (item.__component === 'text.blockquote') {
-		const quote =
-			item.BlockquoteText ??
-			item.Quote ??
-			item.quote ??
-			''
+		const quote = item.BlockquoteText ?? item.Quote ?? item.quote ?? ''
 		const caption =
-			item.BlockquoteSubtext ??
-			item.Caption ??
-			item.caption ??
-			null
+			item.BlockquoteSubtext ?? item.Caption ?? item.caption ?? null
 		const fullPage =
 			item.FullPage === false || item.fullPage === false ? false : true
 		return {
@@ -117,7 +111,8 @@ export const mapStrapiPageToPage = (strapiPage: StrapiPage): Page => {
 		slug: strapiPage.Slug,
 		typeOfPage: strapiPage.TypeOfPage,
 		category: strapiPage.Category,
-		tags: strapiPage.Tags?.map((t) => t.Name) ?? [],
+		seriesSlug: strapiPage.Series?.SeriesSlug ?? undefined,
+		tags: strapiPage.Tags?.map(t => t.Name) ?? [],
 		dynamic: rawDynamic.map(mapStrapiDynamicItem),
 		createdAt: strapiPage.createdAt,
 		updatedAt: strapiPage.updatedAt,

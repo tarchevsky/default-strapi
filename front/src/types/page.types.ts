@@ -4,29 +4,26 @@ import { DynamicComponent } from './dynamic.types'
 export type TypeOfPage = 'блог' | 'статья'
 
 /** Категории для типа страницы «статья» (enum Category в Strapi) */
-export type PageCategory =
-	| 'Методические материалы'
-	| 'Глоссарий'
-	| 'Статья'
+export type PageCategory = 'Методические материалы' | 'Глоссарий' | 'Статьи'
 
 /** Все категории статей — для фильтров, селектов, меток */
 export const PAGE_CATEGORIES: PageCategory[] = [
 	'Методические материалы',
 	'Глоссарий',
-	'Статья',
+	'Статьи',
 ]
 
 /** Маппинг категория → URL-слаг для /blog/[category]/[slug]. Добавление новой категории: + запись сюда. */
 export const CATEGORY_SLUG_MAP: Record<PageCategory, string> = {
 	'Методические материалы': 'metodika',
 	Глоссарий: 'glossary',
-	Статья: 'article',
+	Статьи: 'articles',
 }
 
 const SLUG_TO_CATEGORY = Object.fromEntries(
 	(Object.entries(CATEGORY_SLUG_MAP) as [PageCategory, string][]).map(
-		([cat, slug]) => [slug, cat]
-	)
+		([cat, slug]) => [slug, cat],
+	),
 ) as Record<string, PageCategory>
 
 export function getCategorySlug(category: PageCategory): string {
@@ -53,8 +50,10 @@ export interface ArticleListItem {
 	/** Краткое описание (для блока избранного) */
 	description?: string
 	category?: PageCategory
-	/** URL-слаг категории для ссылки /blog/[categorySlug]/[slug] */
+	/** URL-слаг категории для ссылки /blog/[categorySlug]/[slug] или .../seriesSlug/slug */
 	categorySlug?: string
+	/** Слаг серии: при наличии ссылка /blog/[category]/[seriesSlug]/[slug] */
+	seriesSlug?: string
 	/** Теги статьи (имена тегов из Strapi) */
 	tags?: string[]
 }
@@ -89,6 +88,8 @@ export interface StrapiPage {
 		id: number
 		Name: string
 	}[]
+	/** Серия (для статей) */
+	Series?: { id: number; SeriesSlug: string } | null
 	Dynamic: Array<{
 		__component: string
 		id: number
@@ -117,6 +118,8 @@ export interface Page {
 	typeOfPage?: TypeOfPage
 	/** При typeOfPage === 'статья' */
 	category?: PageCategory
+	/** При typeOfPage === 'статья' и привязке к серии */
+	seriesSlug?: string
 	/** Теги статьи (имена тегов из Strapi) */
 	tags?: string[]
 	dynamic: DynamicComponent[]

@@ -1,6 +1,7 @@
 'use client'
 
 import SearchInput from '@/components/SearchInput'
+import { getArticleHref } from '@/services/page.service'
 import { ArticleListItem, PAGE_CATEGORIES } from '@/types/page.types'
 import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
@@ -137,11 +138,7 @@ export default function BlogLayout({
 									{filtered.map(article => (
 										<li key={article.slug}>
 											<Link
-												href={
-													article.categorySlug
-														? `/blog/${article.categorySlug}/${article.slug}`
-														: `/${article.slug}`
-												}
+												href={getArticleHref(article)}
 												className='link link-hover block'
 											>
 												{article.title}
