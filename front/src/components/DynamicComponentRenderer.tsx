@@ -1,6 +1,7 @@
 import { STRAPI_URL } from '@/constants/admin.constant'
 import {
 	DynamicComponent,
+	FeaturedSeriesComponent,
 	GridIconItem,
 	GridWidth,
 	HeroBlockComponent,
@@ -9,6 +10,7 @@ import { ArticleListItem } from '@/types/page.types'
 import Image from 'next/image'
 import type { JSX } from 'react'
 import { Blockquote } from './Blockquote'
+import { FeaturedSeries, type SeriesRow } from './FeaturedSeries'
 import Hero from './Hero'
 import { IconRenderer } from './IconRenderer'
 import { MarkdownRenderer } from './MarkdownRenderer'
@@ -17,12 +19,14 @@ import FeaturedPostsCarousel from './ui/carousel/FeaturedPostsCarousel'
 interface DynamicComponentRendererProps {
 	component: DynamicComponent
 	featuredArticles?: ArticleListItem[]
+	seriesRows?: SeriesRow[]
 	metaTitle?: string
 }
 
 export const DynamicComponentRenderer = ({
 	component,
 	featuredArticles,
+	seriesRows,
 	metaTitle,
 }: DynamicComponentRendererProps) => {
 	switch (component.__component) {
@@ -128,6 +132,11 @@ export const DynamicComponentRenderer = ({
 		case 'interactivity.featured-posts':
 			if (!component.FeaturedPosts || !featuredArticles?.length) return null
 			return <FeaturedPostsCarousel articles={featuredArticles} />
+		case 'interactivity.featured-series': {
+			const seriesComp = component as FeaturedSeriesComponent
+			if (!seriesComp.FeaturedSeries) return null
+			return <FeaturedSeries seriesRows={seriesRows ?? []} />
+		}
 		case 'blocks.hero': {
 			const hero = component as HeroBlockComponent
 			const img = hero.image

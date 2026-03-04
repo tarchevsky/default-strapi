@@ -64,6 +64,12 @@ export interface FeaturedPostsComponent {
 	FeaturedPosts: boolean
 }
 
+export interface FeaturedSeriesComponent {
+	__component: 'interactivity.featured-series'
+	id: number
+	FeaturedSeries: boolean
+}
+
 export type HeroImage = Pick<
 	StrapiMedia,
 	'id' | 'url' | 'alternativeText' | 'caption' | 'name'
@@ -142,6 +148,7 @@ export type DynamicComponent =
 	| ParagraphComponent
 	| BlockquoteComponent
 	| FeaturedPostsComponent
+	| FeaturedSeriesComponent
 	| ImgComponent
 	| IconComponent
 	| GridComponent

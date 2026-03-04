@@ -536,6 +536,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'text.blockquote',
         'interactivity.featured-posts',
         'blocks.hero',
+        'interactivity.featured-series',
       ]
     >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;

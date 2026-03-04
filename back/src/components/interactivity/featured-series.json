@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_interactivity_featured_series",
+  "info": {
+    "displayName": "FeaturedSeries",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "FeaturedSeries": {
+      "type": "boolean"
+    }
+  },
+  "config": {}
+}

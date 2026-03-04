@@ -2,9 +2,11 @@ import { STRAPI_URL, STRAPI_URL_FALLBACK } from '@/constants/admin.constant'
 import type {
 	DynamicComponent,
 	FeaturedPostsComponent,
+	FeaturedSeriesComponent,
 } from '@/types/dynamic.types'
 import {
 	ArticleListItem,
+	CATEGORY_SLUG_MAP,
 	Page,
 	PageCategory,
 	SearchResultItem,
@@ -22,6 +24,17 @@ export const hasFeaturedPostsInDynamic = (
 			c =>
 				c.__component === 'interactivity.featured-posts' &&
 				(c as FeaturedPostsComponent).FeaturedPosts,
+		),
+	)
+
+export const hasFeaturedSeriesInDynamic = (
+	dynamic: DynamicComponent[],
+): boolean =>
+	Boolean(
+		dynamic?.some(
+			c =>
+				c.__component === 'interactivity.featured-series' &&
+				(c as FeaturedSeriesComponent).FeaturedSeries,
 		),
 	)
 
@@ -81,6 +94,7 @@ export const getPageBySlug = async (
 				`&populate[Dynamic][on][img.icon][populate]=*` +
 				`&populate[Dynamic][on][decorative.line][populate]=*` +
 				`&populate[Dynamic][on][interactivity.featured-posts][populate]=*` +
+				`&populate[Dynamic][on][interactivity.featured-series][populate]=*` +
 				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Img][populate]=*` +
 				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Heading][populate]=*` +
 				`&populate[Dynamic][on][layout.grid][populate][Columns][populate][Paragraph][populate]=*` +
@@ -411,6 +425,30 @@ export const getArticlesBySeries = async (
 		console.error('Error fetching articles by series:', error)
 		return []
 	}
+}
+
+/** Серии по категориям: строки { categorySlug, categoryLabel, series } — только категории с сериями. */
+export const getSeriesRows = async (): Promise<
+	{ categorySlug: string; categoryLabel: string; series: { seriesSlug: string; name: string }[] }[]
+> => {
+	const slugs = Object.values(CATEGORY_SLUG_MAP) as string[]
+	const rows: {
+		categorySlug: string
+		categoryLabel: string
+		series: { seriesSlug: string; name: string }[]
+	}[] = []
+	for (const categorySlug of slugs) {
+		const series = await getSeriesInCategory(categorySlug)
+		if (series.length === 0) continue
+		const categoryLabel = getCategoryBySlug(categorySlug)
+		if (!categoryLabel) continue
+		rows.push({
+			categorySlug,
+			categoryLabel,
+			series: series.map(s => ({ seriesSlug: s.seriesSlug, name: s.name })),
+		})
+	}
+	return rows
 }
 
 /** Серии, в которых есть статьи данной категории (для страницы категории). */

@@ -40,7 +40,8 @@
         "img.icon",
         "text.blockquote",
         "interactivity.featured-posts",
-        "blocks.hero"
+        "blocks.hero",
+        "interactivity.featured-series"
       ]
     },
     "TypeOfPage": {

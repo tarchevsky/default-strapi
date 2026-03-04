@@ -11,7 +11,7 @@ export function FeaturedPosts({ articles }: FeaturedPostsProps) {
 
 	return (
 		<div className='w-full overflow-x-auto overflow-y-hidden'>
-			<div className='flex gap-4 pb-2 -mx-[var(--cont-xs)] px-[var(--cont-xs)] md:-mx-[var(--cont-sm)] md:px-[var(--cont-sm)]'>
+			<div className='flex gap-4 pb-2 cont'>
 				{articles.map(item => (
 					<Link
 						key={`${item.categorySlug ?? ''}-${item.slug}`}

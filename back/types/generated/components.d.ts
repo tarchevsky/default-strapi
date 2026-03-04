@@ -68,6 +68,17 @@ export interface InteractivityFeaturedPosts extends Struct.ComponentSchema {
   };
 }
 
+export interface InteractivityFeaturedSeries extends Struct.ComponentSchema {
+  collectionName: 'components_interactivity_featured_series';
+  info: {
+    displayName: 'FeaturedSeries';
+    icon: 'bulletList';
+  };
+  attributes: {
+    FeaturedSeries: Schema.Attribute.Boolean;
+  };
+}
+
 export interface LayoutColumn extends Struct.ComponentSchema {
   collectionName: 'components_layout_columns';
   info: {
@@ -245,6 +256,7 @@ declare module '@strapi/strapi' {
       'img.icon': ImgIcon;
       'img.img': ImgImg;
       'interactivity.featured-posts': InteractivityFeaturedPosts;
+      'interactivity.featured-series': InteractivityFeaturedSeries;
       'layout.column': LayoutColumn;
       'layout.grid': LayoutGrid;
       'links.email': LinksEmail;

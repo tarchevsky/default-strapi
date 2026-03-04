@@ -7,7 +7,9 @@ import {
 	getArticlePages,
 	getFeaturedArticles,
 	getPageBySlug,
+	getSeriesRows,
 	hasFeaturedPostsInDynamic,
+	hasFeaturedSeriesInDynamic,
 } from '@/services/page.service'
 import { getCategorySlug } from '@/types/page.types'
 import { Metadata } from 'next'
@@ -50,10 +52,14 @@ export async function generateMetadata({
 export default async function Page({ params }: PageProps) {
 	const { slug } = await params
 	const page = await getPageBySlug(slug)
-	const featuredArticles =
+	const [featuredArticles, seriesRows] = await Promise.all([
 		page?.dynamic && hasFeaturedPostsInDynamic(page.dynamic)
-			? await getFeaturedArticles(10)
-			: []
+			? getFeaturedArticles(10)
+			: Promise.resolve([]),
+		page?.dynamic && hasFeaturedSeriesInDynamic(page.dynamic)
+			? getSeriesRows()
+			: Promise.resolve([]),
+	])
 
 	if (!page) {
 		notFound()
@@ -91,11 +97,12 @@ export default async function Page({ params }: PageProps) {
 			</FadeIn>
 			{restComponents.length > 0 && (
 				<>
-					{restComponents.map((component, index) => (
+					{					restComponents.map((component, index) => (
 						<DynamicComponentRenderer
 							key={`${component.__component}-${component.id}-${index}`}
 							component={component}
 							featuredArticles={featuredArticles}
+							seriesRows={seriesRows}
 							metaTitle={page.title}
 						/>
 					))}

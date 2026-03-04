@@ -2,6 +2,7 @@ import {
 	BlockquoteComponent,
 	DynamicComponent,
 	FeaturedPostsComponent,
+	FeaturedSeriesComponent,
 	HeroBlockComponent,
 	HeroImage,
 	ImgComponent,
@@ -33,6 +34,13 @@ function mapStrapiDynamicItem(item: StrapiDynamicItem): DynamicComponent {
 			id: item.id,
 			FeaturedPosts: Boolean(item.FeaturedPosts),
 		} satisfies FeaturedPostsComponent
+	}
+	if (item.__component === 'interactivity.featured-series') {
+		return {
+			__component: 'interactivity.featured-series',
+			id: item.id,
+			FeaturedSeries: Boolean(item.FeaturedSeries),
+		} satisfies FeaturedSeriesComponent
 	}
 	if (item.__component === 'img.img') {
 		const img = (item.Img ?? item.img) as unknown

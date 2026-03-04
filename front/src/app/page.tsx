@@ -3,7 +3,9 @@ import FadeIn from '@/components/ui/FadeIn'
 import {
 	getFeaturedArticles,
 	getPageBySlug,
+	getSeriesRows,
 	hasFeaturedPostsInDynamic,
+	hasFeaturedSeriesInDynamic,
 } from '@/services/page.service'
 import { Metadata } from 'next'
 
@@ -26,10 +28,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
 	const page = await getPageBySlug('home')
-	const featuredArticles =
+	const [featuredArticles, seriesRows] = await Promise.all([
 		page?.dynamic && hasFeaturedPostsInDynamic(page.dynamic)
-			? await getFeaturedArticles(10)
-			: []
+			? getFeaturedArticles(10)
+			: Promise.resolve([]),
+		page?.dynamic && hasFeaturedSeriesInDynamic(page.dynamic)
+			? getSeriesRows()
+			: Promise.resolve([]),
+	])
 
 	if (page) {
 		return (
@@ -41,6 +47,7 @@ export default async function Home() {
 								key={`${component.__component}-${component.id}-${index}`}
 								component={component}
 								featuredArticles={featuredArticles}
+								seriesRows={seriesRows}
 								metaTitle={page.title}
 							/>
 						))}

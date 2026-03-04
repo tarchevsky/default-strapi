@@ -6,7 +6,9 @@ import {
 	getFeaturedArticles,
 	getPageBySlug,
 	getSeriesBySlug,
+	getSeriesRows,
 	hasFeaturedPostsInDynamic,
+	hasFeaturedSeriesInDynamic,
 } from '@/services/page.service'
 import { getCategoryBySlug } from '@/types/page.types'
 import { Metadata } from 'next'
@@ -58,10 +60,14 @@ export default async function Page({ params }: PageProps) {
 		getPageBySlug('blog'),
 		getSeriesBySlug(seriesSlug),
 	])
-	const featuredArticles =
+	const [featuredArticles, seriesRows] = await Promise.all([
 		page?.dynamic && hasFeaturedPostsInDynamic(page.dynamic)
-			? await getFeaturedArticles(10)
-			: []
+			? getFeaturedArticles(10)
+			: Promise.resolve([]),
+		page?.dynamic && hasFeaturedSeriesInDynamic(page.dynamic)
+			? getSeriesRows()
+			: Promise.resolve([]),
+	])
 
 	if (
 		!page ||
@@ -115,6 +121,7 @@ export default async function Page({ params }: PageProps) {
 							key={`${component.__component}-${component.id}-${index}`}
 							component={component}
 							featuredArticles={featuredArticles}
+							seriesRows={seriesRows}
 							metaTitle={page.title}
 						/>
 					))}
