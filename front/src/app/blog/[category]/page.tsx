@@ -1,8 +1,8 @@
 import BarLinkList from '@/components/BarLinkList'
 import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs'
 import {
-	getArticleHref,
 	getArticlesByCategory,
+	getArticleHref,
 	getPageBySlug,
 	getSeriesInCategory,
 } from '@/services/page.service'
@@ -16,8 +16,6 @@ interface PageProps {
 }
 
 const CATEGORY_SLUGS = Object.values(CATEGORY_SLUG_MAP) as string[]
-
-export const dynamic = 'force-dynamic'
 
 export async function generateStaticParams() {
 	return CATEGORY_SLUGS.map(category => ({ category }))
@@ -85,11 +83,11 @@ export default async function Page({ params }: PageProps) {
 
 			<p>
 				<Link
-					href='/blog'
-					className='text-xs text-gray-400 border-t-1 border-t-gray-400 pt-2 transition-colors ease-in duration-200 hover:text-gray-600 hover:border-t-gray-600'
-				>
-					Обратно к статьям
-				</Link>
+				href='/blog'
+				className='text-xs text-gray-400 border-t-1 border-t-gray-400 pt-2 transition-colors ease-in duration-200 hover:text-gray-600 hover:border-t-gray-600'
+			>
+				Обратно к статьям
+			</Link>
 			</p>
 		</div>
 	)

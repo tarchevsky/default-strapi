@@ -12,8 +12,6 @@ interface PageProps {
 
 const CATEGORY_SLUGS = Object.values(CATEGORY_SLUG_MAP) as string[]
 
-export const dynamic = 'force-dynamic'
-
 export async function generateStaticParams() {
 	return CATEGORY_SLUGS.map(category => ({ category }))
 }

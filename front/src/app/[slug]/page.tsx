@@ -21,8 +21,6 @@ interface PageProps {
 	}>
 }
 
-export const dynamic = 'force-dynamic'
-
 export async function generateStaticParams() {
 	try {
 		const slugs = await getAllPageSlugs()
@@ -99,7 +97,7 @@ export default async function Page({ params }: PageProps) {
 			</FadeIn>
 			{restComponents.length > 0 && (
 				<>
-					{restComponents.map((component, index) => (
+					{					restComponents.map((component, index) => (
 						<DynamicComponentRenderer
 							key={`${component.__component}-${component.id}-${index}`}
 							component={component}

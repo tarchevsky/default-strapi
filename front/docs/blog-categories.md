@@ -28,18 +28,14 @@
 export type PageCategory =
   | 'Методические материалы'
   | 'Глоссарий'
-  | 'Статья'
-  | 'Поддержка'
-  | 'Мысли'
+  | 'Статьи'
   | 'Кейсы'
 
 // 2. В PAGE_CATEGORIES
 export const PAGE_CATEGORIES: PageCategory[] = [
   'Методические материалы',
   'Глоссарий',
-  'Статья',
-  'Поддержка',
-  'Мысли',
+  'Статьи',
   'Кейсы',
 ]
 
@@ -47,9 +43,7 @@ export const PAGE_CATEGORIES: PageCategory[] = [
 export const CATEGORY_SLUG_MAP: Record<PageCategory, string> = {
   'Методические материалы': 'metodika',
   Глоссарий: 'glossary',
-  Статья: 'article',
-  Поддержка: 'support',
-  Мысли: 'thoughts',
+  Статьи: 'articles',
   Кейсы: 'cases',
 }
 ```

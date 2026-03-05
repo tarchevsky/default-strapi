@@ -14,7 +14,7 @@ import {
 	getCategoryBySlug,
 	getCategorySlug,
 } from '@/types/page.types'
-import { mapStrapiPageToPage, normalizeAndMapPage } from '@/utils/page.mapper'
+import { mapStrapiPageToPage } from '@/utils/page.mapper'
 
 export const hasFeaturedPostsInDynamic = (
 	dynamic: DynamicComponent[],
@@ -52,11 +52,7 @@ const fetchWithFallback = async (
 				...options,
 				signal: controller.signal,
 			})
-			if (!res.ok) {
-				console.warn(`[Strapi] ${baseUrl}${url} → ${res.status} ${res.statusText}`)
-				return null
-			}
-			return res
+			return res.ok ? res : null
 		} catch (error) {
 			console.warn(`Ошибка при обращении к ${baseUrl}:`, error)
 			return null
@@ -112,8 +108,6 @@ export const getPageBySlug = async (
 				})()
 			: ''
 	const opts = { next: { tags: ['pages'], revalidate: 60 } }
-	const parse = (res: Response) => res.json().then((body: StrapiPagesResponse) => body.data?.[0])
-
 	try {
 		let res = await fetchWithFallback(
 			`/api/pages?${slugFilter}${categoryFilter}${PAGE_POPULATE_BASE}`,
@@ -129,17 +123,10 @@ export const getPageBySlug = async (
 				opts,
 			)
 		}
-		if (!res) {
-			// Fallback: один уровень populate (Strapi 5 по умолчанию отдаёт Dynamic при populate=*)
-			res = await fetchWithFallback(
-				`/api/pages?${slugFilter}${categoryFilter}&populate=*`,
-				opts,
-			)
-		}
 		if (!res) return null
-		const raw = await parse(res)
-		if (!raw) return null
-		return normalizeAndMapPage(raw)
+		const data: StrapiPagesResponse = await res.json()
+		if (!data.data || data.data.length === 0) return null
+		return mapStrapiPageToPage(data.data[0])
 	} catch (error) {
 		console.error('Error fetching page:', error)
 		return null
@@ -284,7 +271,7 @@ export const getAllSeries = async (): Promise<
 	try {
 		const res = await fetchWithFallback(
 			'/api/pages?filters[TypeOfPage][$eq]=статья' +
-				'&filters[Series][$notNull]=true' +
+				'&filters[Series][id][$notNull]=true' +
 				'&fields[0]=id' +
 				'&populate[Series][fields][0]=SeriesSlug&populate[Series][fields][1]=SeriesName',
 			{ next: { tags: ['pages'], revalidate: 60 } },
@@ -483,7 +470,7 @@ export const getSeriesInCategory = async (
 		const res = await fetchWithFallback(
 			`/api/pages?filters[TypeOfPage][$eq]=статья` +
 				`&filters[Category][$eq]=${encodeURIComponent(category)}` +
-				`&filters[Series][$notNull]=true` +
+				`&filters[Series][id][$notNull]=true` +
 				`&fields[0]=id` +
 				`&populate[Series][fields][0]=SeriesSlug&populate[Series][fields][1]=SeriesName&populate[Series][fields][2]=SeriesDescription`,
 			{ next: { tags: ['pages'], revalidate: 60 } },
@@ -541,7 +528,7 @@ export const getSeriesPathParams = async (): Promise<
 > => {
 	try {
 		const res = await fetchWithFallback(
-			'/api/pages?filters[TypeOfPage][$eq]=статья&filters[Series][$notNull]=true' +
+			'/api/pages?filters[TypeOfPage][$eq]=статья&filters[Series][id][$notNull]=true' +
 				'&fields[0]=Category&populate[Series][fields][0]=SeriesSlug',
 			{ next: { tags: ['pages'] } },
 		)

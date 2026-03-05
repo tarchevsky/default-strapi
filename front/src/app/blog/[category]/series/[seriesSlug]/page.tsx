@@ -1,8 +1,8 @@
 import BarLinkList from '@/components/BarLinkList'
 import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs'
 import {
-	getArticleHref,
 	getArticlesBySeries,
+	getArticleHref,
 	getPageBySlug,
 	getSeriesBySlug,
 	getSeriesPathParams,
@@ -15,8 +15,6 @@ import { notFound } from 'next/navigation'
 interface PageProps {
 	params: Promise<{ category: string; seriesSlug: string }>
 }
-
-export const dynamic = 'force-dynamic'
 
 export async function generateStaticParams() {
 	try {
@@ -63,7 +61,9 @@ export default async function Page({ params }: PageProps) {
 			<Breadcrumbs items={breadcrumbItems} className='mb-4' />
 			<h1 className='mb-6'>{series.name}</h1>
 			{series.description && (
-				<p className='prose mb-8 whitespace-pre-line'>{series.description}</p>
+				<p className='prose mb-8 whitespace-pre-line'>
+					{series.description}
+				</p>
 			)}
 			<BarLinkList
 				items={articles.map(article => ({
