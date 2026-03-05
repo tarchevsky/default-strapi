@@ -12,6 +12,11 @@
     "OnOff": {
       "type": "boolean",
       "default": true
+    },
+    "Text": {
+      "type": "component",
+      "component": "text.paragraph",
+      "repeatable": true
     }
   },
   "config": {}

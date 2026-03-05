@@ -244,6 +244,7 @@ export interface TextTitle extends Struct.ComponentSchema {
   };
   attributes: {
     OnOff: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    Text: Schema.Attribute.Component<'text.paragraph', true>;
     Title: Schema.Attribute.String;
   };
 }

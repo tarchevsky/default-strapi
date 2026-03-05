@@ -38,31 +38,37 @@ export const hasFeaturedSeriesInDynamic = (
 		),
 	)
 
+const STRAPI_FETCH_TIMEOUT_MS = 12_000
+
 const fetchWithFallback = async (
 	url: string,
 	options?: RequestInit,
 ): Promise<Response | null> => {
-	let currentUrl = STRAPI_URL
-
-	try {
-		const res = await fetch(`${currentUrl}${url}`, options)
-		if (res.ok) {
-			return res
+	const tryFetch = async (baseUrl: string): Promise<Response | null> => {
+		const controller = new AbortController()
+		const timeout = setTimeout(() => controller.abort(), STRAPI_FETCH_TIMEOUT_MS)
+		try {
+			const res = await fetch(`${baseUrl}${url}`, {
+				...options,
+				signal: controller.signal,
+			})
+			return res.ok ? res : null
+		} catch (error) {
+			console.warn(`Ошибка при обращении к ${baseUrl}:`, error)
+			return null
+		} finally {
+			clearTimeout(timeout)
 		}
-	} catch (error) {
-		console.warn(`Ошибка при обращении к ${currentUrl}:`, error)
 	}
 
-	if (STRAPI_URL_FALLBACK && currentUrl !== STRAPI_URL_FALLBACK) {
-		try {
-			currentUrl = STRAPI_URL_FALLBACK
-			const res = await fetch(`${currentUrl}${url}`, options)
-			if (res.ok) {
-				console.log(`Переключились на fallback URL: ${currentUrl}`)
-				return res
-			}
-		} catch (error) {
-			console.error(`Ошибка при обращении к fallback URL ${currentUrl}:`, error)
+	let res = await tryFetch(STRAPI_URL)
+	if (res) return res
+
+	if (STRAPI_URL_FALLBACK && STRAPI_URL_FALLBACK !== STRAPI_URL) {
+		res = await tryFetch(STRAPI_URL_FALLBACK)
+		if (res) {
+			console.log(`Переключились на fallback URL: ${STRAPI_URL_FALLBACK}`)
+			return res
 		}
 	}
 
@@ -265,7 +271,7 @@ export const getAllSeries = async (): Promise<
 	try {
 		const res = await fetchWithFallback(
 			'/api/pages?filters[TypeOfPage][$eq]=статья' +
-				'&filters[Series][id][$notNull]=true' +
+				'&filters[Series][$notNull]=true' +
 				'&fields[0]=id' +
 				'&populate[Series][fields][0]=SeriesSlug&populate[Series][fields][1]=SeriesName',
 			{ next: { tags: ['pages'], revalidate: 60 } },
@@ -399,8 +405,8 @@ export const getArticlesBySeries = async (
 			`/api/pages?filters[TypeOfPage][$eq]=статья` +
 				`&filters[Category][$eq]=${encodeURIComponent(category)}` +
 				`&filters[Series][SeriesSlug][$eq]=${encodeURIComponent(seriesSlug)}` +
-				`&fields[0]=Title&fields[1]=Slug&fields[2]=Category` +
-				`&sort[0]=publishedAt:desc` +
+				`&fields[0]=Title&fields[1]=Slug&fields[2]=Category&fields[3]=SeriesOrder` +
+				`&sort[0]=SeriesOrder:asc` +
 				`&populate[Tags][fields][0]=Name` +
 				`&populate[Series][fields][0]=SeriesSlug`,
 			{ next: { tags: ['pages'], revalidate: 60 } },
@@ -408,7 +414,7 @@ export const getArticlesBySeries = async (
 		if (!res) return []
 		const data: StrapiPagesResponse = await res.json()
 		if (!data.data?.length) return []
-		return data.data.map(
+		const list = data.data.map(
 			(p): ArticleListItem => ({
 				title: p.Title,
 				slug: p.Slug,
@@ -418,9 +424,11 @@ export const getArticlesBySeries = async (
 						? getCategorySlug(p.Category as PageCategory)
 						: undefined,
 				seriesSlug: p.Series?.SeriesSlug ?? undefined,
+				seriesOrder: p.SeriesOrder,
 				tags: p.Tags?.map(t => t.Name) ?? [],
 			}),
 		)
+		return list.sort((a, b) => (a.seriesOrder ?? 999) - (b.seriesOrder ?? 999))
 	} catch (error) {
 		console.error('Error fetching articles by series:', error)
 		return []
@@ -462,7 +470,7 @@ export const getSeriesInCategory = async (
 		const res = await fetchWithFallback(
 			`/api/pages?filters[TypeOfPage][$eq]=статья` +
 				`&filters[Category][$eq]=${encodeURIComponent(category)}` +
-				`&filters[Series][id][$notNull]=true` +
+				`&filters[Series][$notNull]=true` +
 				`&fields[0]=id` +
 				`&populate[Series][fields][0]=SeriesSlug&populate[Series][fields][1]=SeriesName&populate[Series][fields][2]=SeriesDescription`,
 			{ next: { tags: ['pages'], revalidate: 60 } },
@@ -520,7 +528,7 @@ export const getSeriesPathParams = async (): Promise<
 > => {
 	try {
 		const res = await fetchWithFallback(
-			'/api/pages?filters[TypeOfPage][$eq]=статья&filters[Series][id][$notNull]=true' +
+			'/api/pages?filters[TypeOfPage][$eq]=статья&filters[Series][$notNull]=true' +
 				'&fields[0]=Category&populate[Series][fields][0]=SeriesSlug',
 			{ next: { tags: ['pages'] } },
 		)
