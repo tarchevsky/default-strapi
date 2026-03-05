@@ -14,7 +14,7 @@ import {
 	getCategoryBySlug,
 	getCategorySlug,
 } from '@/types/page.types'
-import { mapStrapiPageToPage } from '@/utils/page.mapper'
+import { mapStrapiPageToPage, normalizeAndMapPage } from '@/utils/page.mapper'
 
 export const hasFeaturedPostsInDynamic = (
 	dynamic: DynamicComponent[],
@@ -52,7 +52,11 @@ const fetchWithFallback = async (
 				...options,
 				signal: controller.signal,
 			})
-			return res.ok ? res : null
+			if (!res.ok) {
+				console.warn(`[Strapi] ${baseUrl}${url} → ${res.status} ${res.statusText}`)
+				return null
+			}
+			return res
 		} catch (error) {
 			console.warn(`Ошибка при обращении к ${baseUrl}:`, error)
 			return null
@@ -108,6 +112,8 @@ export const getPageBySlug = async (
 				})()
 			: ''
 	const opts = { next: { tags: ['pages'], revalidate: 60 } }
+	const parse = (res: Response) => res.json().then((body: StrapiPagesResponse) => body.data?.[0])
+
 	try {
 		let res = await fetchWithFallback(
 			`/api/pages?${slugFilter}${categoryFilter}${PAGE_POPULATE_BASE}`,
@@ -123,10 +129,17 @@ export const getPageBySlug = async (
 				opts,
 			)
 		}
+		if (!res) {
+			// Fallback: один уровень populate (Strapi 5 по умолчанию отдаёт Dynamic при populate=*)
+			res = await fetchWithFallback(
+				`/api/pages?${slugFilter}${categoryFilter}&populate=*`,
+				opts,
+			)
+		}
 		if (!res) return null
-		const data: StrapiPagesResponse = await res.json()
-		if (!data.data || data.data.length === 0) return null
-		return mapStrapiPageToPage(data.data[0])
+		const raw = await parse(res)
+		if (!raw) return null
+		return normalizeAndMapPage(raw)
 	} catch (error) {
 		console.error('Error fetching page:', error)
 		return null
