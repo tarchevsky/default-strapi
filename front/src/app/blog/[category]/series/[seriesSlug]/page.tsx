@@ -1,8 +1,8 @@
 import BarLinkList from '@/components/BarLinkList'
 import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs'
 import {
-	getArticlesBySeries,
 	getArticleHref,
+	getArticlesBySeries,
 	getPageBySlug,
 	getSeriesBySlug,
 	getSeriesPathParams,
@@ -63,9 +63,7 @@ export default async function Page({ params }: PageProps) {
 			<Breadcrumbs items={breadcrumbItems} className='mb-4' />
 			<h1 className='mb-6'>{series.name}</h1>
 			{series.description && (
-				<p className='prose mb-8 whitespace-pre-line'>
-					{series.description}
-				</p>
+				<p className='prose mb-8 whitespace-pre-line'>{series.description}</p>
 			)}
 			<BarLinkList
 				items={articles.map(article => ({

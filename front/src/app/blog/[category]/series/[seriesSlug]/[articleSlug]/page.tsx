@@ -44,11 +44,7 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
 	const { category, seriesSlug, articleSlug } = await params
 	const page = await getPageBySlug(articleSlug, category)
-	if (
-		!page ||
-		page.typeOfPage !== 'статья' ||
-		page.seriesSlug !== seriesSlug
-	)
+	if (!page || page.typeOfPage !== 'статья' || page.seriesSlug !== seriesSlug)
 		return { title: 'Страница не найдена' }
 	return { title: page.title, description: page.description }
 }
@@ -71,11 +67,7 @@ export default async function Page({ params }: PageProps) {
 			: Promise.resolve([]),
 	])
 
-	if (
-		!page ||
-		page.typeOfPage !== 'статья' ||
-		page.seriesSlug !== seriesSlug
-	)
+	if (!page || page.typeOfPage !== 'статья' || page.seriesSlug !== seriesSlug)
 		notFound()
 
 	const parentLabel = blogPage?.title ?? 'Блог'

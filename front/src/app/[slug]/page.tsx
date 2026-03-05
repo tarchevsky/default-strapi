@@ -99,7 +99,7 @@ export default async function Page({ params }: PageProps) {
 			</FadeIn>
 			{restComponents.length > 0 && (
 				<>
-					{					restComponents.map((component, index) => (
+					{restComponents.map((component, index) => (
 						<DynamicComponentRenderer
 							key={`${component.__component}-${component.id}-${index}`}
 							component={component}

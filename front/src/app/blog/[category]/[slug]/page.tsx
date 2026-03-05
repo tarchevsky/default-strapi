@@ -56,8 +56,7 @@ export default async function Page({ params }: PageProps) {
 			: Promise.resolve([]),
 	])
 
-	if (!page || page.typeOfPage !== 'статья' || page.seriesSlug)
-		notFound()
+	if (!page || page.typeOfPage !== 'статья' || page.seriesSlug) notFound()
 
 	const categoryLabel = getCategoryBySlug(category)
 	const breadcrumbItems = [
@@ -67,9 +66,7 @@ export default async function Page({ params }: PageProps) {
 			: []),
 		{ label: page.title },
 	]
-	const titleComponent = page.dynamic?.find(
-		c => c.__component === 'text.title',
-	)
+	const titleComponent = page.dynamic?.find(c => c.__component === 'text.title')
 	const restComponents =
 		page.dynamic?.filter(c => c.__component !== 'text.title') || []
 
