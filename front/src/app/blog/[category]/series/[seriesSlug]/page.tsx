@@ -16,6 +16,8 @@ interface PageProps {
 	params: Promise<{ category: string; seriesSlug: string }>
 }
 
+export const dynamic = 'force-dynamic'
+
 export async function generateStaticParams() {
 	try {
 		return await getSeriesPathParams()

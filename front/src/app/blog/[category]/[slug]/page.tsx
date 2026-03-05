@@ -17,6 +17,8 @@ interface PageProps {
 	params: Promise<{ category: string; slug: string }>
 }
 
+export const dynamic = 'force-dynamic'
+
 export async function generateStaticParams() {
 	try {
 		const params = await getArticlePathParams()
