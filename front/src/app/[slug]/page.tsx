@@ -43,6 +43,15 @@ export async function generateMetadata({
 		}
 	}
 
+	// Редирект для статей делаем здесь, до отправки ответа — иначе ERR_HTTP_HEADERS_SENT
+	if (page.typeOfPage === 'статья' && page.category) {
+		const catSlug = getCategorySlug(page.category)
+		const path = page.seriesSlug
+			? `/blog/${catSlug}/series/${page.seriesSlug}/${slug}`
+			: `/blog/${catSlug}/${slug}`
+		redirect(path)
+	}
+
 	return {
 		title: page.title,
 		description: page.description,

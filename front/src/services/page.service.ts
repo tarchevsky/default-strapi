@@ -46,7 +46,10 @@ const fetchWithFallback = async (
 ): Promise<Response | null> => {
 	const tryFetch = async (baseUrl: string): Promise<Response | null> => {
 		const controller = new AbortController()
-		const timeout = setTimeout(() => controller.abort(), STRAPI_FETCH_TIMEOUT_MS)
+		const timeout = setTimeout(
+			() => controller.abort(),
+			STRAPI_FETCH_TIMEOUT_MS,
+		)
 		try {
 			const res = await fetch(`${baseUrl}${url}`, {
 				...options,
@@ -55,10 +58,14 @@ const fetchWithFallback = async (
 			return res.ok ? res : null
 		} catch (error) {
 			const cause = error instanceof Error ? error.cause : undefined
-			const code = cause && typeof cause === 'object' && 'code' in cause ? (cause as NodeJS.ErrnoException).code : undefined
-			const msg = code === 'ECONNRESET' || code === 'ECONNREFUSED'
-				? `Strapi недоступен по адресу ${baseUrl} (${code}). Запустите бэкенд (например: cd back && bun run develop) и проверьте, что NEXT_PUBLIC_STRAPI_URL совпадает с портом Strapi (по умолчанию 1337).`
-				: `Ошибка при обращении к ${baseUrl}: ${error instanceof Error ? error.message : String(error)}`
+			const code =
+				cause && typeof cause === 'object' && 'code' in cause
+					? (cause as NodeJS.ErrnoException).code
+					: undefined
+			const msg =
+				code === 'ECONNRESET' || code === 'ECONNREFUSED'
+					? `Strapi недоступен по адресу ${baseUrl} (${code}). Запустите бэкенд (например: cd back && bun run develop) и проверьте, что NEXT_PUBLIC_STRAPI_URL совпадает с портом Strapi (по умолчанию 1337).`
+					: `Ошибка при обращении к ${baseUrl}: ${error instanceof Error ? error.message : String(error)}`
 			console.warn(msg)
 			return null
 		} finally {
@@ -174,9 +181,7 @@ export const getArticlePathParams = async (): Promise<
 				const category = getCategorySlug(p.Category as PageCategory)
 				const slug = p.Slug
 				const seriesSlug = p.Series?.SeriesSlug
-				return seriesSlug
-					? { category, seriesSlug, slug }
-					: { category, slug }
+				return seriesSlug ? { category, seriesSlug, slug } : { category, slug }
 			})
 	} catch (error) {
 		console.error('Error fetching article path params:', error)
@@ -291,7 +296,9 @@ export const getAllSeries = async (): Promise<
 			seen.add(p.Series.SeriesSlug)
 			result.push({
 				seriesSlug: p.Series.SeriesSlug,
-				name: (p.Series as { SeriesName?: string }).SeriesName ?? p.Series.SeriesSlug,
+				name:
+					(p.Series as { SeriesName?: string }).SeriesName ??
+					p.Series.SeriesSlug,
 			})
 		}
 		return result
@@ -302,7 +309,9 @@ export const getAllSeries = async (): Promise<
 }
 
 /** Достаёт SeriesSlug из ответа Strapi (flat или data.attributes). */
-function getSeriesSlugFromPage(p: StrapiPagesResponse['data'][number]): string | undefined {
+function getSeriesSlugFromPage(
+	p: StrapiPagesResponse['data'][number],
+): string | undefined {
 	const s = p.Series as
 		| { SeriesSlug?: string; data?: { attributes?: { SeriesSlug?: string } } }
 		| null
@@ -325,8 +334,7 @@ export const getFeaturedArticles = async (
 		if (!data.data?.length) return []
 		return data.data
 			.filter(
-				(p) =>
-					p.Category != null && getCategorySlug(p.Category as PageCategory),
+				p => p.Category != null && getCategorySlug(p.Category as PageCategory),
 			)
 			.slice(0, limit)
 			.map(
@@ -442,7 +450,11 @@ export const getArticlesBySeries = async (
 
 /** Серии по категориям: строки { categorySlug, categoryLabel, series } — только категории с сериями. */
 export const getSeriesRows = async (): Promise<
-	{ categorySlug: string; categoryLabel: string; series: { seriesSlug: string; name: string }[] }[]
+	{
+		categorySlug: string
+		categoryLabel: string
+		series: { seriesSlug: string; name: string }[]
+	}[]
 > => {
 	const slugs = Object.values(CATEGORY_SLUG_MAP) as string[]
 	const rows: {
@@ -467,7 +479,9 @@ export const getSeriesRows = async (): Promise<
 /** Серии, в которых есть статьи данной категории (для страницы категории). */
 export const getSeriesInCategory = async (
 	categorySlug: string,
-): Promise<{ seriesSlug: string; name: string; description?: string | null }[]> => {
+): Promise<
+	{ seriesSlug: string; name: string; description?: string | null }[]
+> => {
 	const category = getCategoryBySlug(categorySlug)
 	if (!category) return []
 
@@ -484,11 +498,18 @@ export const getSeriesInCategory = async (
 		const data: StrapiPagesResponse = await res.json()
 		if (!data.data?.length) return []
 		const seen = new Set<string>()
-		const result: { seriesSlug: string; name: string; description?: string | null }[] = []
+		const result: {
+			seriesSlug: string
+			name: string
+			description?: string | null
+		}[] = []
 		for (const p of data.data) {
 			if (!p.Series?.SeriesSlug || seen.has(p.Series.SeriesSlug)) continue
 			seen.add(p.Series.SeriesSlug)
-			const series = p.Series as { SeriesName?: string; SeriesDescription?: string | null }
+			const series = p.Series as {
+				SeriesName?: string
+				SeriesDescription?: string | null
+			}
 			result.push({
 				seriesSlug: p.Series.SeriesSlug,
 				name: series.SeriesName ?? p.Series.SeriesSlug,
@@ -505,7 +526,11 @@ export const getSeriesInCategory = async (
 /** Серия по слагу (название для страницы серии). */
 export const getSeriesBySlug = async (
 	seriesSlug: string,
-): Promise<{ seriesSlug: string; name: string; description?: string | null } | null> => {
+): Promise<{
+	seriesSlug: string
+	name: string
+	description?: string | null
+} | null> => {
 	try {
 		const res = await fetchWithFallback(
 			`/api/series?filters[SeriesSlug][$eq]=${encodeURIComponent(seriesSlug)}` +
