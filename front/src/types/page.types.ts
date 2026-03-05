@@ -54,8 +54,6 @@ export interface ArticleListItem {
 	categorySlug?: string
 	/** Слаг серии: при наличии ссылка /blog/[category]/[seriesSlug]/[slug] */
 	seriesSlug?: string
-	/** Порядок в серии (1, 2, …) — для сортировки и будущей пагинации по серии */
-	seriesOrder?: number
 	/** Теги статьи (имена тегов из Strapi) */
 	tags?: string[]
 }
@@ -92,8 +90,6 @@ export interface StrapiPage {
 	}[]
 	/** Серия (для статей) */
 	Series?: { id: number; SeriesSlug: string } | null
-	/** Порядок статьи в серии (запрашивается при getArticlesBySeries) */
-	SeriesOrder?: number
 	Dynamic: Array<{
 		__component: string
 		id: number
