@@ -8,6 +8,11 @@ export default ({ env }) => {
 			cookies: {
 				secure: false, // Explicitly disable secure cookies for HTTP connections
 			},
+			// Strapi 6: вместо устаревшего options.expiresIn
+			sessions: {
+				maxSessionLifespan: 30 * 24 * 60 * 60, // 30 дней (в секундах)
+				maxRefreshTokenLifespan: 90 * 24 * 60 * 60, // 90 дней
+			},
 		},
 		apiToken: {
 			salt: env('API_TOKEN_SALT'),
