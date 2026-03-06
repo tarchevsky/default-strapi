@@ -85,6 +85,8 @@ export interface StrapiPage {
 	Slug: string
 	TypeOfPage?: TypeOfPage
 	Category?: PageCategory
+	/** Порядковый номер в серии (1, 2, 3...) — только для статей с Series */
+	SeriesOrder?: number
 	/** Связанные теги (many-to-many Tag) */
 	Tags?: {
 		id: number
@@ -122,6 +124,8 @@ export interface Page {
 	category?: PageCategory
 	/** При typeOfPage === 'статья' и привязке к серии */
 	seriesSlug?: string
+	/** Порядковый номер в серии (1, 2, 3...) — только для статей с Series */
+	seriesOrder?: number
 	/** Теги статьи (имена тегов из Strapi) */
 	tags?: string[]
 	dynamic: DynamicComponent[]

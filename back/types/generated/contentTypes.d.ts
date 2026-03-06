@@ -544,6 +544,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     Series: Schema.Attribute.Relation<'manyToOne', 'api::serie.serie'>;
+    SeriesOrder: Schema.Attribute.Integer;
     Slug: Schema.Attribute.UID<'Title'> &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{

@@ -27,7 +27,7 @@ function rawPageFields(p: StrapiPagesResponse['data'][number]) {
 		Category: (raw.Category ?? raw.category) as PageCategory | undefined,
 		TypeOfPage: (raw.TypeOfPage ?? raw.typeOfPage) as string | undefined,
 		Description: typeof (raw.Description ?? raw.description) === 'string' ? (raw.Description ?? raw.description) as string : undefined,
-		SeriesOrder: series ? (series.SeriesOrder ?? series.seriesOrder) as number | undefined : undefined,
+		SeriesOrder: (raw.SeriesOrder ?? raw.seriesOrder) as number | undefined,
 		SeriesSlug: series
 			? (series.SeriesSlug ?? series.seriesSlug) as string | undefined
 			: undefined,
@@ -271,7 +271,7 @@ export const searchPagesAndArticles = async (
 export const getArticlePages = async (): Promise<ArticleListItem[]> => {
 	try {
 		const res = await fetchWithFallback(
-			'/api/pages?filters[TypeOfPage][$eq]=статья&fields[0]=Title&fields[1]=Slug&fields[2]=Category' +
+			'/api/pages?filters[TypeOfPage][$eq]=статья&fields[0]=Title&fields[1]=Slug&fields[2]=Category&fields[3]=SeriesOrder' +
 				'&sort[0]=publishedAt:desc' +
 				'&populate[Tags][fields][0]=Name&populate[Series][fields][0]=SeriesSlug',
 			{ next: { tags: ['pages'], revalidate: 60 } },
@@ -287,6 +287,7 @@ export const getArticlePages = async (): Promise<ArticleListItem[]> => {
 				category: f.Category,
 				categorySlug: f.Category != null ? getCategorySlug(f.Category) : undefined,
 				seriesSlug: f.SeriesSlug ?? undefined,
+				seriesOrder: f.SeriesOrder,
 				tags: (f.Tags ?? []).map(t => t?.Name ?? t?.name ?? '').filter(Boolean),
 			}
 		})
@@ -336,7 +337,7 @@ export const getFeaturedArticles = async (
 ): Promise<ArticleListItem[]> => {
 	try {
 		const res = await fetchWithFallback(
-			`/api/pages?filters[TypeOfPage][$eq]=статья&fields[0]=Title&fields[1]=Slug&fields[2]=Category&fields[3]=Description&sort[0]=publishedAt:desc&pagination[pageSize]=50&populate[Tags][fields][0]=Name&populate[Series][fields][0]=SeriesSlug`,
+			`/api/pages?filters[TypeOfPage][$eq]=статья&fields[0]=Title&fields[1]=Slug&fields[2]=Category&fields[3]=Description&fields[4]=SeriesOrder&sort[0]=publishedAt:desc&pagination[pageSize]=50&populate[Tags][fields][0]=Name&populate[Series][fields][0]=SeriesSlug`,
 			{ next: { tags: ['pages'], revalidate: 60 } },
 		)
 		if (!res) return []
@@ -357,6 +358,7 @@ export const getFeaturedArticles = async (
 					category: f.Category,
 					categorySlug: f.Category != null ? getCategorySlug(f.Category) : undefined,
 					seriesSlug: f.SeriesSlug ?? undefined,
+					seriesOrder: f.SeriesOrder,
 					tags: (f.Tags ?? []).map(t => t?.Name ?? t?.name ?? '').filter(Boolean),
 				}
 			})
@@ -389,7 +391,7 @@ export const getArticlesByCategory = async (
 		const res = await fetchWithFallback(
 			`/api/pages?filters[TypeOfPage][$eq]=статья` +
 				`&filters[Category][$eq]=${encodeURIComponent(category)}` +
-				`&fields[0]=Title&fields[1]=Slug&fields[2]=Category` +
+				`&fields[0]=Title&fields[1]=Slug&fields[2]=Category&fields[3]=SeriesOrder` +
 				`&sort[0]=publishedAt:desc` +
 				`&populate[Tags][fields][0]=Name` +
 				`&populate[Series][fields][0]=SeriesSlug`,
@@ -406,6 +408,7 @@ export const getArticlesByCategory = async (
 				category: f.Category,
 				categorySlug: f.Category != null ? getCategorySlug(f.Category) : undefined,
 				seriesSlug: f.SeriesSlug ?? undefined,
+				seriesOrder: f.SeriesOrder,
 				tags: (f.Tags ?? []).map(t => t?.Name ?? t?.name ?? '').filter(Boolean),
 			}
 		})
@@ -428,10 +431,10 @@ export const getArticlesBySeries = async (
 			`/api/pages?filters[TypeOfPage][$eq]=статья` +
 				`&filters[Category][$eq]=${encodeURIComponent(category)}` +
 				`&filters[Series][SeriesSlug][$eq]=${encodeURIComponent(seriesSlug)}` +
-				`&fields[0]=Title&fields[1]=Slug&fields[2]=Category` +
+				`&fields[0]=Title&fields[1]=Slug&fields[2]=Category&fields[3]=SeriesOrder` +
 				`&populate[Tags][fields][0]=Name` +
-				`&populate[Series][fields][0]=SeriesSlug&populate[Series][fields][1]=SeriesOrder` +
-				`&sort[0]=Series.SeriesOrder:asc`,
+				`&populate[Series][fields][0]=SeriesSlug` +
+				`&sort[0]=SeriesOrder:asc`,
 			{ next: { tags: ['pages'], revalidate: 60 } },
 		)
 		if (!res) return []
@@ -605,8 +608,9 @@ export const getArticlesByTag = async (
 		const res = await fetchWithFallback(
 			`/api/pages?filters[TypeOfPage][$eq]=статья` +
 				`&filters[Tags][Name][$eq]=${encodeURIComponent(name)}` +
-				`&fields[0]=Title&fields[1]=Slug&fields[2]=Category` +
-				`&populate[Tags][fields][0]=Name`,
+				`&fields[0]=Title&fields[1]=Slug&fields[2]=Category&fields[3]=SeriesOrder` +
+				`&populate[Tags][fields][0]=Name` +
+				`&populate[Series][fields][0]=SeriesSlug`,
 			{ next: { tags: ['pages'], revalidate: 60 } },
 		)
 
@@ -622,6 +626,8 @@ export const getArticlesByTag = async (
 				slug: f.Slug,
 				category: f.Category,
 				categorySlug: f.Category != null ? getCategorySlug(f.Category) : undefined,
+				seriesSlug: f.SeriesSlug ?? undefined,
+				seriesOrder: f.SeriesOrder,
 				tags: (f.Tags ?? []).map(t => t?.Name ?? t?.name ?? '').filter(Boolean),
 			}
 		})

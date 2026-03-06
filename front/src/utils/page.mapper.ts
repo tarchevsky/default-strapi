@@ -138,6 +138,7 @@ export const mapStrapiPageToPage = (strapiPage: StrapiPage): Page => {
 		typeOfPage: strapiAttr(raw, 'TypeOfPage', 'typeOfPage') as Page['typeOfPage'],
 		category: strapiAttr(raw, 'Category', 'category') as Page['category'],
 		seriesSlug,
+		seriesOrder: strapiAttr(raw, 'SeriesOrder', 'seriesOrder') as number | undefined,
 		tags: Array.isArray(tagsRaw) ? tagsRaw.map(t => t?.Name ?? t?.name ?? '').filter(Boolean) : [],
 		dynamic: rawDynamic.map(mapStrapiDynamicItem),
 		createdAt: String(raw.createdAt ?? strapiPage.createdAt),
