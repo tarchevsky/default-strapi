@@ -88,6 +88,7 @@ const fetchWithFallback = async (
 }
 
 const PAGE_POPULATE_BASE =
+	'&populate[0]=Dynamic' +
 	'&populate[Tags][fields][0]=Name' +
 	'&populate[Series][fields][0]=SeriesSlug' +
 	'&populate[Dynamic][on][text.paragraph][populate]=*' +
