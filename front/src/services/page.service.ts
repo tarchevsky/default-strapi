@@ -16,6 +16,23 @@ import {
 } from '@/types/page.types'
 import { mapStrapiPageToPage } from '@/utils/page.mapper'
 
+/** Поля страницы из ответа Strapi 5 (поддержка PascalCase и lowercase) */
+function rawPageFields(p: StrapiPagesResponse['data'][number]) {
+	const raw = p as unknown as Record<string, unknown>
+	const series = (raw.Series ?? raw.series) as Record<string, unknown> | null | undefined
+	const tags = (raw.Tags ?? raw.tags) as Array<{ Name?: string; name?: string }> | undefined
+	return {
+		Title: String(raw.Title ?? raw.title ?? ''),
+		Slug: String(raw.Slug ?? raw.slug ?? ''),
+		Category: (raw.Category ?? raw.category) as PageCategory | undefined,
+		TypeOfPage: (raw.TypeOfPage ?? raw.typeOfPage) as string | undefined,
+		Description: typeof (raw.Description ?? raw.description) === 'string' ? (raw.Description ?? raw.description) as string : undefined,
+		SeriesOrder: (raw.SeriesOrder ?? raw.seriesOrder) as number | undefined,
+		SeriesSlug: series ? (series.SeriesSlug ?? series.seriesSlug) as string | undefined : undefined,
+		Tags: Array.isArray(tags) ? tags : undefined,
+	}
+}
+
 export const hasFeaturedPostsInDynamic = (
 	dynamic: DynamicComponent[],
 ): boolean =>
@@ -157,8 +174,8 @@ export const getAllPageSlugs = async (): Promise<string[]> => {
 		if (!res) return []
 		const data: StrapiPagesResponse = await res.json()
 		return (data.data || [])
-			.filter(p => p.TypeOfPage !== 'статья')
-			.map(p => p.Slug)
+			.filter(p => rawPageFields(p).TypeOfPage !== 'статья')
+			.map(p => rawPageFields(p).Slug)
 	} catch (error) {
 		console.error('Error fetching page slugs:', error)
 		return []
@@ -177,12 +194,14 @@ export const getArticlePathParams = async (): Promise<
 		if (!res) return []
 		const data: StrapiPagesResponse = await res.json()
 		return (data.data || [])
-			.filter(p => p.Category && getCategorySlug(p.Category as PageCategory))
+			.filter(p => {
+				const f = rawPageFields(p)
+				return f.Category && getCategorySlug(f.Category)
+			})
 			.map(p => {
-				const category = getCategorySlug(p.Category as PageCategory)
-				const slug = p.Slug
-				const seriesSlug = p.Series?.SeriesSlug
-				return seriesSlug ? { category, seriesSlug, slug } : { category, slug }
+				const f = rawPageFields(p)
+				const category = getCategorySlug(f.Category!)
+				return f.SeriesSlug ? { category, seriesSlug: f.SeriesSlug, slug: f.Slug } : { category, slug: f.Slug }
 			})
 	} catch (error) {
 		console.error('Error fetching article path params:', error)
@@ -199,21 +218,22 @@ export const searchPagesAndArticles = async (
 	const qLower = q.toLowerCase()
 	const mapToResults = (list: StrapiPagesResponse['data']) =>
 		list.map((p): SearchResultItem => {
-			const isArticle = p.TypeOfPage === 'статья'
+			const f = rawPageFields(p)
+			const isArticle = f.TypeOfPage === 'статья'
 			const categorySlug =
-				isArticle && p.Category != null
-					? getCategorySlug(p.Category as PageCategory)
+				isArticle && f.Category != null
+					? getCategorySlug(f.Category)
 					: undefined
-			const seriesSlug = isArticle ? p.Series?.SeriesSlug : undefined
+			const seriesSlug = isArticle ? f.SeriesSlug : undefined
 			const href =
 				isArticle && categorySlug
 					? seriesSlug
-						? `/blog/${categorySlug}/series/${seriesSlug}/${p.Slug}`
-						: `/blog/${categorySlug}/${p.Slug}`
-					: `/${p.Slug}`
+						? `/blog/${categorySlug}/series/${seriesSlug}/${f.Slug}`
+						: `/blog/${categorySlug}/${f.Slug}`
+					: `/${f.Slug}`
 			return {
-				title: p.Title,
-				slug: p.Slug,
+				title: f.Title,
+				slug: f.Slug,
 				href,
 				type: isArticle ? 'article' : 'page',
 			}
@@ -230,9 +250,10 @@ export const searchPagesAndArticles = async (
 		if (!data.data?.length) return []
 
 		const filtered = data.data.filter(p => {
-			const titleMatch = p.Title?.toLowerCase().includes(qLower)
-			const tags = p.Tags ?? []
-			const tagsMatch = tags.some(t => t.Name.toLowerCase().includes(qLower))
+			const f = rawPageFields(p)
+			const titleMatch = f.Title?.toLowerCase().includes(qLower)
+			const tags = f.Tags ?? []
+			const tagsMatch = tags.some(t => (t?.Name ?? t?.name ?? '').toLowerCase().includes(qLower))
 			return Boolean(titleMatch || tagsMatch)
 		})
 
@@ -256,19 +277,17 @@ export const getArticlePages = async (): Promise<ArticleListItem[]> => {
 		if (!res) return []
 		const data: StrapiPagesResponse = await res.json()
 		if (!data.data?.length) return []
-		return data.data.map(
-			(p): ArticleListItem => ({
-				title: p.Title,
-				slug: p.Slug,
-				category: p.Category as PageCategory | undefined,
-				categorySlug:
-					p.Category != null
-						? getCategorySlug(p.Category as PageCategory)
-						: undefined,
-				seriesSlug: p.Series?.SeriesSlug ?? undefined,
-				tags: p.Tags?.map(t => t.Name) ?? [],
-			}),
-		)
+		return data.data.map((p): ArticleListItem => {
+			const f = rawPageFields(p)
+			return {
+				title: f.Title,
+				slug: f.Slug,
+				category: f.Category,
+				categorySlug: f.Category != null ? getCategorySlug(f.Category) : undefined,
+				seriesSlug: f.SeriesSlug ?? undefined,
+				tags: (f.Tags ?? []).map(t => t?.Name ?? t?.name ?? '').filter(Boolean),
+			}
+		})
 	} catch (error) {
 		console.error('Error fetching article pages:', error)
 		return []
@@ -293,32 +312,20 @@ export const getAllSeries = async (): Promise<
 		const seen = new Set<string>()
 		const result: { seriesSlug: string; name: string }[] = []
 		for (const p of data.data) {
-			if (!p.Series?.SeriesSlug || seen.has(p.Series.SeriesSlug)) continue
-			seen.add(p.Series.SeriesSlug)
-			result.push({
-				seriesSlug: p.Series.SeriesSlug,
-				name:
-					(p.Series as { SeriesName?: string }).SeriesName ??
-					p.Series.SeriesSlug,
-			})
+			const f = rawPageFields(p)
+			const seriesSlug = f.SeriesSlug
+			if (!seriesSlug || seen.has(seriesSlug)) continue
+			const raw = p as unknown as Record<string, unknown>
+			const series = (raw.Series ?? raw.series) as Record<string, unknown> | undefined
+			const name = series ? (String(series.SeriesName ?? series.seriesName ?? seriesSlug)) : seriesSlug
+			seen.add(seriesSlug)
+			result.push({ seriesSlug, name })
 		}
 		return result
 	} catch (error) {
 		console.error('Error fetching all series:', error)
 		return []
 	}
-}
-
-/** Достаёт SeriesSlug из ответа Strapi (flat или data.attributes). */
-function getSeriesSlugFromPage(
-	p: StrapiPagesResponse['data'][number],
-): string | undefined {
-	const s = p.Series as
-		| { SeriesSlug?: string; data?: { attributes?: { SeriesSlug?: string } } }
-		| null
-		| undefined
-	if (!s) return undefined
-	return s.SeriesSlug ?? s.data?.attributes?.SeriesSlug ?? undefined
 }
 
 /** Последние N статей (для блока избранного в dynamic). Только статьи с категорией — ссылки ведут в /blog/.... */
@@ -334,21 +341,23 @@ export const getFeaturedArticles = async (
 		const data: StrapiPagesResponse = await res.json()
 		if (!data.data?.length) return []
 		return data.data
-			.filter(
-				p => p.Category != null && getCategorySlug(p.Category as PageCategory),
-			)
+			.filter(p => {
+				const f = rawPageFields(p)
+				return f.Category != null && getCategorySlug(f.Category)
+			})
 			.slice(0, limit)
-			.map(
-				(p): ArticleListItem => ({
-					title: p.Title,
-					slug: p.Slug,
-					description: p.Description,
-					category: p.Category as PageCategory | undefined,
-					categorySlug: getCategorySlug(p.Category as PageCategory),
-					seriesSlug: getSeriesSlugFromPage(p),
-					tags: p.Tags?.map(t => t.Name) ?? [],
-				}),
-			)
+			.map((p): ArticleListItem => {
+				const f = rawPageFields(p)
+				return {
+					title: f.Title,
+					slug: f.Slug,
+					description: f.Description,
+					category: f.Category,
+					categorySlug: f.Category != null ? getCategorySlug(f.Category) : undefined,
+					seriesSlug: f.SeriesSlug ?? undefined,
+					tags: (f.Tags ?? []).map(t => t?.Name ?? t?.name ?? '').filter(Boolean),
+				}
+			})
 	} catch (error) {
 		console.error('Error fetching featured articles:', error)
 		return []
@@ -387,19 +396,17 @@ export const getArticlesByCategory = async (
 		if (!res) return []
 		const data: StrapiPagesResponse = await res.json()
 		if (!data.data?.length) return []
-		return data.data.map(
-			(p): ArticleListItem => ({
-				title: p.Title,
-				slug: p.Slug,
-				category: p.Category as PageCategory | undefined,
-				categorySlug:
-					p.Category != null
-						? getCategorySlug(p.Category as PageCategory)
-						: undefined,
-				seriesSlug: p.Series?.SeriesSlug ?? undefined,
-				tags: p.Tags?.map(t => t.Name) ?? [],
-			}),
-		)
+		return data.data.map((p): ArticleListItem => {
+			const f = rawPageFields(p)
+			return {
+				title: f.Title,
+				slug: f.Slug,
+				category: f.Category,
+				categorySlug: f.Category != null ? getCategorySlug(f.Category) : undefined,
+				seriesSlug: f.SeriesSlug ?? undefined,
+				tags: (f.Tags ?? []).map(t => t?.Name ?? t?.name ?? '').filter(Boolean),
+			}
+		})
 	} catch (error) {
 		console.error('Error fetching articles by category:', error)
 		return []
@@ -428,20 +435,18 @@ export const getArticlesBySeries = async (
 		if (!res) return []
 		const data: StrapiPagesResponse = await res.json()
 		if (!data.data?.length) return []
-		const list = data.data.map(
-			(p): ArticleListItem => ({
-				title: p.Title,
-				slug: p.Slug,
-				category: p.Category as PageCategory | undefined,
-				categorySlug:
-					p.Category != null
-						? getCategorySlug(p.Category as PageCategory)
-						: undefined,
-				seriesSlug: p.Series?.SeriesSlug ?? undefined,
-				seriesOrder: p.SeriesOrder,
-				tags: p.Tags?.map(t => t.Name) ?? [],
-			}),
-		)
+		const list = data.data.map((p): ArticleListItem => {
+			const f = rawPageFields(p)
+			return {
+				title: f.Title,
+				slug: f.Slug,
+				category: f.Category,
+				categorySlug: f.Category != null ? getCategorySlug(f.Category) : undefined,
+				seriesSlug: f.SeriesSlug ?? undefined,
+				seriesOrder: f.SeriesOrder,
+				tags: (f.Tags ?? []).map(t => t?.Name ?? t?.name ?? '').filter(Boolean),
+			}
+		})
 		return list.sort((a, b) => (a.seriesOrder ?? 999) - (b.seriesOrder ?? 999))
 	} catch (error) {
 		console.error('Error fetching articles by series:', error)
@@ -505,17 +510,15 @@ export const getSeriesInCategory = async (
 			description?: string | null
 		}[] = []
 		for (const p of data.data) {
-			if (!p.Series?.SeriesSlug || seen.has(p.Series.SeriesSlug)) continue
-			seen.add(p.Series.SeriesSlug)
-			const series = p.Series as {
-				SeriesName?: string
-				SeriesDescription?: string | null
-			}
-			result.push({
-				seriesSlug: p.Series.SeriesSlug,
-				name: series.SeriesName ?? p.Series.SeriesSlug,
-				description: series.SeriesDescription ?? null,
-			})
+			const f = rawPageFields(p)
+			const seriesSlug = f.SeriesSlug
+			if (!seriesSlug || seen.has(seriesSlug)) continue
+			const raw = p as unknown as Record<string, unknown>
+			const series = (raw.Series ?? raw.series) as Record<string, unknown> | undefined
+			const name = series ? String(series.SeriesName ?? series.seriesName ?? seriesSlug) : seriesSlug
+			const description = series ? (series.SeriesDescription ?? series.seriesDescription ?? null) as string | null : null
+			seen.add(seriesSlug)
+			result.push({ seriesSlug, name, description: description ?? undefined })
 		}
 		return result
 	} catch (error) {
@@ -540,13 +543,12 @@ export const getSeriesBySlug = async (
 		)
 		if (!res) return null
 		const data = await res.json()
-		const item = data.data?.[0]
+		const item = data.data?.[0] as Record<string, unknown> | undefined
 		if (!item) return null
-		return {
-			seriesSlug: item.SeriesSlug,
-			name: item.SeriesName ?? item.SeriesSlug,
-			description: item.SeriesDescription ?? null,
-		}
+		const slugFromApi = String(item.SeriesSlug ?? item.seriesSlug ?? '')
+		const name = String(item.SeriesName ?? item.seriesName ?? slugFromApi)
+		const description = (item.SeriesDescription ?? item.seriesDescription ?? null) as string | null
+		return { seriesSlug: slugFromApi, name, description }
 	} catch (error) {
 		console.error('Error fetching series by slug:', error)
 		return null
@@ -567,16 +569,17 @@ export const getSeriesPathParams = async (): Promise<
 		const data: StrapiPagesResponse = await res.json()
 		const seen = new Set<string>()
 		return (data.data || [])
-			.filter(
-				p =>
-					p.Category &&
-					getCategorySlug(p.Category as PageCategory) &&
-					p.Series?.SeriesSlug,
-			)
-			.map(p => ({
-				category: getCategorySlug(p.Category as PageCategory),
-				seriesSlug: p.Series!.SeriesSlug,
-			}))
+			.filter(p => {
+				const f = rawPageFields(p)
+				return f.Category && getCategorySlug(f.Category) && f.SeriesSlug
+			})
+			.map(p => {
+				const f = rawPageFields(p)
+				return {
+					category: getCategorySlug(f.Category!),
+					seriesSlug: f.SeriesSlug!,
+				}
+			})
 			.filter(({ category, seriesSlug }) => {
 				const key = `${category}:${seriesSlug}`
 				if (seen.has(key)) return false
@@ -610,18 +613,16 @@ export const getArticlesByTag = async (
 		const data: StrapiPagesResponse = await res.json()
 		if (!data.data?.length) return []
 
-		return data.data.map(
-			(p): ArticleListItem => ({
-				title: p.Title,
-				slug: p.Slug,
-				category: p.Category as PageCategory | undefined,
-				categorySlug:
-					p.Category != null
-						? getCategorySlug(p.Category as PageCategory)
-						: undefined,
-				tags: p.Tags?.map(t => t.Name) ?? [],
-			}),
-		)
+		return data.data.map((p): ArticleListItem => {
+			const f = rawPageFields(p)
+			return {
+				title: f.Title,
+				slug: f.Slug,
+				category: f.Category,
+				categorySlug: f.Category != null ? getCategorySlug(f.Category) : undefined,
+				tags: (f.Tags ?? []).map(t => t?.Name ?? t?.name ?? '').filter(Boolean),
+			}
+		})
 	} catch (error) {
 		console.error('Error fetching articles by tag:', error)
 		return []

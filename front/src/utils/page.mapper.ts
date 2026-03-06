@@ -109,23 +109,33 @@ function mapStrapiDynamicItem(item: StrapiDynamicItem): DynamicComponent {
 	return item as DynamicComponent
 }
 
+/** Читает атрибут из ответа Strapi (PascalCase или lowercase) */
+function strapiAttr<T>(raw: Record<string, unknown>, ...keys: string[]): T | undefined {
+	for (const k of keys) {
+		const v = raw[k]
+		if (v !== undefined && v !== null) return v as T
+	}
+	return undefined
+}
+
 export const mapStrapiPageToPage = (strapiPage: StrapiPage): Page => {
-	// Strapi 5 REST API может возвращать атрибуты в нижнем регистре (dynamic)
 	const raw = strapiPage as unknown as Record<string, unknown>
 	const rawDynamic = (raw.Dynamic ?? raw.dynamic ?? []) as StrapiDynamicItem[]
+	const series = raw.Series ?? raw.series as { SeriesSlug?: string; seriesSlug?: string } | undefined
+	const tagsRaw = (raw.Tags ?? raw.tags) as Array<{ Name?: string; name?: string }> | undefined
 	return {
-		id: strapiPage.id,
-		documentId: strapiPage.documentId,
-		title: strapiPage.Title,
-		description: strapiPage.Description,
-		slug: strapiPage.Slug,
-		typeOfPage: strapiPage.TypeOfPage,
-		category: strapiPage.Category,
-		seriesSlug: strapiPage.Series?.SeriesSlug ?? undefined,
-		tags: strapiPage.Tags?.map(t => t.Name) ?? [],
+		id: (raw.id as number) ?? strapiPage.id,
+		documentId: (raw.documentId as string) ?? strapiPage.documentId,
+		title: String(strapiAttr<string>(raw, 'Title', 'title') ?? ''),
+		description: String(strapiAttr<string>(raw, 'Description', 'description') ?? ''),
+		slug: String(strapiAttr<string>(raw, 'Slug', 'slug') ?? ''),
+		typeOfPage: strapiAttr(raw, 'TypeOfPage', 'typeOfPage') as Page['typeOfPage'],
+		category: strapiAttr(raw, 'Category', 'category') as Page['category'],
+		seriesSlug: series?.SeriesSlug ?? series?.seriesSlug ?? undefined,
+		tags: Array.isArray(tagsRaw) ? tagsRaw.map(t => t?.Name ?? t?.name ?? '').filter(Boolean) : [],
 		dynamic: rawDynamic.map(mapStrapiDynamicItem),
-		createdAt: strapiPage.createdAt,
-		updatedAt: strapiPage.updatedAt,
-		publishedAt: strapiPage.publishedAt,
+		createdAt: String(raw.createdAt ?? strapiPage.createdAt),
+		updatedAt: String(raw.updatedAt ?? strapiPage.updatedAt),
+		publishedAt: String(raw.publishedAt ?? strapiPage.publishedAt),
 	}
 }

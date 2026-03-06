@@ -40,58 +40,113 @@ function mapTextLogo(
 	return null
 }
 
+/** Читает атрибут из ответа Strapi 5 (PascalCase или lowercase) */
+function attr<T>(raw: Record<string, unknown>, ...keys: string[]): T | undefined {
+	for (const k of keys) {
+		const v = raw[k]
+		if (v !== undefined && v !== null) return v as T
+	}
+	return undefined
+}
+
 export const mapStrapiHeaderToHeader = (strapiHeader: StrapiHeader): Header => {
+	const raw = strapiHeader as unknown as Record<string, unknown>
 	const getAbsoluteUrl = (url: string): string => {
 		if (url.startsWith('http')) return url
 		return `${STRAPI_URL}${url}`
 	}
 
+	const logo = (raw.Logo ?? raw.logo) as { url?: string; alternativeText?: string } | undefined
+	const logoMob = (raw.LogoMob ?? raw.logoMob) as { url?: string; alternativeText?: string } | undefined
+	const logoWidth = attr<number>(raw, 'LogoWidth', 'logoWidth')
+	const logoHeight = attr<number>(raw, 'LogoHeight', 'logoHeight')
+	const logoMobWidth = attr<number>(raw, 'LogoMobWidth', 'logoMobWidth')
+	const logoMobHeight = attr<number>(raw, 'LogoMobHeight', 'logoMobHeight')
+
+	const textLogo = mapTextLogo(
+		(raw.TextLogo ?? raw.textLogo) as
+			| string
+			| StrapiRichTextBlock[]
+			| { content?: StrapiRichTextBlock[] }
+			| null
+			| undefined,
+	)
+
+	const menuRaw = (raw.Menu ?? raw.menu) as Array<{
+		id?: number
+		Order?: number
+		order?: number
+		Url?: string
+		url?: string
+		MenuItem?: string
+		menuItem?: string
+	}> | undefined
+	const menu = Array.isArray(menuRaw)
+		? menuRaw.map(item => ({
+				order: item.Order ?? item.order ?? 0,
+				id: item.id ?? 0,
+				url: item.Url ?? item.url ?? '/',
+				label: item.MenuItem ?? item.menuItem ?? '',
+		  }))
+		: []
+
+	const socialsRaw = (raw.Socials ?? raw.socials) as Array<{
+		id?: number
+		Link?: string
+		link?: string
+		SingleIconText?: string
+		singleIconText?: string
+		IconWidth?: number
+		IconHeight?: number
+	}> | undefined
+	const socials = Array.isArray(socialsRaw)
+		? socialsRaw.map(social => ({
+				id: social.id ?? 0,
+				link: social.Link ?? social.link ?? '',
+				iconName: social.SingleIconText ?? social.singleIconText ?? '',
+				width: social.IconWidth ?? undefined,
+				height: social.IconHeight ?? undefined,
+		  }))
+		: []
+
+	const tel = (raw.Tel ?? raw.tel) as { Tel?: string; tel?: string; link?: string } | undefined
+	const email = (raw.Email ?? raw.email) as {
+		Email?: string
+		email?: string
+		EmailLink?: string
+		emailLink?: string
+	} | undefined
+
 	return {
-		logo: strapiHeader.Logo
-			? {
-					url: getAbsoluteUrl(strapiHeader.Logo.url),
-					alt: strapiHeader.Logo.alternativeText || 'Logo',
-					width: strapiHeader.LogoWidth ?? undefined,
-					height: strapiHeader.LogoHeight ?? undefined,
-			  }
-			: undefined,
-		logoMob: strapiHeader.LogoMob
-			? {
-					url: getAbsoluteUrl(strapiHeader.LogoMob.url),
-					alt: strapiHeader.LogoMob.alternativeText || 'Logo mobile',
-					width: strapiHeader.LogoMobWidth ?? undefined,
-					height: strapiHeader.LogoMobHeight ?? undefined,
-			  }
-			: undefined,
-		textLogo: mapTextLogo(strapiHeader.TextLogo),
-		menu: Array.isArray(strapiHeader.Menu)
-			? strapiHeader.Menu.map(item => ({
-					order: item.Order,
-					id: item.id,
-					url: item.Url ?? '/',
-					label: item.MenuItem ?? '',
-			  }))
-			: [],
-		socials: Array.isArray(strapiHeader.Socials)
-			? strapiHeader.Socials.map(social => ({
-					id: social.id,
-					link: social.Link ?? '',
-					iconName: social.SingleIconText ?? '',
-					width: social.IconWidth ?? undefined,
-					height: social.IconHeight ?? undefined,
-			  }))
-			: [],
-		contacts: {
-			tel: strapiHeader.Tel
+		logo:
+			logo && logo.url
 				? {
-						value: strapiHeader.Tel.Tel,
-						href: strapiHeader.Tel.link ?? '#',
+						url: getAbsoluteUrl(logo.url),
+						alt: logo.alternativeText || 'Logo',
+						width: logoWidth ?? undefined,
+						height: logoHeight ?? undefined,
 				  }
 				: undefined,
-			email: strapiHeader.Email
+		logoMob:
+			logoMob && logoMob.url
 				? {
-						value: strapiHeader.Email.Email,
-						href: strapiHeader.Email.EmailLink ?? '#',
+						url: getAbsoluteUrl(logoMob.url),
+						alt: logoMob.alternativeText || 'Logo mobile',
+						width: logoMobWidth ?? undefined,
+						height: logoMobHeight ?? undefined,
+				  }
+				: undefined,
+		textLogo,
+		menu,
+		socials,
+		contacts: {
+			tel: tel
+				? { value: tel.Tel ?? tel.tel ?? '', href: tel.link ?? '#' }
+				: undefined,
+			email: email
+				? {
+						value: email.Email ?? email.email ?? '',
+						href: email.EmailLink ?? email.emailLink ?? '#',
 				  }
 				: undefined,
 		},
