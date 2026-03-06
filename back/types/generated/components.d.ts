@@ -191,6 +191,7 @@ export interface SeriesTypeOfContent extends Struct.ComponentSchema {
   };
   attributes: {
     SeriesName: Schema.Attribute.String;
+    SeriesOrder: Schema.Attribute.Integer;
     SeriesSlug: Schema.Attribute.String & Schema.Attribute.Unique;
   };
 }

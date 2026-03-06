@@ -92,8 +92,8 @@ export interface StrapiPage {
 	}[]
 	/** Серия (для статей) */
 	Series?: { id: number; SeriesSlug: string } | null
-	/** Порядок статьи в серии (запрашивается при getArticlesBySeries) */
-	SeriesOrder?: number
+	/** Компонент серии на странице: порядок и слаг (series.type-of-content) */
+	TypeOfContent?: { SeriesSlug?: string; SeriesOrder?: number } | null
 	Dynamic: Array<{
 		__component: string
 		id: number

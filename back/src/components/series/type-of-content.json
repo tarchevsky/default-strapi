@@ -12,6 +12,9 @@
     "SeriesSlug": {
       "type": "string",
       "unique": true
+    },
+    "SeriesOrder": {
+      "type": "integer"
     }
   },
   "config": {}

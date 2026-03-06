@@ -544,7 +544,6 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     Series: Schema.Attribute.Relation<'manyToOne', 'api::serie.serie'>;
-    SeriesOrder: Schema.Attribute.Integer & Schema.Attribute.Required;
     Slug: Schema.Attribute.UID<'Title'> &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
@@ -557,6 +556,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 60;
       }>;
+    TypeOfContent: Schema.Attribute.Component<'series.type-of-content', false>;
     TypeOfPage: Schema.Attribute.Enumeration<
       ['\u0431\u043B\u043E\u0433', '\u0441\u0442\u0430\u0442\u044C\u044F']
     >;

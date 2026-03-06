@@ -101,9 +101,20 @@
       },
       "inversedBy": "Pages"
     },
-    "SeriesOrder": {
-      "type": "integer",
-      "required": true
+    "TypeOfContent": {
+      "type": "component",
+      "repeatable": false,
+      "component": "series.type-of-content",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "TypeOfPage"
+            },
+            "статья"
+          ]
+        }
+      }
     }
   }
 }
