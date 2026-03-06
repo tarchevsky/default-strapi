@@ -20,23 +20,17 @@ import { mapStrapiPageToPage } from '@/utils/page.mapper'
 function rawPageFields(p: StrapiPagesResponse['data'][number]) {
 	const raw = p as unknown as Record<string, unknown>
 	const series = (raw.Series ?? raw.series) as Record<string, unknown> | null | undefined
-	const typeOfContent = (raw.TypeOfContent ?? raw.typeOfContent) as Record<string, unknown> | null | undefined
 	const tags = (raw.Tags ?? raw.tags) as Array<{ Name?: string; name?: string }> | undefined
-	const seriesOrder = typeOfContent
-		? (typeOfContent.SeriesOrder ?? typeOfContent.seriesOrder) as number | undefined
-		: undefined
 	return {
 		Title: String(raw.Title ?? raw.title ?? ''),
 		Slug: String(raw.Slug ?? raw.slug ?? ''),
 		Category: (raw.Category ?? raw.category) as PageCategory | undefined,
 		TypeOfPage: (raw.TypeOfPage ?? raw.typeOfPage) as string | undefined,
 		Description: typeof (raw.Description ?? raw.description) === 'string' ? (raw.Description ?? raw.description) as string : undefined,
-		SeriesOrder: seriesOrder,
-		SeriesSlug: typeOfContent
-			? (typeOfContent.SeriesSlug ?? typeOfContent.seriesSlug) as string | undefined
-			: series
-				? (series.SeriesSlug ?? series.seriesSlug) as string | undefined
-				: undefined,
+		SeriesOrder: series ? (series.SeriesOrder ?? series.seriesOrder) as number | undefined : undefined,
+		SeriesSlug: series
+			? (series.SeriesSlug ?? series.seriesSlug) as string | undefined
+			: undefined,
 		Tags: Array.isArray(tags) ? tags : undefined,
 	}
 }
@@ -436,9 +430,8 @@ export const getArticlesBySeries = async (
 				`&filters[Series][SeriesSlug][$eq]=${encodeURIComponent(seriesSlug)}` +
 				`&fields[0]=Title&fields[1]=Slug&fields[2]=Category` +
 				`&populate[Tags][fields][0]=Name` +
-				`&populate[Series][fields][0]=SeriesSlug` +
-				`&populate[TypeOfContent][fields][0]=SeriesOrder&populate[TypeOfContent][fields][1]=SeriesSlug` +
-				`&sort[0]=TypeOfContent.SeriesOrder:asc`,
+				`&populate[Series][fields][0]=SeriesSlug&populate[Series][fields][1]=SeriesOrder` +
+				`&sort[0]=Series.SeriesOrder:asc`,
 			{ next: { tags: ['pages'], revalidate: 60 } },
 		)
 		if (!res) return []

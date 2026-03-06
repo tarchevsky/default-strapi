@@ -556,7 +556,6 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 60;
       }>;
-    TypeOfContent: Schema.Attribute.Component<'series.type-of-content', false>;
     TypeOfPage: Schema.Attribute.Enumeration<
       ['\u0431\u043B\u043E\u0433', '\u0441\u0442\u0430\u0442\u044C\u044F']
     >;

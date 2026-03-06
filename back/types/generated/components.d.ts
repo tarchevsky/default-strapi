@@ -183,19 +183,6 @@ export interface MenuMenuItems extends Struct.ComponentSchema {
   };
 }
 
-export interface SeriesTypeOfContent extends Struct.ComponentSchema {
-  collectionName: 'components_series_type_of_contents';
-  info: {
-    displayName: 'TypeOfContent';
-    icon: 'archive';
-  };
-  attributes: {
-    SeriesName: Schema.Attribute.String;
-    SeriesOrder: Schema.Attribute.Integer;
-    SeriesSlug: Schema.Attribute.String & Schema.Attribute.Unique;
-  };
-}
-
 export interface TextBlockquote extends Struct.ComponentSchema {
   collectionName: 'components_text_blockquotes';
   info: {
@@ -264,7 +251,6 @@ declare module '@strapi/strapi' {
       'links.email': LinksEmail;
       'links.tel': LinksTel;
       'menu.menu-items': MenuMenuItems;
-      'series.type-of-content': SeriesTypeOfContent;
       'text.blockquote': TextBlockquote;
       'text.heading': TextHeading;
       'text.paragraph': TextParagraph;

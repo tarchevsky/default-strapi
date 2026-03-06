@@ -122,19 +122,12 @@ export const mapStrapiPageToPage = (strapiPage: StrapiPage): Page => {
 	const raw = strapiPage as unknown as Record<string, unknown>
 	const rawDynamic = (raw.Dynamic ?? raw.dynamic ?? []) as StrapiDynamicItem[]
 	const seriesRaw = (raw.Series ?? raw.series) as Record<string, unknown> | null | undefined
-	const typeOfContentRaw = (raw.TypeOfContent ?? raw.typeOfContent) as Record<string, unknown> | null | undefined
 	const tagsRaw = (raw.Tags ?? raw.tags) as Array<{ Name?: string; name?: string }> | undefined
-	const seriesSlugFromRelation =
+	const seriesSlug =
 		typeof seriesRaw?.SeriesSlug === 'string'
 			? seriesRaw.SeriesSlug
 			: typeof seriesRaw?.seriesSlug === 'string'
 				? seriesRaw.seriesSlug
-				: undefined
-	const seriesSlugFromType =
-		typeof typeOfContentRaw?.SeriesSlug === 'string'
-			? typeOfContentRaw.SeriesSlug
-			: typeof typeOfContentRaw?.seriesSlug === 'string'
-				? typeOfContentRaw.seriesSlug
 				: undefined
 	return {
 		id: (raw.id as number) ?? strapiPage.id,
@@ -144,7 +137,7 @@ export const mapStrapiPageToPage = (strapiPage: StrapiPage): Page => {
 		slug: String(strapiAttr<string>(raw, 'Slug', 'slug') ?? ''),
 		typeOfPage: strapiAttr(raw, 'TypeOfPage', 'typeOfPage') as Page['typeOfPage'],
 		category: strapiAttr(raw, 'Category', 'category') as Page['category'],
-		seriesSlug: seriesSlugFromRelation ?? seriesSlugFromType,
+		seriesSlug,
 		tags: Array.isArray(tagsRaw) ? tagsRaw.map(t => t?.Name ?? t?.name ?? '').filter(Boolean) : [],
 		dynamic: rawDynamic.map(mapStrapiDynamicItem),
 		createdAt: String(raw.createdAt ?? strapiPage.createdAt),
