@@ -111,9 +111,8 @@ function mapStrapiDynamicItem(item: StrapiDynamicItem): DynamicComponent {
 
 export const mapStrapiPageToPage = (strapiPage: StrapiPage): Page => {
 	// Strapi 5 REST API может возвращать атрибуты в нижнем регистре (dynamic)
-	const rawDynamic = ((strapiPage as Record<string, unknown>).Dynamic ??
-		(strapiPage as Record<string, unknown>).dynamic ??
-		[]) as StrapiDynamicItem[]
+	const raw = strapiPage as unknown as Record<string, unknown>
+	const rawDynamic = (raw.Dynamic ?? raw.dynamic ?? []) as StrapiDynamicItem[]
 	return {
 		id: strapiPage.id,
 		documentId: strapiPage.documentId,
