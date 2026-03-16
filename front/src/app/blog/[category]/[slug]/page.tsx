@@ -1,6 +1,7 @@
 import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs'
 import { DynamicComponentRenderer } from '@/components/DynamicComponentRenderer'
 import FadeIn from '@/components/ui/FadeIn'
+import ReadingProgressBar from '@/components/ui/ReadingProgressBar'
 import {
 	getArticlePathParams,
 	getFeaturedArticles,
@@ -72,34 +73,37 @@ export default async function Page({ params }: PageProps) {
 		page.dynamic?.filter(c => c.__component !== 'text.title') || []
 
 	return (
-		<div className='md:py-16 prose m-auto'>
-			<Breadcrumbs items={breadcrumbItems} className='mb-4' />
-			<FadeIn>
-				{page.category && page.category !== 'Статьи' && (
-					<p className='mb-2 text-sm opacity-80'>{page.category}</p>
-				)}
-				{titleComponent ? (
-					<DynamicComponentRenderer
-						component={titleComponent}
-						metaTitle={page.title}
-					/>
-				) : (
-					<h1 className='mb-4 cont'>{page.title}</h1>
-				)}
-			</FadeIn>
-			{restComponents.length > 0 && (
-				<FadeIn className='ind cont flex flex-col gap-6 md:gap-8 text-[15px] md:text-base leading-relaxed'>
-					{restComponents.map((component, index) => (
+		<>
+			<ReadingProgressBar />
+			<div className='md:py-16 prose m-auto'>
+				<Breadcrumbs items={breadcrumbItems} className='mb-4' />
+				<FadeIn>
+					{page.category && page.category !== 'Статьи' && (
+						<p className='mb-2 text-sm opacity-80'>{page.category}</p>
+					)}
+					{titleComponent ? (
 						<DynamicComponentRenderer
-							key={`${component.__component}-${component.id}-${index}`}
-							component={component}
-							featuredArticles={featuredArticles}
-							seriesRows={seriesRows}
+							component={titleComponent}
 							metaTitle={page.title}
 						/>
-					))}
+					) : (
+						<h1 className='mb-4 cont'>{page.title}</h1>
+					)}
 				</FadeIn>
-			)}
-		</div>
+				{restComponents.length > 0 && (
+					<FadeIn className='ind cont flex flex-col gap-6 md:gap-8 text-[15px] md:text-base leading-relaxed'>
+						{restComponents.map((component, index) => (
+							<DynamicComponentRenderer
+								key={`${component.__component}-${component.id}-${index}`}
+								component={component}
+								featuredArticles={featuredArticles}
+								seriesRows={seriesRows}
+								metaTitle={page.title}
+							/>
+						))}
+					</FadeIn>
+				)}
+			</div>
+		</>
 	)
 }

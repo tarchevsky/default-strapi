@@ -7,6 +7,7 @@ import {
 	getSeriesInCategory,
 } from '@/services/page.service'
 import { CATEGORY_SLUG_MAP, getCategoryBySlug } from '@/types/page.types'
+import ReadingProgressBar from '@/components/ui/ReadingProgressBar'
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -50,45 +51,48 @@ export default async function Page({ params }: PageProps) {
 	]
 
 	return (
-		<div className='cont md:py-16'>
-			<Breadcrumbs items={breadcrumbItems} className='mb-4' />
-			<h1 className='mb-6'>{categoryLabel}</h1>
+		<>
+			<ReadingProgressBar />
+			<div className='cont md:py-16'>
+				<Breadcrumbs items={breadcrumbItems} className='mb-4' />
+				<h1 className='mb-6'>{categoryLabel}</h1>
 
-			<BarLinkList
-				items={articles.map(article => ({
-					href: getArticleHref(article),
-					name: article.title,
-				}))}
-				className='list-none space-y-2 pl-0 pt-2 mb-10'
-				emptyMessage='В этой категории пока нет статей.'
-			/>
+				<BarLinkList
+					items={articles.map(article => ({
+						href: getArticleHref(article),
+						name: article.title,
+					}))}
+					className='list-none space-y-2 pl-0 pt-2 mb-10'
+					emptyMessage='В этой категории пока нет статей.'
+				/>
 
-			{seriesList.length > 0 && (
-				<section className='border-l-2 border-base-content/20 pl-4 py-2 mb-16'>
+				{seriesList.length > 0 && (
+					<section className='border-l-2 border-base-content/20 pl-4 py-2 mb-16'>
+						<Link
+							href={`/blog/${category}/series`}
+							className='text-base font-semibold link link-hover block mb-3'
+						>
+							Серии
+						</Link>
+						<BarLinkList
+							items={seriesList.map(s => ({
+								href: `/blog/${category}/series/${s.seriesSlug}`,
+								name: s.name,
+								description: s.description ?? undefined,
+							}))}
+						/>
+					</section>
+				)}
+
+				<p>
 					<Link
-						href={`/blog/${category}/series`}
-						className='text-base font-semibold link link-hover block mb-3'
+						href='/blog'
+						className='text-xs text-gray-400 border-t-1 border-t-gray-400 pt-2 transition-colors ease-in duration-200 hover:text-gray-600 hover:border-t-gray-600'
 					>
-						Серии
+						Обратно к статьям
 					</Link>
-					<BarLinkList
-						items={seriesList.map(s => ({
-							href: `/blog/${category}/series/${s.seriesSlug}`,
-							name: s.name,
-							description: s.description ?? undefined,
-						}))}
-					/>
-				</section>
-			)}
-
-			<p>
-				<Link
-				href='/blog'
-				className='text-xs text-gray-400 border-t-1 border-t-gray-400 pt-2 transition-colors ease-in duration-200 hover:text-gray-600 hover:border-t-gray-600'
-			>
-				Обратно к статьям
-			</Link>
-			</p>
-		</div>
+				</p>
+			</div>
+		</>
 	)
 }
