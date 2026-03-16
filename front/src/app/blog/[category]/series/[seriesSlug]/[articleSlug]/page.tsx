@@ -1,8 +1,8 @@
 import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs'
 import { DynamicComponentRenderer } from '@/components/DynamicComponentRenderer'
+import ArticleToc from '@/components/ui/ArticleToc'
 import FadeIn from '@/components/ui/FadeIn'
 import ReadingProgressBar from '@/components/ui/ReadingProgressBar'
-import ArticleToc from '@/components/ui/ArticleToc'
 import {
 	getArticlePathParams,
 	getFeaturedArticles,
@@ -44,11 +44,7 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
 	const { category, seriesSlug, articleSlug } = await params
 	const page = await getPageBySlug(articleSlug, category)
-	if (
-		!page ||
-		page.typeOfPage !== 'статья' ||
-		page.seriesSlug !== seriesSlug
-	)
+	if (!page || page.typeOfPage !== 'статья' || page.seriesSlug !== seriesSlug)
 		return { title: 'Страница не найдена' }
 	return { title: page.title, description: page.description }
 }
@@ -71,11 +67,7 @@ export default async function Page({ params }: PageProps) {
 			: Promise.resolve([]),
 	])
 
-	if (
-		!page ||
-		page.typeOfPage !== 'статья' ||
-		page.seriesSlug !== seriesSlug
-	)
+	if (!page || page.typeOfPage !== 'статья' || page.seriesSlug !== seriesSlug)
 		notFound()
 
 	const parentLabel = blogPage?.title ?? 'Блог'
@@ -103,7 +95,7 @@ export default async function Page({ params }: PageProps) {
 	return (
 		<>
 			<ReadingProgressBar />
-			<div className='relative md:py-16 prose m-auto'>
+			<div className='md:py-16 prose m-auto'>
 				<ArticleToc containerId='article-content' />
 				<Breadcrumbs items={breadcrumbItems} className='mb-4' />
 				<FadeIn>
