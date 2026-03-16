@@ -73,7 +73,7 @@ export default async function Page({ params }: PageProps) {
 	return (
 		<>
 			<ReadingProgressBar />
-			<div className='md:py-16 prose m-auto'>
+			<div className='md:py-16 prose m-auto relative'>
 				<ArticleToc containerId='article-content' />
 				<Breadcrumbs items={breadcrumbItems} className='mb-4' />
 				<FadeIn>
