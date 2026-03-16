@@ -2,6 +2,7 @@ import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs'
 import { DynamicComponentRenderer } from '@/components/DynamicComponentRenderer'
 import FadeIn from '@/components/ui/FadeIn'
 import ReadingProgressBar from '@/components/ui/ReadingProgressBar'
+import ArticleToc from '@/components/ui/ArticleToc'
 import {
 	getArticlePathParams,
 	getFeaturedArticles,
@@ -102,7 +103,8 @@ export default async function Page({ params }: PageProps) {
 	return (
 		<>
 			<ReadingProgressBar />
-			<div className='md:py-16 prose m-auto'>
+			<div className='relative md:py-16 prose m-auto'>
+				<ArticleToc containerId='article-content' />
 				<Breadcrumbs items={breadcrumbItems} className='mb-4' />
 				<FadeIn>
 					{page.category && page.category !== 'Статьи' && (
@@ -118,7 +120,10 @@ export default async function Page({ params }: PageProps) {
 					)}
 				</FadeIn>
 				{restComponents.length > 0 && (
-					<FadeIn className='ind cont flex flex-col gap-6 md:gap-8 text-[15px] md:text-base leading-relaxed'>
+					<div
+						id='article-content'
+						className='ind cont flex flex-col gap-6 md:gap-8 text-[15px] md:text-base leading-relaxed'
+					>
 						{restComponents.map((component, index) => (
 							<DynamicComponentRenderer
 								key={`${component.__component}-${component.id}-${index}`}
@@ -128,7 +133,7 @@ export default async function Page({ params }: PageProps) {
 								metaTitle={page.title}
 							/>
 						))}
-					</FadeIn>
+					</div>
 				)}
 			</div>
 		</>
