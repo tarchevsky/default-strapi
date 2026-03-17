@@ -44,7 +44,7 @@ const ArticleToc = ({ containerId }: ArticleTocProps) => {
 	return (
 		<nav
 			aria-label='Оглавление статьи'
-			className='pointer-events-auto hidden lg:block absolute top-32 left-0 -translate-x-full w-52 text-xs text-gray-500'
+			className='pointer-events-auto hidden lg:block lg:sticky lg:top-32 lg:self-start w-52 max-h-[calc(100vh-8rem)] overflow-auto text-xs text-gray-500'
 		>
 			<div className='mb-2 tracking-wide text-gray-400'>Оглавление</div>
 			<ul className='space-y-1 list-none pl-0'>

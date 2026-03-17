@@ -95,38 +95,40 @@ export default async function Page({ params }: PageProps) {
 	return (
 		<>
 			<ReadingProgressBar />
-			<div className='md:py-16 prose m-auto relative'>
+			<div className='md:py-16 mx-auto max-w-6xl px-4 lg:flex lg:gap-12'>
 				<ArticleToc containerId='article-content' />
-				<Breadcrumbs items={breadcrumbItems} className='mb-4' />
-				<FadeIn>
-					{page.category && page.category !== 'Статьи' && (
-						<p className='mb-2 text-sm opacity-80'>{page.category}</p>
-					)}
-					{titleComponent ? (
-						<DynamicComponentRenderer
-							component={titleComponent}
-							metaTitle={page.title}
-						/>
-					) : (
-						<h1 className='mb-4 cont'>{page.title}</h1>
-					)}
-				</FadeIn>
-				{restComponents.length > 0 && (
-					<div
-						id='article-content'
-						className='ind cont flex flex-col gap-6 md:gap-8 text-[15px] md:text-base leading-relaxed'
-					>
-						{restComponents.map((component, index) => (
+				<div className='flex-1 prose'>
+					<Breadcrumbs items={breadcrumbItems} className='mb-4' />
+					<FadeIn>
+						{page.category && page.category !== 'Статьи' && (
+							<p className='mb-2 text-sm opacity-80'>{page.category}</p>
+						)}
+						{titleComponent ? (
 							<DynamicComponentRenderer
-								key={`${component.__component}-${component.id}-${index}`}
-								component={component}
-								featuredArticles={featuredArticles}
-								seriesRows={seriesRows}
+								component={titleComponent}
 								metaTitle={page.title}
 							/>
-						))}
-					</div>
-				)}
+						) : (
+							<h1 className='mb-4 cont'>{page.title}</h1>
+						)}
+					</FadeIn>
+					{restComponents.length > 0 && (
+						<div
+							id='article-content'
+							className='ind cont flex flex-col gap-6 md:gap-8 text-[15px] md:text-base leading-relaxed'
+						>
+							{restComponents.map((component, index) => (
+								<DynamicComponentRenderer
+									key={`${component.__component}-${component.id}-${index}`}
+									component={component}
+									featuredArticles={featuredArticles}
+									seriesRows={seriesRows}
+									metaTitle={page.title}
+								/>
+							))}
+						</div>
+					)}
+				</div>
 			</div>
 		</>
 	)
