@@ -83,6 +83,20 @@ export interface HeroBlockComponent {
 	subtitle?: string | null
 }
 
+export interface StepsPairComponent {
+	__component: 'steps.pair'
+	id: number
+	StepTitle?: string | null
+	StepText?: string | null
+	StepCaption?: string | null
+}
+
+export interface StepsStepsComponent {
+	__component: 'steps.steps'
+	id: number
+	Pair: StepsPairComponent[]
+}
+
 export type GridWidth =
 	| 'w-1-4'
 	| 'w-1-3'
@@ -154,4 +168,5 @@ export type DynamicComponent =
 	| GridComponent
 	| TitleComponent
 	| LineComponent
+	| StepsStepsComponent
 	| HeroBlockComponent

@@ -183,6 +183,30 @@ export interface MenuMenuItems extends Struct.ComponentSchema {
   };
 }
 
+export interface StepsPair extends Struct.ComponentSchema {
+  collectionName: 'components_steps_pairs';
+  info: {
+    displayName: 'Pair';
+    icon: 'bulletList';
+  };
+  attributes: {
+    StepCaption: Schema.Attribute.String;
+    StepText: Schema.Attribute.RichText;
+    StepTitle: Schema.Attribute.String;
+  };
+}
+
+export interface StepsSteps extends Struct.ComponentSchema {
+  collectionName: 'components_steps_steps';
+  info: {
+    displayName: 'Steps';
+    icon: 'bulletList';
+  };
+  attributes: {
+    Pair: Schema.Attribute.Component<'steps.pair', true>;
+  };
+}
+
 export interface TextBlockquote extends Struct.ComponentSchema {
   collectionName: 'components_text_blockquotes';
   info: {
@@ -251,6 +275,8 @@ declare module '@strapi/strapi' {
       'links.email': LinksEmail;
       'links.tel': LinksTel;
       'menu.menu-items': MenuMenuItems;
+      'steps.pair': StepsPair;
+      'steps.steps': StepsSteps;
       'text.blockquote': TextBlockquote;
       'text.heading': TextHeading;
       'text.paragraph': TextParagraph;

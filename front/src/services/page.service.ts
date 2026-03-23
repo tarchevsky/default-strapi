@@ -125,7 +125,8 @@ const PAGE_POPULATE_BASE =
 	'&populate[Dynamic][on][layout.grid][populate][Columns][populate][Icon][populate]=*' +
 	'&populate[Dynamic][on][blocks.hero][populate][Image][populate]=*' +
 	'&populate[Dynamic][on][blocks.hero][populate][Title][populate]=*' +
-	'&populate[Dynamic][on][blocks.hero][populate][Subtitle][populate]=*'
+	'&populate[Dynamic][on][blocks.hero][populate][Subtitle][populate]=*' +
+	'&populate[Dynamic][on][steps.steps][populate]=*'
 
 export const getPageBySlug = async (
 	slug: string,

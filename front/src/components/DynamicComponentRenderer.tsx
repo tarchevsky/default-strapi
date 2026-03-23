@@ -5,12 +5,14 @@ import {
 	GridIconItem,
 	GridWidth,
 	HeroBlockComponent,
+	StepsStepsComponent,
 } from '@/types/dynamic.types'
 import { ArticleListItem } from '@/types/page.types'
 import Image from 'next/image'
 import type { JSX } from 'react'
 import { Blockquote } from './Blockquote'
 import { FeaturedSeries, type SeriesRow } from './FeaturedSeries'
+import { StepsTimeline } from './StepsTimeline'
 import Hero from './Hero'
 import { IconRenderer } from './IconRenderer'
 import { MarkdownRenderer } from './MarkdownRenderer'
@@ -152,6 +154,11 @@ export const DynamicComponentRenderer = ({
 			const subtitle = hero.subtitle?.trim() || undefined
 
 			return <Hero title={title} src={src} alt={alt} subtitle={subtitle} />
+		}
+		case 'steps.steps': {
+			const steps = component as StepsStepsComponent
+			if (!steps.Pair?.length) return null
+			return <StepsTimeline pairs={steps.Pair} />
 		}
 		case 'layout.grid': {
 			const gapPx = (component.Gap ?? 0) * 8

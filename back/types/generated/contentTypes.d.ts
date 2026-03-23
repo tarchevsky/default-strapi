@@ -537,6 +537,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'interactivity.featured-posts',
         'blocks.hero',
         'interactivity.featured-series',
+        'steps.steps',
       ]
     >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;

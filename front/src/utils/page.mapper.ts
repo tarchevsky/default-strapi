@@ -7,6 +7,8 @@ import {
 	HeroImage,
 	ImgComponent,
 	ParagraphComponent,
+	StepsPairComponent,
+	StepsStepsComponent,
 } from '@/types/dynamic.types'
 import { Page, StrapiPage } from '@/types/page.types'
 
@@ -104,6 +106,42 @@ function mapStrapiDynamicItem(item: StrapiDynamicItem): DynamicComponent {
 					? String(subtitleComponent.Paragraph)
 					: null,
 		} satisfies HeroBlockComponent
+	}
+
+	if (item.__component === 'steps.steps') {
+		const rawPairs = (item.Pair ?? item.pair) as unknown
+		const pairs = Array.isArray(rawPairs)
+			? rawPairs.map(p => {
+					const pair = p as Record<string, unknown>
+					return {
+						__component: 'steps.pair',
+						id: (pair.id as number) ?? 0,
+						StepTitle: String(
+							pair.StepTitle ?? pair.stepTitle ?? pair.Steptitle ?? '',
+						),
+						StepText: String(
+							pair.StepText ??
+								pair.stepText ??
+								pair.steptext ??
+								pair.Steptext ??
+								'',
+						),
+						StepCaption: String(
+							pair.StepCaption ??
+								pair.stepCaption ??
+								pair.stepcaption ??
+								pair.Stepcaption ??
+								'',
+						),
+					} satisfies StepsPairComponent
+				})
+			: []
+
+		return {
+			__component: 'steps.steps',
+			id: item.id,
+			Pair: pairs,
+		} satisfies StepsStepsComponent
 	}
 
 	return item as DynamicComponent

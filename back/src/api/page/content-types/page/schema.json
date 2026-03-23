@@ -41,7 +41,8 @@
         "text.blockquote",
         "interactivity.featured-posts",
         "blocks.hero",
-        "interactivity.featured-series"
+        "interactivity.featured-series",
+        "steps.steps"
       ]
     },
     "TypeOfPage": {

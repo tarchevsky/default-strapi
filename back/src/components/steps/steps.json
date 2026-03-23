@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_steps_steps",
+  "info": {
+    "displayName": "Steps",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "Pair": {
+      "type": "component",
+      "component": "steps.pair",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

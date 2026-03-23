@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_steps_pairs",
+  "info": {
+    "displayName": "Pair",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "StepTitle": {
+      "type": "string"
+    },
+    "StepText": {
+      "type": "richtext"
+    },
+    "StepCaption": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}
