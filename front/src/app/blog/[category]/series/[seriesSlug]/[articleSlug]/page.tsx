@@ -1,10 +1,12 @@
 import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs'
 import { DynamicComponentRenderer } from '@/components/DynamicComponentRenderer'
+import SeriesArticleNavigation from '@/components/SeriesArticleNavigation'
 import ArticleToc from '@/components/ui/ArticleToc'
 import FadeIn from '@/components/ui/FadeIn'
 import ReadingProgressBar from '@/components/ui/ReadingProgressBar'
 import {
 	getArticlePathParams,
+	getArticlesBySeries,
 	getFeaturedArticles,
 	getPageBySlug,
 	getSeriesBySlug,
@@ -58,13 +60,14 @@ export default async function Page({ params }: PageProps) {
 		getPageBySlug('blog'),
 		getSeriesBySlug(seriesSlug),
 	])
-	const [featuredArticles, seriesRows] = await Promise.all([
+	const [featuredArticles, seriesRows, seriesArticles] = await Promise.all([
 		page?.dynamic && hasFeaturedPostsInDynamic(page.dynamic)
 			? getFeaturedArticles(10)
 			: Promise.resolve([]),
 		page?.dynamic && hasFeaturedSeriesInDynamic(page.dynamic)
 			? getSeriesRows()
 			: Promise.resolve([]),
+		getArticlesBySeries(category, seriesSlug),
 	])
 
 	if (!page || page.typeOfPage !== 'статья' || page.seriesSlug !== seriesSlug)
@@ -91,6 +94,12 @@ export default async function Page({ params }: PageProps) {
 	const titleComponent = page.dynamic?.find(c => c.__component === 'text.title')
 	const restComponents =
 		page.dynamic?.filter(c => c.__component !== 'text.title') || []
+	const currentIndex = seriesArticles.findIndex(article => article.slug === articleSlug)
+	const previousArticle = currentIndex > 0 ? seriesArticles[currentIndex - 1] : undefined
+	const nextArticle =
+		currentIndex >= 0 && currentIndex < seriesArticles.length - 1
+			? seriesArticles[currentIndex + 1]
+			: undefined
 
 	return (
 		<>
@@ -112,6 +121,10 @@ export default async function Page({ params }: PageProps) {
 							<h1 className='mb-4 cont'>{page.title}</h1>
 						)}
 					</FadeIn>
+					<SeriesArticleNavigation
+						previousArticle={previousArticle}
+						nextArticle={nextArticle}
+					/>
 					{restComponents.length > 0 && (
 						<div
 							id='article-content'
@@ -128,6 +141,10 @@ export default async function Page({ params }: PageProps) {
 							))}
 						</div>
 					)}
+					<SeriesArticleNavigation
+						previousArticle={previousArticle}
+						nextArticle={nextArticle}
+					/>
 				</div>
 			</div>
 		</>

@@ -20,6 +20,32 @@
         "h5",
         "h6"
       ]
+    },
+    "Size": {
+      "type": "enumeration",
+      "enum": [
+        "xs",
+        "sm",
+        "base",
+        "lg",
+        "xl",
+        "twoxl",
+        "threexl",
+        "fourxl"
+      ]
+    },
+    "MobSize": {
+      "type": "enumeration",
+      "enum": [
+        "xs",
+        "sm",
+        "base",
+        "lg",
+        "xl",
+        "twoxl",
+        "threexl",
+        "fourxl"
+      ]
     }
   },
   "config": {}

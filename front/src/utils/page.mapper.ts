@@ -3,6 +3,7 @@ import {
 	DynamicComponent,
 	FeaturedPostsComponent,
 	FeaturedSeriesComponent,
+	HeadingComponent,
 	HeroBlockComponent,
 	HeroImage,
 	ImgComponent,
@@ -43,6 +44,24 @@ function mapStrapiDynamicItem(item: StrapiDynamicItem): DynamicComponent {
 			id: item.id,
 			FeaturedSeries: Boolean(item.FeaturedSeries),
 		} satisfies FeaturedSeriesComponent
+	}
+	if (item.__component === 'text.heading') {
+		return {
+			__component: 'text.heading',
+			id: item.id,
+			headinglevel: String(
+				item.headinglevel ?? item.Headinglevel ?? 'h2',
+			) as HeadingComponent['headinglevel'],
+			Heading: String(item.Heading ?? item.heading ?? ''),
+			MobSize:
+				typeof (item.MobSize ?? item.mobSize) === 'string'
+					? String(item.MobSize ?? item.mobSize) as HeadingComponent['MobSize']
+					: undefined,
+			Size:
+				typeof (item.Size ?? item.size) === 'string'
+					? String(item.Size ?? item.size) as HeadingComponent['Size']
+					: undefined,
+		} satisfies HeadingComponent
 	}
 	if (item.__component === 'img.img') {
 		const img = (item.Img ?? item.img) as unknown

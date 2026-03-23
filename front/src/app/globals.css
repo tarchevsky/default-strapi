@@ -121,21 +121,6 @@ h6 {
 	@apply text-sm md:text-base;
 }
 
-.prose h1 {
-	@apply text-xl md:text-2xl;
-}
-.prose h2 {
-	@apply text-lg md:text-xl;
-}
-.prose h3 {
-	@apply text-base md:text-lg;
-}
-.prose h4,
-.prose h5,
-.prose h6 {
-	@apply text-sm md:text-base;
-}
-
 p {
 	margin: 0;
 }

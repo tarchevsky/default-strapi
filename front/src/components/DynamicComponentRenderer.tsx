@@ -3,6 +3,7 @@ import {
 	DynamicComponent,
 	FeaturedSeriesComponent,
 	GridIconItem,
+	HeadingSize,
 	GridWidth,
 	HeroBlockComponent,
 	StepsStepsComponent,
@@ -25,6 +26,92 @@ interface DynamicComponentRendererProps {
 	metaTitle?: string
 }
 
+const headingSizeToTextClass = (size?: HeadingSize) => {
+	switch (size) {
+		case 'xs':
+			return 'text-xs'
+		case 'sm':
+			return 'text-sm'
+		case 'base':
+			return 'text-base'
+		case 'lg':
+			return 'text-lg'
+		case 'xl':
+			return 'text-xl'
+		case 'twoxl':
+			return 'text-2xl'
+		case 'threexl':
+			return 'text-3xl'
+		case 'fourxl':
+			return 'text-4xl'
+		default:
+			return 'text-base'
+	}
+}
+
+const normalizeHeadingSize = (value: unknown): HeadingSize | undefined => {
+	if (typeof value !== 'string') return undefined
+	switch (value) {
+		case 'xs':
+		case 'sm':
+		case 'base':
+		case 'lg':
+		case 'xl':
+		case 'twoxl':
+		case 'threexl':
+		case 'fourxl':
+			return value
+		// Поддержка старых значений, если они уже есть в контенте
+		case '2xl':
+			return 'twoxl'
+		case '3xl':
+			return 'threexl'
+		case '4xl':
+			return 'fourxl'
+		default:
+			return undefined
+	}
+}
+
+const getDefaultHeadingSizesByLevel = (
+	level: keyof JSX.IntrinsicElements | undefined,
+): { mobile: HeadingSize; desktop: HeadingSize } => {
+	switch (level) {
+		case 'h1':
+			return { mobile: 'xl', desktop: 'twoxl' }
+		case 'h2':
+			return { mobile: 'lg', desktop: 'xl' }
+		case 'h3':
+			return { mobile: 'base', desktop: 'lg' }
+		case 'h4':
+		case 'h5':
+		case 'h6':
+		default:
+			return { mobile: 'sm', desktop: 'base' }
+	}
+}
+
+const buildHeadingSizeClasses = (mobileSize: HeadingSize, desktopSize: HeadingSize) => {
+	const mobileClass = headingSizeToTextClass(mobileSize)
+	const desktopClass = headingSizeToTextClass(desktopSize)
+
+	// max-md + md гарантирует, что мобильный размер не перебьёт десктопный
+	return `max-md:${mobileClass} md:${desktopClass}`
+}
+
+const getHeadingSizes = (value: unknown): {
+	mobileSize?: HeadingSize
+	desktopSize?: HeadingSize
+} => {
+	if (!value || typeof value !== 'object') return {}
+	const headingLike = value as Record<string, unknown>
+
+	return {
+		mobileSize: normalizeHeadingSize(headingLike.MobSize ?? headingLike.mobSize),
+		desktopSize: normalizeHeadingSize(headingLike.Size ?? headingLike.size),
+	}
+}
+
 export const DynamicComponentRenderer = ({
 	component,
 	featuredArticles,
@@ -34,8 +121,16 @@ export const DynamicComponentRenderer = ({
 	switch (component.__component) {
 		case 'text.heading': {
 			const HeadingTag = component.headinglevel
+			const { mobileSize, desktopSize } = getHeadingSizes(component)
+			const defaults = getDefaultHeadingSizesByLevel(HeadingTag)
+			const headingSizeClasses = buildHeadingSizeClasses(
+				mobileSize ?? defaults.mobile,
+				desktopSize ?? defaults.desktop,
+			)
 			return (
-				<HeadingTag className='font-bold mb-2'>{component.Heading}</HeadingTag>
+				<HeadingTag className={`${headingSizeClasses} font-bold mb-2`}>
+					{component.Heading}
+				</HeadingTag>
 			)
 		}
 		case 'text.paragraph':
@@ -396,10 +491,16 @@ export const DynamicComponentRenderer = ({
 								{Array.isArray(col.Heading) &&
 									col.Heading.map(h => {
 										const Tag = h.headinglevel as keyof JSX.IntrinsicElements
+										const { mobileSize, desktopSize } = getHeadingSizes(h)
+										const defaults = getDefaultHeadingSizesByLevel(Tag)
+										const headingSizeClasses = buildHeadingSizeClasses(
+											mobileSize ?? defaults.mobile,
+											desktopSize ?? defaults.desktop,
+										)
 										return (
 											<Tag
 												key={h.id}
-												className='text-base md:text-lg font-semibold mb-2'
+												className={`${headingSizeClasses} font-semibold mb-2`}
 											>
 												{h.Heading}
 											</Tag>

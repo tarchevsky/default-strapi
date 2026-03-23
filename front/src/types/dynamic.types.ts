@@ -1,10 +1,22 @@
 import { StrapiMedia } from './media.types'
 
+export type HeadingSize =
+	| 'xs'
+	| 'sm'
+	| 'base'
+	| 'lg'
+	| 'xl'
+	| 'twoxl'
+	| 'threexl'
+	| 'fourxl'
+
 export interface HeadingComponent {
 	__component: 'text.heading'
 	id: number
 	headinglevel: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 	Heading: string
+	MobSize?: HeadingSize
+	Size?: HeadingSize
 }
 
 export interface ParagraphComponent {
@@ -118,7 +130,7 @@ export type GridDirection = 'column' | 'row'
 // поэтому используем Pick от базовых компонент без этого поля
 export type GridHeading = Pick<
 	HeadingComponent,
-	'id' | 'Heading' | 'headinglevel'
+	'id' | 'Heading' | 'headinglevel' | 'MobSize' | 'Size'
 >
 export type GridParagraph = Pick<
 	ParagraphComponent,

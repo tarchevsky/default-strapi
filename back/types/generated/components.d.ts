@@ -231,6 +231,12 @@ export interface TextHeading extends Struct.ComponentSchema {
       ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
     > &
       Schema.Attribute.DefaultTo<'h3'>;
+    MobSize: Schema.Attribute.Enumeration<
+      ['xs', 'sm', 'base', 'lg', 'xl', 'twoxl', 'threexl', 'fourxl']
+    >;
+    Size: Schema.Attribute.Enumeration<
+      ['xs', 'sm', 'base', 'lg', 'xl', 'twoxl', 'threexl', 'fourxl']
+    >;
   };
 }
 
