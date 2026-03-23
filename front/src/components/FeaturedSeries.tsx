@@ -36,7 +36,7 @@ export function FeaturedSeries({ seriesRows }: FeaturedSeriesProps) {
 									<Link
 										key={`${row.categorySlug}-${s.seriesSlug}`}
 										href={`/blog/${row.categorySlug}/series/${s.seriesSlug}`}
-										className='flex-shrink-0 text-2xl md:text-4xl font-bold tracking-tight hover:opacity-80 transition-opacity border-b-2 border-transparent hover:border-current'
+										className='flex-shrink-0 text-2xl md:text-4xl font-bold tracking-tight hover:scale-120 transition-scale duration-200 border-b-2 border-transparent hover:border-current'
 									>
 										{s.name}
 									</Link>
