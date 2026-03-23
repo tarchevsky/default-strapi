@@ -14,6 +14,7 @@ interface ArticleTocProps {
 
 const ArticleToc = ({ containerId }: ArticleTocProps) => {
 	const [items, setItems] = useState<TocItem[]>([])
+	const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
 	useEffect(() => {
 		const container = document.getElementById(containerId)
@@ -32,13 +33,60 @@ const ArticleToc = ({ containerId }: ArticleTocProps) => {
 			})
 			.filter((x): x is TocItem => x !== null)
 
+		setActiveIndex(null)
 		setItems(mapped)
 	}, [containerId])
+
+	useEffect(() => {
+		if (items.length === 0) return
+
+		const elementToIndex = new Map<HTMLElement, number>(
+			items.map((item, idx) => [item.element, idx]),
+		)
+
+		// Смещаем “активность” ближе к верху экрана, чтобы подсветка обновлялась
+		// до смены контента (с учётом sticky-меню).
+		const topOffsetPx = 140
+
+		const observer = new IntersectionObserver(
+			entries => {
+				let bestIdx: number | null = null
+				let bestScore = Number.POSITIVE_INFINITY
+
+				for (const entry of entries) {
+					if (!entry.isIntersecting) continue
+					const el = entry.target as HTMLElement
+					const idx = elementToIndex.get(el)
+					if (idx === undefined) continue
+
+					// Выбираем тот заголовок, который ближе всего к области “активности”.
+					const score = Math.abs(entry.boundingClientRect.top - topOffsetPx)
+					if (score < bestScore) {
+						bestScore = score
+						bestIdx = idx
+					}
+				}
+
+				if (bestIdx !== null) setActiveIndex(bestIdx)
+			},
+			{
+				// Когда заголовок попадает в верхнюю часть viewport — он считается активным.
+				rootMargin: '-20% 0px -65% 0px',
+				threshold: [0, 0.1, 0.25, 0.5],
+			},
+		)
+
+		for (const item of items) observer.observe(item.element)
+
+		return () => observer.disconnect()
+	}, [items])
 
 	if (items.length === 0) return null
 
 	const handleClick = (el: HTMLElement) => {
 		el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+		const idx = items.findIndex(i => i.element === el)
+		if (idx >= 0) setActiveIndex(idx)
 	}
 
 	return (
@@ -57,7 +105,9 @@ const ArticleToc = ({ containerId }: ArticleTocProps) => {
 					>
 						<button
 							type='button'
-							className='cursor-pointer text-left hover:text-gray-700'
+							className={`cursor-pointer text-left hover:text-gray-700 ${
+								activeIndex === index ? 'text-gray-900 font-medium' : ''
+							}`}
 							onClick={() => handleClick(item.element)}
 						>
 							{item.text}
