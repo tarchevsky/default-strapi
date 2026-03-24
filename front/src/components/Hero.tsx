@@ -55,7 +55,9 @@ const Hero = ({
 					unoptimized={unoptimized}
 				/>
 				<div>
-					<h1 className='text-4xl font-extrabold text-slate-800'>{title}</h1>
+					<h1 className='text-4xl md:text-5xl font-extrabold text-slate-800'>
+						{title}
+					</h1>
 					{subtitle ? (
 						<p className='mt-2 text-base text-slate-700'>{subtitle}</p>
 					) : null}
@@ -75,7 +77,7 @@ const Hero = ({
 				<div className='-ml-16 z-10 relative'>
 					{/* Базовый текст — тёмный (виден справа от круга) */}
 					<div className='text-slate-800'>
-						<h1 className='text-5xl md:text-7xl font-extrabold [text-shadow:0_1px_2px_rgba(0,0,0,0.08)]'>
+						<h1 className='text-4xl md:text-5xl font-extrabold [text-shadow:0_1px_2px_rgba(0,0,0,0.08)]'>
 							{title}
 						</h1>
 						{subtitle ? (
@@ -92,7 +94,7 @@ const Hero = ({
 							mixBlendMode: 'screen',
 						}}
 					>
-						<h1 className='text-5xl md:text-7xl font-extrabold [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]'>
+						<h1 className='text-4xl md:text-5xl font-extrabold [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]'>
 							{title}
 						</h1>
 						{subtitle ? (

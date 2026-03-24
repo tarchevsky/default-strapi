@@ -21,7 +21,9 @@ export function FeaturedPosts({ articles }: FeaturedPostsProps) {
 						{item.categorySlug && (
 							<span className='text-xs opacity-70'>{item.category}</span>
 						)}
-						<h3 className='font-bold mt-1 line-clamp-2'>{item.title}</h3>
+						<h3 className='font-bold mt-1 line-clamp-2 text-2xl'>
+							{item.title}
+						</h3>
 						{item.description && (
 							<p className='text-sm mt-2 opacity-80 line-clamp-2'>
 								{item.description}

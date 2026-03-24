@@ -47,8 +47,10 @@ export default function SeriesArticleNavigation({
 			className={['cont my-6 md:my-8', className].filter(Boolean).join(' ')}
 		>
 			<div className='grid gap-3 md:grid-cols-2'>
-				<div>{previousArticle ? <NavCard direction='prev' article={previousArticle} /> : null}</div>
-				<div>{nextArticle ? <NavCard direction='next' article={nextArticle} /> : null}</div>
+				{previousArticle ? (
+					<NavCard direction='prev' article={previousArticle} />
+				) : null}
+				{nextArticle ? <NavCard direction='next' article={nextArticle} /> : null}
 			</div>
 		</nav>
 	)

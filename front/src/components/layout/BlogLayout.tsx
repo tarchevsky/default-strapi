@@ -1,6 +1,7 @@
 'use client'
 
 import SearchInput from '@/components/SearchInput'
+import BarLinkList from '@/components/BarLinkList'
 import { getArticleHref } from '@/services/page.service'
 import { ArticleListItem, PAGE_CATEGORIES } from '@/types/page.types'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -266,18 +267,12 @@ export default function BlogLayout({
 					{hasSidebar && (
 						<section className='mt-10' aria-label='Статьи'>
 							{filtered.length > 0 ? (
-								<ul className='list-none space-y-2'>
-									{filtered.map(article => (
-										<li key={article.slug}>
-											<Link
-												href={getArticleHref(article)}
-												className='link link-hover block'
-											>
-												{article.title}
-											</Link>
-										</li>
-									))}
-								</ul>
+								<BarLinkList
+									items={filtered.map(article => ({
+										href: getArticleHref(article),
+										name: article.title,
+									}))}
+								/>
 							) : (
 								<p className=' text-sm opacity-80'>
 									Пока нет статей по выбранным фильтрам

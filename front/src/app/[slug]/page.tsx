@@ -101,12 +101,14 @@ export default async function Page({ params }: PageProps) {
 						metaTitle={page.title}
 					/>
 				) : (
-					<h1 className={isBlog ? 'mb-4' : 'cont mb-4'}>{page.title}</h1>
+					<h1 className={isBlog ? 'mb-4 text-4xl md:text-5xl' : 'cont mb-4'}>
+						{page.title}
+					</h1>
 				)}
 			</FadeIn>
 			{restComponents.length > 0 && (
 				<>
-					{					restComponents.map((component, index) => (
+					{restComponents.map((component, index) => (
 						<DynamicComponentRenderer
 							key={`${component.__component}-${component.id}-${index}`}
 							component={component}
