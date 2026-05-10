@@ -51,14 +51,14 @@ export const ContactsAndSocials: FC<ContactsAndSocialsProps> = ({
 						<div className='flex flex-wrap items-center gap-x-3 gap-y-1 md:hidden'>
 							<Link
 								href={tel.href}
-								className='transition-colors px-[10px] py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
+								className='transition-colors py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
 								aria-label={`Позвонить: ${tel.value}`}
 							>
 								{tel.value}
 							</Link>
 							<Link
 								href={tel2.href}
-								className='transition-colors px-[10px] py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
+								className='transition-colors py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
 								aria-label={`Позвонить: ${tel2.value}`}
 							>
 								{tel2.value}
