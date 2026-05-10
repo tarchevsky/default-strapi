@@ -111,6 +111,7 @@ const Header = ({ headerData }: HeaderProps) => {
 							content={header.textLogo}
 							useCont={false}
 							useInd={false}
+							useRemarkGfm={false}
 						/>
 					</Link>
 				) : (

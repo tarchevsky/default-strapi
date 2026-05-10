@@ -41,7 +41,12 @@ interface SocialIcon {
 
 // Strapi Rich Text (Blocks) — один узел
 export type StrapiRichTextBlock =
-	| { type: string; text?: string; children?: StrapiRichTextBlock[]; [k: string]: unknown }
+	| {
+			type: string
+			text?: string
+			children?: StrapiRichTextBlock[]
+			[k: string]: unknown
+	  }
 	| string
 
 // Тип для сырых данных хеддера из Strapi
@@ -57,13 +62,19 @@ export interface StrapiHeader {
 	LogoHeight?: number | null
 	LogoMobWidth?: number | null
 	LogoMobHeight?: number | null
-	TextLogo?: string | StrapiRichTextBlock[] | { content?: StrapiRichTextBlock[] } | null
+	TextLogo?:
+		| string
+		| StrapiRichTextBlock[]
+		| { content?: StrapiRichTextBlock[] }
+		| null
 	Menu: MenuItem[]
 	Socials: SocialIcon[]
 	Tel?: {
 		id: number
 		Tel: string
 		link: string
+		Tel2?: string | null
+		Link2?: string | null
 	}
 	Email?: {
 		id: number
@@ -103,6 +114,10 @@ export interface Header {
 	}>
 	contacts: {
 		tel?: {
+			value: string
+			href: string
+		}
+		tel2?: {
 			value: string
 			href: string
 		}

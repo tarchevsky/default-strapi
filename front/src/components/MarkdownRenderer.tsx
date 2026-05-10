@@ -8,6 +8,8 @@ interface MarkdownRendererProps {
 	className?: string
 	useCont?: boolean
 	useInd?: boolean
+	/** false — без remark-gfm (напр. чтобы номера не стали автоссылками в логотипе) */
+	useRemarkGfm?: boolean
 }
 
 export const MarkdownRenderer = ({
@@ -15,7 +17,9 @@ export const MarkdownRenderer = ({
 	className = '',
 	useCont = true,
 	useInd = true,
+	useRemarkGfm = true,
 }: MarkdownRendererProps) => {
+	const remarkPlugins = useRemarkGfm ? [remarkGfm] : []
 	return (
 		<div
 			className={`${useCont ? 'cont ' : ''}${
@@ -23,7 +27,7 @@ export const MarkdownRenderer = ({
 			}prose max-w-full${className ? ` ${className}` : ''}`}
 		>
 			<ReactMarkdown
-				remarkPlugins={[remarkGfm]}
+				remarkPlugins={remarkPlugins}
 				rehypePlugins={[rehypeRaw]}
 				components={{
 					ul: CustomUl,

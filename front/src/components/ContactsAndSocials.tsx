@@ -1,7 +1,11 @@
+'use client'
+
 import { IconRenderer } from '@/components/IconRenderer'
 import { Header } from '@/types/header.types'
+import cn from 'clsx'
 import Link from 'next/link'
-import { FC } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
+import { TiPhone } from 'react-icons/ti'
 
 interface ContactsAndSocialsProps {
 	contacts?: Header['contacts']
@@ -14,21 +18,83 @@ export const ContactsAndSocials: FC<ContactsAndSocialsProps> = ({
 }) => {
 	const validSocials = socials?.filter(s => s.link?.trim()) ?? []
 	const hasContacts =
-		contacts?.tel?.href?.trim() || contacts?.email?.href?.trim()
+		contacts?.tel?.href?.trim() ||
+		contacts?.tel2?.href?.trim() ||
+		contacts?.email?.href?.trim()
+
+	const [phoneDropdownOpen, setPhoneDropdownOpen] = useState(false)
+	const phoneDropdownRef = useRef<HTMLDivElement>(null)
+
+	useEffect(() => {
+		if (!phoneDropdownOpen) return
+		const handleClick = (e: MouseEvent) => {
+			const el = phoneDropdownRef.current
+			if (el && !el.contains(e.target as Node)) {
+				setPhoneDropdownOpen(false)
+			}
+		}
+		document.addEventListener('click', handleClick)
+		return () => document.removeEventListener('click', handleClick)
+	}, [phoneDropdownOpen])
 
 	if (!hasContacts && validSocials.length === 0) return null
 
+	const tel = contacts?.tel
+	const tel2 = contacts?.tel2
+	const hasDualPhone = Boolean(tel?.href?.trim() && tel2?.href?.trim())
+
 	return (
 		<div className='flex flex-shrink-0 justify-between items-center gap-4'>
-			{contacts?.tel && contacts.tel.href?.trim() && (
-				<Link
-					href={contacts.tel.href}
-					className='transition-colors px-[10px] py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
-					aria-label={`Позвонить: ${contacts.tel.value}`}
-				>
-					{contacts.tel.value}
-				</Link>
-			)}
+			{tel?.href?.trim() &&
+				(hasDualPhone && tel2 ? (
+					<div
+						ref={phoneDropdownRef}
+						className={cn(
+							'dropdown dropdown-end flex',
+							phoneDropdownOpen && 'dropdown-open',
+						)}
+					>
+						<button
+							type='button'
+							className='transition-colors inline-flex items-center justify-center px-[10px] py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
+							aria-expanded={phoneDropdownOpen}
+							aria-haspopup='menu'
+							aria-label='Выбрать телефон'
+							onClick={e => {
+								e.stopPropagation()
+								setPhoneDropdownOpen(v => !v)
+							}}
+						>
+							<TiPhone className='block w-6 h-6' />
+						</button>
+						<ul className='menu menu-sm dropdown-content mt-10 z-[60] p-2 shadow bg-base-100 rounded-box w-52'>
+							<li>
+								<Link
+									href={tel.href}
+									onClick={() => setPhoneDropdownOpen(false)}
+								>
+									{tel.value}
+								</Link>
+							</li>
+							<li>
+								<Link
+									href={tel2.href}
+									onClick={() => setPhoneDropdownOpen(false)}
+								>
+									{tel2.value}
+								</Link>
+							</li>
+						</ul>
+					</div>
+				) : (
+					<Link
+						href={tel.href}
+						className='transition-colors inline-flex items-center justify-center px-[10px] py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
+						aria-label={`Позвонить: ${tel.value}`}
+					>
+						<TiPhone className='block w-6 h-6' />
+					</Link>
+				))}
 			{contacts?.email && contacts.email.href?.trim() && (
 				<Link
 					href={contacts.email.href}

@@ -165,8 +165,10 @@ export interface LinksTel extends Struct.ComponentSchema {
     link: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'tel:+74993466635'>;
+    Link2: Schema.Attribute.String;
     Tel: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'8-499-346-66-35'>;
+    Tel2: Schema.Attribute.String;
   };
 }
 
