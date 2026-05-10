@@ -47,45 +47,63 @@ export const ContactsAndSocials: FC<ContactsAndSocialsProps> = ({
 		<div className='flex flex-shrink-0 justify-between items-center gap-4'>
 			{tel?.href?.trim() &&
 				(hasDualPhone && tel2 ? (
-					<div
-						ref={phoneDropdownRef}
-						className={cn(
-							'dropdown dropdown-end flex',
-							phoneDropdownOpen && 'dropdown-open',
-						)}
-					>
-						<button
-							type='button'
-							className='transition-colors inline-flex items-center justify-center px-[10px] py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
-							aria-expanded={phoneDropdownOpen}
-							aria-haspopup='menu'
-							aria-label='Выбрать телефон'
-							onClick={e => {
-								e.stopPropagation()
-								setPhoneDropdownOpen(v => !v)
-							}}
+					<>
+						<div className='flex flex-wrap items-center gap-x-3 gap-y-1 md:hidden'>
+							<Link
+								href={tel.href}
+								className='transition-colors px-[10px] py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
+								aria-label={`Позвонить: ${tel.value}`}
+							>
+								{tel.value}
+							</Link>
+							<Link
+								href={tel2.href}
+								className='transition-colors px-[10px] py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
+								aria-label={`Позвонить: ${tel2.value}`}
+							>
+								{tel2.value}
+							</Link>
+						</div>
+						<div
+							ref={phoneDropdownRef}
+							className={cn(
+								'dropdown dropdown-end hidden md:flex',
+								phoneDropdownOpen && 'dropdown-open',
+							)}
 						>
-							<TiPhone className='block w-6 h-6' />
-						</button>
-						<ul className='menu menu-sm dropdown-content mt-10 z-[60] p-2 shadow bg-base-100 rounded-box w-52'>
-							<li>
-								<Link
-									href={tel.href}
-									onClick={() => setPhoneDropdownOpen(false)}
-								>
-									{tel.value}
-								</Link>
-							</li>
-							<li>
-								<Link
-									href={tel2.href}
-									onClick={() => setPhoneDropdownOpen(false)}
-								>
-									{tel2.value}
-								</Link>
-							</li>
-						</ul>
-					</div>
+							<button
+								type='button'
+								className='transition-colors inline-flex items-center justify-center px-[10px] py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
+								aria-expanded={phoneDropdownOpen}
+								aria-haspopup='menu'
+								aria-label='Выбрать телефон'
+								onClick={e => {
+									e.stopPropagation()
+									setPhoneDropdownOpen(v => !v)
+								}}
+							>
+								<TiPhone className='block w-6 h-6' />
+							</button>
+							<ul className='menu menu-sm dropdown-content mt-10 z-[60] p-2 shadow bg-base-100 rounded-box w-52'>
+								<li>
+									<Link
+										href={tel.href}
+										onClick={() => setPhoneDropdownOpen(false)}
+									>
+										{tel.value}
+									</Link>
+								</li>
+								<li>
+									<Link
+										href={tel2.href}
+										onClick={() => setPhoneDropdownOpen(false)}
+									>
+										{tel2.value}
+									</Link>
+								</li>
+							</ul>
+						</div>
+					</>
 				) : (
 					<Link
 						href={tel.href}
