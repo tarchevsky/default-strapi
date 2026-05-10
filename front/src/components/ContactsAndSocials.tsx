@@ -48,7 +48,7 @@ export const ContactsAndSocials: FC<ContactsAndSocialsProps> = ({
 			{tel?.href?.trim() &&
 				(hasDualPhone && tel2 ? (
 					<>
-						<div className='flex flex-wrap items-center gap-x-3 gap-y-1 md:hidden'>
+						<div className='flex flex-wrap items-center gap-5 md:hidden'>
 							<Link
 								href={tel.href}
 								className='transition-colors py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
