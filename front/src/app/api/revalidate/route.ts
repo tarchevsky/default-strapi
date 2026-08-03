@@ -1,45 +1,15 @@
-import { exec } from 'child_process'
 import { revalidateTag } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
-import { promisify } from 'util'
-
-const execAsync = promisify(exec)
-
-async function rebuildProject() {
-	try {
-		console.log('Начало пересборки проекта...')
-		const { stdout, stderr } = await execAsync(
-			'cd ~/puhovvv.ru/front && ~/.bun/bin/bun run build && ~/.bun/bin/bun pm2 restart puhovvv-front',
-			{
-				timeout: 120000, // 2 минуты максимум
-				shell: '/bin/bash',
-				env: {
-					...process.env,
-					PATH: `${process.env.HOME}/.bun/bin:/usr/local/bin:/usr/bin:/bin`,
-				},
-			},
-		)
-
-		console.log('Пересборка завершена:', stdout)
-		if (stderr) {
-			console.warn('Предупреждения при пересборке:', stderr)
-		}
-	} catch (error) {
-		console.error('Ошибка при пересборке проекта:', error)
-		// Не прерываем процесс webhook, просто логируем ошибку
-	}
-}
 
 export async function POST(request: NextRequest) {
 	try {
 		const body = await request.json()
 		const { contentType, action, data, secret } = body
 
-		// Проверяем секретный ключ (из body или заголовка)
-		const expectedSecret = process.env.WEBHOOK_SECRET || 'default-secret'
+		const expectedSecret = process.env.WEBHOOK_SECRET
 		const webhookSecret = secret || request.headers.get('x-webhook-secret')
 
-		if (webhookSecret !== expectedSecret) {
+		if (!expectedSecret || webhookSecret !== expectedSecret) {
 			return NextResponse.json(
 				{ error: 'Неверный секретный ключ' },
 				{ status: 401 },
@@ -48,7 +18,6 @@ export async function POST(request: NextRequest) {
 
 		console.log(`Получен webhook: ${contentType}:${action}`)
 
-		// Ревалидируем соответствующие теги кэша
 		const revalidateActions = [
 			'create',
 			'update',
@@ -62,8 +31,15 @@ export async function POST(request: NextRequest) {
 			case 'api::header.header':
 				if (revalidateActions.includes(action)) {
 					revalidateTag('header')
-					await rebuildProject()
-					console.log('Ревалидирован header, запущена пересборка проекта')
+					console.log('Ревалидирован header')
+				}
+				break
+
+			case 'footer':
+			case 'api::footer.footer':
+				if (revalidateActions.includes(action)) {
+					revalidateTag('footer')
+					console.log('Ревалидирован footer')
 				}
 				break
 
@@ -91,15 +67,17 @@ export async function POST(request: NextRequest) {
 				}
 				break
 
-			// Поддержка старых событий entry.*
 			case 'entry':
 				if (revalidateActions.includes(action)) {
 					const modelName = data?.model || data?.__typename || ''
 
 					if (modelName === 'header' || modelName === 'api::header.header') {
 						revalidateTag('header')
-						await rebuildProject()
-						console.log('Ревалидирован header, запущена пересборка проекта')
+						console.log('Ревалидирован header')
+					}
+					if (modelName === 'footer' || modelName === 'api::footer.footer') {
+						revalidateTag('footer')
+						console.log('Ревалидирован footer')
 					}
 					if (
 						modelName === 'site-setting' ||

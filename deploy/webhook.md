@@ -2,7 +2,7 @@
 
 ## Назначение
 
-Изменения в Strapi должны немедленно инвалидировать кэш Next.js и, при необходимости, пересобрать фронт. Для этого Strapi шлёт POST-запросы в Next.js API `POST /api/revalidate`, который запускает `revalidateTag` и команду `bun run build`/`pm2 restart dom-front`.
+Изменения в Strapi должны немедленно инвалидировать кэш Next.js. Strapi шлёт POST в `POST /api/revalidate`, который вызывает только `revalidateTag`. Полную пересборку (`bun run build`) из webhook **не запускать** — это роняет CPU на общей VM.
 
 ## Переменные окружения
 
@@ -39,9 +39,9 @@
 
 Файл `front/src/app/api/revalidate/route.ts`:
 
-- проверяет `WEBHOOK_SECRET` (из body или header `x-webhook-secret`);
-- вызывает `revalidateTag` для кейсов, header, site-setting, media;
-- для `header` дополнительно запускает `bun run build` + `pm2 restart dom-front`.
+- проверяет `WEBHOOK_SECRET` (обязателен в `.env`, без дефолта);
+- вызывает `revalidateTag` для pages, header, footer, site-setting, media;
+- сборку фронта не трогает.
 
 ## Пошаговая настройка
 
