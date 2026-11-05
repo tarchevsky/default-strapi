@@ -283,7 +283,7 @@ export default function BlogLayout({
 				</main>
 				{hasSidebar && (
 					<aside
-						className='hidden h-[75vh] w-full shrink-0 overflow-auto border-l-2 border-solid border-gray-200 lg:sticky lg:top-0 lg:block lg:w-72 lg:pt-0'
+						className='hidden h-[75vh] w-full shrink-0 overflow-auto border-l-2 border-solid border-base-300 lg:sticky lg:top-0 lg:block lg:w-72 lg:pt-0'
 						aria-label='Боковая панель'
 					>
 						{sidebarContent}

@@ -2,9 +2,53 @@
 @plugin "@tailwindcss/typography";
 @plugin "daisyui" {
 	themes:
-		light --default,
-		dark --prefersdark,
-		cupcake;
+		cupcake --default,
+		puhovvv-night;
+}
+
+/* Мягкая ночная тема (по образцу stomss-night) — холодные приглушённые тона */
+@plugin "daisyui/theme" {
+	name: 'puhovvv-night';
+	color-scheme: dark;
+
+	--color-base-100: #1e2128;
+	--color-base-200: #272b34;
+	--color-base-300: #323844;
+	--color-base-content: #c5cad3;
+
+	--color-primary: #8fa3b8;
+	--color-primary-content: #1e2128;
+
+	--color-secondary: #6e7a8a;
+	--color-secondary-content: #dfe4ea;
+
+	--color-accent: #5a6573;
+	--color-accent-content: #e8ecf0;
+
+	--color-neutral: #949aa6;
+	--color-neutral-content: #1e2128;
+
+	--color-info: #8fa3b8;
+	--color-info-content: #1e2128;
+
+	--color-success: #8aab8f;
+	--color-success-content: #1e2128;
+
+	--color-warning: #b8a67a;
+	--color-warning-content: #1e2128;
+
+	--color-error: #c98a8a;
+	--color-error-content: #1e2128;
+
+	--radius-selector: 1.9rem;
+	--radius-field: 1rem;
+	--radius-box: 1rem;
+
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 1px;
+	--depth: 0;
+	--noise: 0;
 }
 
 @theme {
@@ -90,6 +134,12 @@
 
 html {
 	scroll-behavior: smooth;
+}
+
+body {
+	transition:
+		background-color 0.3s ease,
+		color 0.3s ease;
 }
 
 body {

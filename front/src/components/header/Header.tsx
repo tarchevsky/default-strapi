@@ -5,6 +5,7 @@ import { ContactsAndSocials } from '@/components/ContactsAndSocials'
 import { Logo } from '@/components/Logo'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import SearchInput from '@/components/SearchInput'
+import ThemeToggle from '@/components/ThemeToggle'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { DEFAULT_HEADER, getHeader } from '@/services/header.service'
 import { Header as HeaderType } from '@/types/header.types'
@@ -180,6 +181,7 @@ const Header = ({ headerData }: HeaderProps) => {
 							</motion.div>
 						)}
 					</AnimatePresence>
+					<ThemeToggle />
 				</div>
 			</nav>
 
@@ -243,6 +245,10 @@ const Header = ({ headerData }: HeaderProps) => {
 											</li>
 										))}
 									</ul>
+									<div className='flex items-center gap-2 py-3'>
+										<ThemeToggle />
+										<span className='text-base font-medium'>Тема</span>
+									</div>
 									{(header?.contacts?.tel ||
 										header?.contacts?.email ||
 										(header?.socials && header.socials.length > 0)) && (

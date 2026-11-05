@@ -92,9 +92,9 @@ const ArticleToc = ({ containerId }: ArticleTocProps) => {
 	return (
 		<nav
 			aria-label='Оглавление статьи'
-			className='pointer-events-auto hidden lg:block lg:sticky lg:top-32 lg:self-start w-52 max-h-[calc(100vh-8rem)] overflow-auto text-xs text-gray-500'
+			className='pointer-events-auto hidden lg:block lg:sticky lg:top-32 lg:self-start w-52 max-h-[calc(100vh-8rem)] overflow-auto text-xs text-base-content/60'
 		>
-			<div className='mb-2 tracking-wide text-gray-400'>Оглавление</div>
+			<div className='mb-2 tracking-wide text-base-content/50'>Оглавление</div>
 			<ul className='space-y-1 list-none pl-0'>
 				{items.map((item, index) => (
 					<li
@@ -105,8 +105,8 @@ const ArticleToc = ({ containerId }: ArticleTocProps) => {
 					>
 						<button
 							type='button'
-							className={`cursor-pointer text-left hover:text-gray-700 ${
-								activeIndex === index ? 'text-gray-900 font-medium' : ''
+							className={`cursor-pointer text-left hover:text-base-content/80 ${
+								activeIndex === index ? 'text-base-content font-medium' : ''
 							}`}
 							onClick={() => handleClick(item.element)}
 						>

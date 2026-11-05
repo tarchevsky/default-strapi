@@ -55,11 +55,11 @@ const Hero = ({
 					unoptimized={unoptimized}
 				/>
 				<div>
-					<h1 className='text-4xl md:text-5xl font-extrabold text-slate-800'>
+					<h1 className='text-4xl md:text-5xl font-extrabold text-base-content'>
 						{title}
 					</h1>
 					{subtitle ? (
-						<p className='mt-2 text-base text-slate-700'>{subtitle}</p>
+						<p className='mt-2 text-base text-base-content/80'>{subtitle}</p>
 					) : null}
 				</div>
 			</div>
@@ -76,12 +76,12 @@ const Hero = ({
 				/>
 				<div className='-ml-16 z-10 relative'>
 					{/* Базовый текст — тёмный (виден справа от круга) */}
-					<div className='text-slate-800'>
+					<div className='text-base-content'>
 						<h1 className='text-4xl md:text-5xl font-extrabold [text-shadow:0_1px_2px_rgba(0,0,0,0.08)]'>
 							{title}
 						</h1>
 						{subtitle ? (
-							<p className='mt-2 text-slate-700 [text-shadow:0_1px_2px_rgba(0,0,0,0.06)]'>
+							<p className='mt-2 text-base-content/80 [text-shadow:0_1px_2px_rgba(0,0,0,0.06)]'>
 								{subtitle}
 							</p>
 						) : null}

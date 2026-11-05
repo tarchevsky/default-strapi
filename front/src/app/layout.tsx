@@ -5,6 +5,7 @@ import ScrollToTop from '@/components/scrollToTop/ScrollToTop'
 import PageTransition from '@/components/ui/PageTransition'
 import { getFooter } from '@/services/footer.service'
 import { getHeader } from '@/services/header.service'
+import { THEME, THEME_INIT_SCRIPT } from '@/lib/theme'
 import { getSiteSetting } from '@/services/site-setting.service'
 import { mapSiteSetting } from '@/utils/site-setting.mapper'
 import '@fancyapps/ui/dist/fancybox/fancybox.css'
@@ -38,8 +39,9 @@ export default async function RootLayout({
 	}
 
 	return (
-		<html lang='ru' data-theme='cupcake'>
+		<html lang='ru' data-theme={THEME.light} suppressHydrationWarning>
 			<head>
+				<script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
 				{siteSetting.favicon && (
 					<link rel='icon' href={siteSetting.favicon} type='image/svg+xml' />
 				)}

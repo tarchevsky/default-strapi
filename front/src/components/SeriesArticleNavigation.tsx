@@ -22,9 +22,9 @@ function NavCard({
 	return (
 		<Link
 			href={getArticleHref(article)}
-			className='group block rounded-2xl border border-gray-200 px-4 py-3 transition-colors duration-200 hover:border-gray-400'
+			className='group block rounded-2xl border border-base-300 px-4 py-3 transition-colors duration-200 hover:border-base-content/40'
 		>
-			<p className='mb-1 text-xs uppercase tracking-wide text-gray-500'>
+			<p className='mb-1 text-xs uppercase tracking-wide text-base-content/60'>
 				{arrow} {label}
 			</p>
 			<p className='text-sm md:text-base font-medium leading-snug group-hover:underline'>

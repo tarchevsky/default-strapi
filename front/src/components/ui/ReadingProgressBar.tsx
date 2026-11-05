@@ -35,9 +35,9 @@ const ReadingProgressBar = () => {
 
 	return (
 		<div className='pointer-events-none fixed inset-x-0 top-0 z-[60] h-0'>
-			<div className='h-[3px] w-full overflow-hidden bg-gray-100/80'>
+			<div className='h-[3px] w-full overflow-hidden bg-base-200/80'>
 				<div
-					className='h-full bg-gray-400 transition-[width] duration-150 ease-out'
+					className='h-full bg-base-content/40 transition-[width] duration-150 ease-out'
 					style={{ width: `${progress}%` }}
 				/>
 			</div>

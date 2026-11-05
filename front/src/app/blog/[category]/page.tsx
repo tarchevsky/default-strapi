@@ -87,7 +87,7 @@ export default async function Page({ params }: PageProps) {
 				<p>
 					<Link
 						href='/blog'
-						className='text-xs text-gray-400 border-t-1 border-t-gray-400 pt-2 transition-colors ease-in duration-200 hover:text-gray-600 hover:border-t-gray-600'
+						className='text-xs text-base-content/50 border-t-1 border-t-base-content/40 pt-2 transition-colors ease-in duration-200 hover:text-base-content/80 hover:border-t-base-content/70'
 					>
 						Обратно к статьям
 					</Link>
