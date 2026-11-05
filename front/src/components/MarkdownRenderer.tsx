@@ -11,7 +11,7 @@ interface MarkdownRendererProps {
 	useInd?: boolean
 	/** false — без remark-gfm (напр. чтобы номера не стали автоссылками в логотипе) */
 	useRemarkGfm?: boolean
-	/** true — одиночный перенос строки внутри абзаца превращается в <br/> (remark-breaks) */
+	/** true — Enter внутри абзаца даёт <br/> (remark-breaks), двойной Enter — новый абзац с отступом (.md-paragraphs) */
 	useBreaks?: boolean
 }
 
@@ -31,7 +31,7 @@ export const MarkdownRenderer = ({
 		<div
 			className={`${useCont ? 'cont ' : ''}${
 				useInd ? 'ind ' : ''
-			}prose max-w-full${className ? ` ${className}` : ''}`}
+			}${useBreaks ? 'md-paragraphs ' : ''}prose max-w-full${className ? ` ${className}` : ''}`}
 		>
 			<ReactMarkdown
 				remarkPlugins={remarkPlugins}
