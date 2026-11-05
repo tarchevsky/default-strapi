@@ -112,6 +112,7 @@ const Header = ({ headerData }: HeaderProps) => {
 							useCont={false}
 							useInd={false}
 							useRemarkGfm={false}
+							useBreaks={false}
 						/>
 					</Link>
 				) : (
