@@ -56,12 +56,12 @@
 	--heading-color: #ffffff;
 }
 
-[data-theme='puhovvv-night'] h1,
-[data-theme='puhovvv-night'] h2,
-[data-theme='puhovvv-night'] h3,
-[data-theme='puhovvv-night'] h4,
-[data-theme='puhovvv-night'] h5,
-[data-theme='puhovvv-night'] h6 {
+:where([data-theme='puhovvv-night']) h1,
+:where([data-theme='puhovvv-night']) h2,
+:where([data-theme='puhovvv-night']) h3,
+:where([data-theme='puhovvv-night']) h4,
+:where([data-theme='puhovvv-night']) h5,
+:where([data-theme='puhovvv-night']) h6 {
 	color: var(--heading-color);
 }
 
