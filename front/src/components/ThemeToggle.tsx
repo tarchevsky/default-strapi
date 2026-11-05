@@ -35,7 +35,7 @@ export default function ThemeToggle({ className }: ThemeToggleProps) {
 	return (
 		<label
 			className={cn(
-				'swap swap-rotate btn btn-ghost btn-sm btn-circle shrink-0',
+				'swap swap-rotate shrink-0 cursor-pointer transition-opacity duration-150 hover:opacity-80',
 				className,
 			)}
 			aria-label={isDark ? 'Включить светлую тему' : 'Включить тёмную тему'}
@@ -46,8 +46,8 @@ export default function ThemeToggle({ className }: ThemeToggleProps) {
 				checked={isDark}
 				onChange={e => handleChange(e.target.checked)}
 			/>
-			<Sun className='swap-off size-5' />
-			<Moon className='swap-on size-5' />
+			<Sun className='swap-off size-6' />
+			<Moon className='swap-on size-6' />
 		</label>
 	)
 }

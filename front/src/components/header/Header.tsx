@@ -130,7 +130,7 @@ const Header = ({ headerData }: HeaderProps) => {
 						</li>
 					))}
 				</ul>
-				<div className='flex flex-shrink-0 items-center gap-1 min-h-[3.5rem]'>
+				<div className='flex flex-shrink-0 items-center gap-4 min-h-[3.5rem]'>
 					<label className='input input-sm w-52 rounded-full border border-base-300 lg:w-60'>
 						<Search className='size-4 shrink-0 opacity-60' aria-hidden />
 						<SearchInput

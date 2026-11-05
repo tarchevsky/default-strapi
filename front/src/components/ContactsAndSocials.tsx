@@ -73,7 +73,7 @@ export const ContactsAndSocials: FC<ContactsAndSocialsProps> = ({
 						>
 							<button
 								type='button'
-								className='transition-colors inline-flex items-center justify-center px-[10px] py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
+								className='transition-colors inline-flex items-center justify-center py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
 								aria-expanded={phoneDropdownOpen}
 								aria-haspopup='menu'
 								aria-label='Выбрать телефон'
@@ -107,7 +107,7 @@ export const ContactsAndSocials: FC<ContactsAndSocialsProps> = ({
 				) : (
 					<Link
 						href={tel.href}
-						className='transition-colors inline-flex items-center justify-center px-[10px] py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
+						className='transition-colors inline-flex items-center justify-center py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
 						aria-label={`Позвонить: ${tel.value}`}
 					>
 						<TiPhone className='block w-6 h-6' />
@@ -116,7 +116,7 @@ export const ContactsAndSocials: FC<ContactsAndSocialsProps> = ({
 			{contacts?.email && contacts.email.href?.trim() && (
 				<Link
 					href={contacts.email.href}
-					className='transition-colors px-[10px] py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
+					className='transition-colors py-0 leading-none ease-out duration-150 hover:opacity-80 font-bold'
 					aria-label={`Написать на: ${contacts.email.value}`}
 				>
 					{contacts.email.value}
