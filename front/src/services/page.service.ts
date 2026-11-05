@@ -9,7 +9,6 @@ import {
 	CATEGORY_SLUG_MAP,
 	Page,
 	PageCategory,
-	SearchResultItem,
 	StrapiPagesResponse,
 	getCategoryBySlug,
 	getCategorySlug,
@@ -59,7 +58,7 @@ export const hasFeaturedSeriesInDynamic = (
 
 const STRAPI_FETCH_TIMEOUT_MS = 12_000
 
-const fetchWithFallback = async (
+export const fetchWithFallback = async (
 	url: string,
 	options?: RequestInit,
 ): Promise<Response | null> => {
@@ -208,62 +207,6 @@ export const getArticlePathParams = async (): Promise<
 			})
 	} catch (error) {
 		console.error('Error fetching article path params:', error)
-		return []
-	}
-}
-
-/** Поиск страниц и статей по заголовку. Регистронезависимый. */
-export const searchPagesAndArticles = async (
-	query: string,
-): Promise<SearchResultItem[]> => {
-	const q = query.trim()
-	if (!q) return []
-	const qLower = q.toLowerCase()
-	const mapToResults = (list: StrapiPagesResponse['data']) =>
-		list.map((p): SearchResultItem => {
-			const f = rawPageFields(p)
-			const isArticle = f.TypeOfPage === 'статья'
-			const categorySlug =
-				isArticle && f.Category != null
-					? getCategorySlug(f.Category)
-					: undefined
-			const seriesSlug = isArticle ? f.SeriesSlug : undefined
-			const href =
-				isArticle && categorySlug
-					? seriesSlug
-						? `/blog/${categorySlug}/series/${seriesSlug}/${f.Slug}`
-						: `/blog/${categorySlug}/${f.Slug}`
-					: `/${f.Slug}`
-			return {
-				title: f.Title,
-				slug: f.Slug,
-				href,
-				type: isArticle ? 'article' : 'page',
-			}
-		})
-
-	try {
-		const opts = { next: { revalidate: 30 } as const }
-		const urlBase = `/api/pages?fields[0]=Title&fields[1]=Slug&fields[2]=TypeOfPage&fields[3]=Category&pagination[pageSize]=50&populate[Tags][fields][0]=Name&populate[Series][fields][0]=SeriesSlug`
-
-		const res = await fetchWithFallback(urlBase, opts)
-		if (!res) return []
-
-		const data: StrapiPagesResponse = await res.json()
-		if (!data.data?.length) return []
-
-		const filtered = data.data.filter(p => {
-			const f = rawPageFields(p)
-			const titleMatch = f.Title?.toLowerCase().includes(qLower)
-			const tags = f.Tags ?? []
-			const tagsMatch = tags.some(t => (t?.Name ?? t?.name ?? '').toLowerCase().includes(qLower))
-			return Boolean(titleMatch || tagsMatch)
-		})
-
-		if (!filtered.length) return []
-		return mapToResults(filtered)
-	} catch (error) {
-		console.error('Error searching pages:', error)
 		return []
 	}
 }

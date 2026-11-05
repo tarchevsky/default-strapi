@@ -7,6 +7,7 @@ import {
 	useRef,
 	useState,
 	type ReactNode,
+	type RefObject,
 	type SyntheticEvent,
 } from 'react'
 import { createPortal } from 'react-dom'
@@ -19,6 +20,8 @@ interface SearchModalShellProps {
 	onClose: () => void
 	children: ReactNode
 	'aria-label'?: string
+	/** Элемент, получающий фокус сразу после открытия (без задержки — чтобы не терять символы при наборе) */
+	initialFocusRef?: RefObject<HTMLInputElement | null>
 }
 
 /** Диалог для поиска: портал в body, анимация открытия/закрытия, крестик снаружи (desktop) */
@@ -27,6 +30,7 @@ export default function SearchModalShell({
 	onClose,
 	children,
 	'aria-label': ariaLabel,
+	initialFocusRef,
 }: SearchModalShellProps) {
 	const dialogRef = useRef<HTMLDialogElement>(null)
 	const openRef = useRef(open)
@@ -46,6 +50,12 @@ export default function SearchModalShell({
 		if (open) {
 			setExiting(false)
 			if (!dialog.open) dialog.showModal()
+			const input = initialFocusRef?.current
+			if (input) {
+				input.focus()
+				const end = input.value.length
+				input.setSelectionRange(end, end)
+			}
 			return
 		}
 
@@ -58,7 +68,7 @@ export default function SearchModalShell({
 		}, EXIT_MS)
 
 		return () => window.clearTimeout(timeout)
-	}, [open, mounted])
+	}, [open, mounted, initialFocusRef])
 
 	useEffect(() => {
 		if (!open && !exiting) return

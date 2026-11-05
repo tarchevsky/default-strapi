@@ -34,15 +34,6 @@ export function getCategoryBySlug(slug: string): PageCategory | undefined {
 	return SLUG_TO_CATEGORY[slug]
 }
 
-/** Результат поиска страниц и статей (для поиска в хедере/блоге) */
-export interface SearchResultItem {
-	title: string
-	slug: string
-	/** Готовый href: /slug для страницы, /blog/categorySlug/slug для статьи */
-	href: string
-	type: 'page' | 'article'
-}
-
 /** Элемент списка статей для сайдбара/ленты и блока избранного */
 export interface ArticleListItem {
 	title: string

@@ -1,27 +1,34 @@
 'use client'
 
-import { SearchResultItem } from '@/types/page.types'
+import {
+	EMPTY_SEARCH_RESPONSE,
+	type SearchResponse,
+} from '@/types/search.types'
 import { AnimatePresence, motion, type Variants } from 'framer-motion'
 import { Search, X } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
+	Fragment,
 	useCallback,
 	useEffect,
 	useMemo,
 	useRef,
 	useState,
 	type KeyboardEvent,
+	type ReactNode,
 } from 'react'
 import SearchModalShell from './SearchModalShell'
+import { searchStore, useSearchState } from './searchStore'
 
-const DEBOUNCE_MS = 300
+const DEBOUNCE_MS = 250
+const listboxId = 'search-modal-results'
 const STAGGER_CAP = 16
 const EASE_OUT = [0.22, 1, 0.36, 1] as const
 const EASE_IN = [0.4, 0, 0.2, 1] as const
 
 const SEARCH_HINT =
-	'Начните вводить название статьи, страницы или тег — результаты появятся здесь.'
+	'Ищем по всему сайту: заголовкам и тексту статей, сериям, тегам и страницам. Начните вводить запрос.'
 
 const contentVariants: Variants = {
 	initial: {},
@@ -43,44 +50,144 @@ const itemVariants: Variants = {
 	exit: { opacity: 0, y: -14, transition: { duration: 0.16, ease: EASE_IN } },
 }
 
-const GROUPS: { type: SearchResultItem['type']; label: string }[] = [
-	{ type: 'article', label: 'Статьи' },
-	{ type: 'page', label: 'Страницы' },
-]
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
-interface SearchModalProps {
-	open: boolean
-	onClose: () => void
+/** Подсветка слов запроса (без учёта регистра и ё/е) */
+const highlight = (text: string, query: string): ReactNode => {
+	const words = query
+		.trim()
+		.split(/\s+/)
+		.filter(Boolean)
+		.map(w => escapeRegExp(w).replace(/[её]/gi, '[её]'))
+	if (!words.length || !text) return text
+	const re = new RegExp(`(${words.join('|')})`, 'gi')
+	return text.split(re).map((part, i) =>
+		i % 2 === 1 ? (
+			<mark key={i} className='rounded-sm bg-primary/25 text-inherit'>
+				{part}
+			</mark>
+		) : (
+			<Fragment key={i}>{part}</Fragment>
+		),
+	)
 }
 
-export default function SearchModal({ open, onClose }: SearchModalProps) {
-	const [query, setQuery] = useState('')
-	const [results, setResults] = useState<SearchResultItem[]>([])
+/** Элемент результата в общем плоском списке (для навигации стрелками) */
+interface ResultLink {
+	key: string
+	href: string
+	title: string
+	subtitle?: string
+	meta?: string
+}
+
+interface ResultSection {
+	id: string
+	label: string
+	/** Для тегов: подзаголовки групп внутри раздела */
+	groups: { heading?: string; links: ResultLink[] }[]
+}
+
+const buildSections = (data: SearchResponse): ResultSection[] => {
+	const sections: ResultSection[] = [
+		{
+			id: 'articles',
+			label: 'Статьи',
+			groups: [
+				{
+					links: data.articles.map(a => ({
+						key: `a-${a.href}`,
+						href: a.href,
+						title: a.title,
+						subtitle: a.description,
+					})),
+				},
+			],
+		},
+		{
+			id: 'texts',
+			label: 'Текст в статьях',
+			groups: [
+				{
+					links: data.texts.map(t => ({
+						key: `t-${t.href}`,
+						href: t.href,
+						title: t.title,
+						subtitle: t.snippet,
+					})),
+				},
+			],
+		},
+		{
+			id: 'series',
+			label: 'Серии статей',
+			groups: [
+				{
+					links: data.series.map(s => ({
+						key: `s-${s.href}`,
+						href: s.href,
+						title: s.name,
+						subtitle: s.description,
+						meta: `${s.count} ${pluralArticles(s.count)}`,
+					})),
+				},
+			],
+		},
+		{
+			id: 'tags',
+			label: 'Теги',
+			groups: data.tags.map(tag => ({
+				heading: `#${tag.name}`,
+				links: tag.articles.map(a => ({
+					key: `g-${tag.name}-${a.href}`,
+					href: a.href,
+					title: a.title,
+				})),
+			})),
+		},
+		{
+			id: 'pages',
+			label: 'Страницы',
+			groups: [
+				{
+					links: data.pages.map(p => ({
+						key: `p-${p.href}`,
+						href: p.href,
+						title: p.title,
+						subtitle: p.description,
+					})),
+				},
+			],
+		},
+	]
+	// Пустые разделы не показываем
+	return sections.filter(s => s.groups.some(g => g.links.length > 0))
+}
+
+function pluralArticles(n: number) {
+	const mod10 = n % 10
+	const mod100 = n % 100
+	if (mod10 === 1 && mod100 !== 11) return 'статья'
+	if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'статьи'
+	return 'статей'
+}
+
+export default function SearchModal() {
+	const { open, query } = useSearchState()
+	const [data, setData] = useState<SearchResponse>(EMPTY_SEARCH_RESPONSE)
+	const [resultQuery, setResultQuery] = useState('')
 	const [loading, setLoading] = useState(false)
 	const [activeIndex, setActiveIndex] = useState(-1)
 	const inputRef = useRef<HTMLInputElement>(null)
 	const router = useRouter()
 	const trimmed = query.trim()
 
-	const handleClose = useCallback(() => {
-		setQuery('')
-		setResults([])
-		setActiveIndex(-1)
-		onClose()
-	}, [onClose])
-
-	// Фокус в поле после открытия (двойной rAF — ждём showModal и анимацию)
-	useEffect(() => {
-		if (!open) return
-		const frame = requestAnimationFrame(() => {
-			requestAnimationFrame(() => inputRef.current?.focus())
-		})
-		return () => cancelAnimationFrame(frame)
-	}, [open])
+	const handleClose = useCallback(() => searchStore.close(), [])
 
 	useEffect(() => {
 		if (!trimmed) {
-			setResults([])
+			setData(EMPTY_SEARCH_RESPONSE)
+			setResultQuery('')
 			setLoading(false)
 			return
 		}
@@ -91,12 +198,14 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
 				const res = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`, {
 					signal: controller.signal,
 				})
-				const data = await res.json()
-				setResults(Array.isArray(data) ? data : [])
+				const json = (await res.json()) as Partial<SearchResponse>
+				setData({ ...EMPTY_SEARCH_RESPONSE, ...json })
+				setResultQuery(trimmed)
 				setActiveIndex(-1)
 			} catch (error) {
 				if ((error as Error).name === 'AbortError') return
-				setResults([])
+				setData(EMPTY_SEARCH_RESPONSE)
+				setResultQuery(trimmed)
 			} finally {
 				if (!controller.signal.aborted) setLoading(false)
 			}
@@ -107,22 +216,22 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
 		}
 	}, [trimmed])
 
-	// Плоский список в порядке отображения — для навигации стрелками
-	const ordered = useMemo(
-		() => GROUPS.flatMap(g => results.filter(r => r.type === g.type)),
-		[results],
+	const sections = useMemo(() => buildSections(data), [data])
+	const flatLinks = useMemo(
+		() => sections.flatMap(s => s.groups.flatMap(g => g.links)),
+		[sections],
 	)
 
 	const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-		if (!ordered.length) return
+		if (!flatLinks.length) return
 		if (event.key === 'ArrowDown') {
 			event.preventDefault()
-			setActiveIndex(i => (i + 1) % ordered.length)
+			setActiveIndex(i => (i + 1) % flatLinks.length)
 		} else if (event.key === 'ArrowUp') {
 			event.preventDefault()
-			setActiveIndex(i => (i <= 0 ? ordered.length - 1 : i - 1))
+			setActiveIndex(i => (i <= 0 ? flatLinks.length - 1 : i - 1))
 		} else if (event.key === 'Enter') {
-			const item = ordered[activeIndex >= 0 ? activeIndex : 0]
+			const item = flatLinks[activeIndex >= 0 ? activeIndex : 0]
 			if (item) {
 				event.preventDefault()
 				handleClose()
@@ -131,74 +240,112 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
 		}
 	}
 
-	const listboxId = 'search-modal-results'
-	let rowIndex = 0
+	// Активный пункт держим в зоне видимости при навигации стрелками
+	useEffect(() => {
+		if (activeIndex < 0) return
+		document
+			.getElementById(`${listboxId}-${activeIndex}`)
+			?.scrollIntoView({ block: 'nearest' })
+	}, [activeIndex])
+
 
 	const renderBody = () => {
 		if (!trimmed) {
 			return <p className='text-lg leading-snug opacity-60'>{SEARCH_HINT}</p>
 		}
-		if (loading && !results.length) {
+		if (!resultQuery || (loading && !flatLinks.length)) {
 			return <p className='text-lg leading-snug opacity-60'>Ищем…</p>
 		}
-		if (!ordered.length) {
+		if (!sections.length) {
 			return <p className='text-lg leading-snug opacity-60'>Ничего не найдено</p>
 		}
+
+		let rowIndex = 0
+		let linkIndex = 0
 		return (
 			<motion.div
-				key={trimmed}
+				key={resultQuery}
 				id={listboxId}
 				role='listbox'
-				className='flex flex-col gap-8'
+				className={`flex flex-col gap-8 transition-opacity ${loading ? 'opacity-60' : ''}`}
 				initial='initial'
 				animate='animate'
 			>
-				{GROUPS.map(group => {
-					const items = ordered.filter(r => r.type === group.type)
-					if (!items.length) return null
-					return (
-						<div key={group.type} className='flex flex-col gap-2.5'>
-							<motion.p
-								custom={rowIndex++}
-								variants={itemVariants}
-								className='text-sm uppercase tracking-wide opacity-60'
-							>
-								{group.label}
-							</motion.p>
-							{items.map(item => {
-								const index = rowIndex++
-								const flatIndex = ordered.indexOf(item)
-								const isActive = flatIndex === activeIndex
-								return (
-									<motion.div
-										key={`${item.type}-${item.slug}`}
-										custom={index}
+				{sections.map(section => (
+					<section key={section.id} className='flex flex-col gap-2.5'>
+						<motion.p
+							custom={rowIndex++}
+							variants={itemVariants}
+							className='font-sans text-sm font-normal uppercase tracking-wide opacity-60'
+						>
+							{section.label}
+						</motion.p>
+						{section.groups.map((group, gi) => (
+							<div key={group.heading ?? gi} className='flex flex-col gap-2.5'>
+								{group.heading && (
+									<motion.p
+										custom={rowIndex++}
 										variants={itemVariants}
-										className='border-b border-dashed border-base-300 pb-2.5'
+										className='mt-1 text-base font-semibold text-primary'
 									>
-										<Link
-											id={`${listboxId}-${flatIndex}`}
-											href={item.href}
-											role='option'
-											aria-selected={isActive}
-											onClick={handleClose}
-											onMouseEnter={() => setActiveIndex(flatIndex)}
-											className={`block text-lg leading-snug transition-opacity hover:opacity-70 ${isActive ? 'text-primary' : ''}`}
+										{highlight(group.heading, resultQuery)}
+									</motion.p>
+								)}
+								{group.links.map(link => {
+									const index = linkIndex++
+									const isActive = index === activeIndex
+									return (
+										<motion.div
+											key={link.key}
+											custom={rowIndex++}
+											variants={itemVariants}
+											className='border-b border-dashed border-base-300 pb-2.5'
 										>
-											{item.title}
-										</Link>
-									</motion.div>
-								)
-							})}
-						</div>
-					)
-				})}
+											<Link
+												id={`${listboxId}-${index}`}
+												href={link.href}
+												role='option'
+												aria-selected={isActive}
+												onClick={handleClose}
+												onMouseEnter={() => setActiveIndex(index)}
+												className='group block'
+											>
+												<span
+													className={`flex items-baseline justify-between gap-3 text-lg leading-snug transition-colors ${isActive ? 'text-primary' : ''}`}
+												>
+													<span className='min-w-0'>
+														{highlight(link.title, resultQuery)}
+													</span>
+													{link.meta && (
+														<span className='shrink-0 text-sm opacity-60'>
+															{link.meta}
+														</span>
+													)}
+												</span>
+												{link.subtitle && (
+													<span className='mt-1 block text-sm leading-snug opacity-70 line-clamp-3'>
+														{highlight(link.subtitle, resultQuery)}
+													</span>
+												)}
+											</Link>
+										</motion.div>
+									)
+								})}
+							</div>
+						))}
+					</section>
+				))}
 			</motion.div>
 		)
 	}
 
 	return (
-		<SearchModalShell open={open} onClose={handleClose} aria-label='Поиск по сайту'>
+		<SearchModalShell
+			open={open}
+			onClose={handleClose}
+			aria-label='Поиск по сайту'
+			initialFocusRef={inputRef}
+		>
 			<AnimatePresence mode='wait'>
 				{open ? (
 					<motion.div
@@ -221,12 +368,12 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
 								role='combobox'
 								autoComplete='off'
 								value={query}
-								onChange={e => setQuery(e.target.value)}
+								onChange={e => searchStore.setQuery(e.target.value)}
 								onKeyDown={handleKeyDown}
 								placeholder='Введите запрос'
 								aria-label='Поиск по сайту'
-								aria-expanded={ordered.length > 0}
-								aria-controls={ordered.length ? listboxId : undefined}
+								aria-expanded={flatLinks.length > 0}
+								aria-controls={flatLinks.length ? listboxId : undefined}
 								aria-activedescendant={
 									activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined
 								}
@@ -236,7 +383,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
 								<button
 									type='button'
 									onClick={() => {
-										setQuery('')
+										searchStore.setQuery('')
 										inputRef.current?.focus()
 									}}
 									className='shrink-0 transition-opacity hover:opacity-70'

@@ -4,7 +4,9 @@ import Burger from '@/components/burger/Burger'
 import { ContactsAndSocials } from '@/components/ContactsAndSocials'
 import { Logo } from '@/components/Logo'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
+import SearchInput from '@/components/SearchInput'
 import SearchModal from '@/components/search/SearchModal'
+import { searchStore } from '@/components/search/searchStore'
 import ThemeToggle from '@/components/ThemeToggle'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { DEFAULT_HEADER, getHeader } from '@/services/header.service'
@@ -13,7 +15,7 @@ import cn from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Search } from 'lucide-react'
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styles from './Header.module.scss'
 
 interface HeaderProps {
@@ -22,7 +24,6 @@ interface HeaderProps {
 
 const Header = ({ headerData }: HeaderProps) => {
 	const [isMenuActive, setIsMenuActive] = useState(false)
-	const [isSearchOpen, setIsSearchOpen] = useState(false)
 	const [header, setHeader] = useState<HeaderType | null>(headerData || null)
 	const [isLoading, setIsLoading] = useState(!headerData)
 
@@ -60,11 +61,10 @@ const Header = ({ headerData }: HeaderProps) => {
 		return () => mq.removeEventListener('change', handler)
 	}, [])
 
-	const openSearch = useCallback(() => {
+	const openSearch = () => {
 		setIsMenuActive(false)
-		setIsSearchOpen(true)
-	}, [])
-	const closeSearch = useCallback(() => setIsSearchOpen(false), [])
+		searchStore.open()
+	}
 
 	// Сортируем меню по order (создаём копию, чтобы не мутировать оригинал)
 	const sortedMenu = header?.menu
@@ -131,16 +131,15 @@ const Header = ({ headerData }: HeaderProps) => {
 					))}
 				</ul>
 				<div className='flex flex-shrink-0 items-center gap-1 min-h-[3.5rem]'>
-					<button
-						type='button'
-						onClick={openSearch}
-						className='btn btn-ghost btn-sm btn-circle shrink-0'
-						aria-label='Открыть поиск'
-						aria-haspopup='dialog'
-						aria-expanded={isSearchOpen}
-					>
-						<Search className='size-5' />
-					</button>
+					<label className='input input-sm w-52 rounded-full border border-base-300 lg:w-60'>
+						<Search className='size-4 shrink-0 opacity-60' aria-hidden />
+						<SearchInput
+							className='grow'
+							inputClassName='w-full placeholder:opacity-60'
+							placeholder='Поиск по сайту'
+							aria-label='Поиск по сайту'
+						/>
+					</label>
 					<ThemeToggle />
 				</div>
 			</nav>
@@ -246,12 +245,11 @@ const Header = ({ headerData }: HeaderProps) => {
 				)}
 				aria-label='Открыть поиск'
 				aria-haspopup='dialog'
-				aria-expanded={isSearchOpen}
 			>
 				<Search className='size-5' />
 			</button>
 
-			<SearchModal open={isSearchOpen} onClose={closeSearch} />
+			<SearchModal />
 		</header>
 	)
 }
