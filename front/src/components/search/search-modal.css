@@ -1,59 +1,48 @@
-/* Модалка поиска (по образцу stomss): раскрытие сверху через clip-path */
+/* Модалка поиска: мягкое появление по центру (fade + scale), затемнение с размытием фона */
+dialog.modal.modal--search {
+	background-color: color-mix(in oklab, black 45%, transparent);
+	backdrop-filter: blur(4px);
+	transition:
+		background-color 0.3s ease,
+		backdrop-filter 0.3s ease,
+		opacity 0.3s ease,
+		visibility 0.3s allow-discrete,
+		display 0.3s allow-discrete,
+		overlay 0.3s allow-discrete;
+}
+
+dialog.modal.modal--search.modal-exiting {
+	background-color: transparent;
+	backdrop-filter: blur(0);
+}
+
 dialog.modal.modal--search .modal-shell {
 	opacity: 1;
-	transform: translateY(0);
-	clip-path: inset(0 0 0% 0);
+	transform: translateY(0) scale(1);
 	transition:
-		clip-path 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-		transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-		opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-	will-change: clip-path, transform, opacity;
+		transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+		opacity 0.25s ease;
+	will-change: transform, opacity;
 }
 
 dialog.modal.modal--search.modal-exiting .modal-shell,
 dialog.modal.modal--search:not([open]) .modal-shell {
 	opacity: 0;
-	transform: translateY(-12px);
-	clip-path: inset(0 0 100% 0);
+	transform: translateY(0.75rem) scale(0.97);
 	transition:
-		clip-path 0.38s cubic-bezier(0.4, 0, 0.2, 1),
-		transform 0.38s cubic-bezier(0.4, 0, 0.2, 1),
-		opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		opacity 0.2s ease;
 }
 
 @starting-style {
 	dialog.modal.modal--search[open] .modal-shell {
 		opacity: 0;
-		transform: translateY(-16px);
-		clip-path: inset(0 0 100% 0);
-	}
-}
-
-@media (width >= 640px) {
-	/* Отрицательный inset — чтобы крестик снаружи коробки не обрезался */
-	dialog.modal.modal--search .modal-shell {
-		clip-path: inset(-3rem -4rem 0% -1rem);
-	}
-
-	dialog.modal.modal--search.modal-exiting .modal-shell,
-	dialog.modal.modal--search:not([open]) .modal-shell {
-		opacity: 0;
-		transform: translateY(-0.75rem) scale(0.98);
-		clip-path: inset(-3rem -4rem 8% -1rem);
-	}
-
-	@starting-style {
-		dialog.modal.modal--search[open] .modal-shell {
-			opacity: 0;
-			transform: translateY(-0.75rem) scale(0.98);
-			clip-path: inset(-3rem -4rem 8% -1rem);
-		}
+		transform: translateY(0.75rem) scale(0.97);
 	}
 }
 
 /* DaisyUI не должен дублировать opacity/scale на нашем box */
-.modal-shell .modal-box {
-	opacity: 1;
+dialog.modal.modal--search .modal-shell {
 	scale: 1;
 	translate: none;
 }

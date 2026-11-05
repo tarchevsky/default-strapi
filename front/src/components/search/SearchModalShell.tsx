@@ -1,7 +1,6 @@
 'use client'
 
 import cn from 'clsx'
-import { X } from 'lucide-react'
 import {
 	useEffect,
 	useRef,
@@ -13,7 +12,7 @@ import {
 import { createPortal } from 'react-dom'
 import './search-modal.css'
 
-const EXIT_MS = 380
+const EXIT_MS = 320
 
 interface SearchModalShellProps {
 	open: boolean
@@ -24,7 +23,7 @@ interface SearchModalShellProps {
 	initialFocusRef?: RefObject<HTMLInputElement | null>
 }
 
-/** Диалог для поиска: портал в body, анимация открытия/закрытия, крестик снаружи (desktop) */
+/** Диалог поиска: портал в body, карточка по центру с отступами от краёв, анимация открытия/закрытия */
 export default function SearchModalShell({
 	open,
 	onClose,
@@ -50,13 +49,17 @@ export default function SearchModalShell({
 		if (open) {
 			setExiting(false)
 			if (!dialog.open) dialog.showModal()
-			const input = initialFocusRef?.current
-			if (input) {
+			const focusInput = () => {
+				const input = initialFocusRef?.current
+				if (!input || document.activeElement === input) return
 				input.focus()
 				const end = input.value.length
 				input.setSelectionRange(end, end)
 			}
-			return
+			// Сразу — чтобы не терять символы при наборе; повторно — если фокус перехватили (клик/тач по кнопке)
+			focusInput()
+			const frame = requestAnimationFrame(() => requestAnimationFrame(focusInput))
+			return () => cancelAnimationFrame(frame)
 		}
 
 		if (!dialog.open) return
@@ -93,7 +96,7 @@ export default function SearchModalShell({
 		<dialog
 			ref={dialogRef}
 			className={cn(
-				'modal modal-middle modal--search overflow-x-clip p-0 sm:p-4',
+				'modal modal--search px-4 py-4 max-sm:items-start max-sm:pt-16 sm:px-6 sm:py-10',
 				(open || exiting) && 'modal-open',
 				exiting && 'modal-exiting',
 			)}
@@ -101,20 +104,8 @@ export default function SearchModalShell({
 			onCancel={handleCancel}
 			aria-label={ariaLabel}
 		>
-			<div className='modal-shell relative col-start-1 row-start-1 h-dvh w-full max-h-dvh sm:h-auto sm:w-[min(900px,calc(100%-5rem))] sm:max-h-[calc(100dvh-5rem)]'>
-				<button
-					type='button'
-					className='absolute right-2 top-2 z-20 flex size-9 items-center justify-center rounded-full border border-base-300 bg-base-100 transition-opacity hover:opacity-70 sm:right-0 sm:top-0 sm:size-8 sm:-translate-y-1/2 sm:translate-x-[calc(100%+10px)]'
-					onClick={onClose}
-					aria-label='Закрыть'
-				>
-					<X className='size-4' strokeWidth={1.5} />
-				</button>
-				<div className='modal-box h-full w-full max-w-none max-h-none rounded-none bg-base-100 p-0 sm:h-[600px] sm:max-h-[calc(100dvh-5rem)] sm:rounded-box border border-base-300'>
-					<div className='flex h-full flex-col p-6 max-sm:pt-14'>
-						{children}
-					</div>
-				</div>
+			<div className='modal-shell relative z-10 col-start-1 row-start-1 flex max-h-[min(640px,calc(100dvh-5rem))] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-base-content/10 bg-base-100 text-base-content shadow-2xl sm:max-h-[min(680px,calc(100dvh-5rem))]'>
+				{children}
 			</div>
 
 			<form method='dialog' className='modal-backdrop'>

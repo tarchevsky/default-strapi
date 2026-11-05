@@ -251,13 +251,13 @@ export default function SearchModal() {
 
 	const renderBody = () => {
 		if (!trimmed) {
-			return <p className='text-lg leading-snug opacity-60'>{SEARCH_HINT}</p>
+			return <p className='px-2 py-6 text-center text-base leading-relaxed text-base-content/60'>{SEARCH_HINT}</p>
 		}
 		if (!resultQuery || (loading && !flatLinks.length)) {
-			return <p className='text-lg leading-snug opacity-60'>Ищем…</p>
+			return <p className='px-2 py-6 text-center text-base leading-relaxed text-base-content/60'>Ищем…</p>
 		}
 		if (!sections.length) {
-			return <p className='text-lg leading-snug opacity-60'>Ничего не найдено</p>
+			return <p className='px-2 py-6 text-center text-base leading-relaxed text-base-content/60'>Ничего не найдено</p>
 		}
 
 		let rowIndex = 0
@@ -267,26 +267,26 @@ export default function SearchModal() {
 				key={resultQuery}
 				id={listboxId}
 				role='listbox'
-				className={`flex flex-col gap-8 transition-opacity ${loading ? 'opacity-60' : ''}`}
+				className={`flex flex-col gap-6 transition-opacity ${loading ? 'opacity-60' : ''}`}
 				initial='initial'
 				animate='animate'
 			>
 				{sections.map(section => (
-					<section key={section.id} className='flex flex-col gap-2.5'>
+					<section key={section.id} className='flex flex-col gap-1'>
 						<motion.p
 							custom={rowIndex++}
 							variants={itemVariants}
-							className='font-sans text-sm font-normal uppercase tracking-wide opacity-60'
+							className='px-3 pb-1 font-sans text-xs font-semibold uppercase tracking-[0.08em] text-base-content/50'
 						>
 							{section.label}
 						</motion.p>
 						{section.groups.map((group, gi) => (
-							<div key={group.heading ?? gi} className='flex flex-col gap-2.5'>
+							<div key={group.heading ?? gi} className='flex flex-col gap-0.5'>
 								{group.heading && (
 									<motion.p
 										custom={rowIndex++}
 										variants={itemVariants}
-										className='mt-1 text-base font-semibold text-primary'
+										className='px-3 pt-2 pb-0.5 text-sm font-semibold text-primary'
 									>
 										{highlight(group.heading, resultQuery)}
 									</motion.p>
@@ -299,7 +299,7 @@ export default function SearchModal() {
 											key={link.key}
 											custom={rowIndex++}
 											variants={itemVariants}
-											className='border-b border-dashed border-base-300 pb-2.5'
+											
 										>
 											<Link
 												id={`${listboxId}-${index}`}
@@ -308,22 +308,22 @@ export default function SearchModal() {
 												aria-selected={isActive}
 												onClick={handleClose}
 												onMouseEnter={() => setActiveIndex(index)}
-												className='group block'
+												className={`block rounded-2xl px-3 py-2.5 transition-colors ${isActive ? 'bg-base-content/[0.07]' : ''}`}
 											>
 												<span
-													className={`flex items-baseline justify-between gap-3 text-lg leading-snug transition-colors ${isActive ? 'text-primary' : ''}`}
+													className='flex items-baseline justify-between gap-3 text-base font-medium leading-snug sm:text-lg'
 												>
 													<span className='min-w-0'>
 														{highlight(link.title, resultQuery)}
 													</span>
 													{link.meta && (
-														<span className='shrink-0 text-sm opacity-60'>
+														<span className='shrink-0 rounded-full bg-base-200 px-2 py-0.5 text-xs text-base-content/60'>
 															{link.meta}
 														</span>
 													)}
 												</span>
 												{link.subtitle && (
-													<span className='mt-1 block text-sm leading-snug opacity-70 line-clamp-3'>
+													<span className='mt-1 block text-sm leading-snug text-base-content/65 line-clamp-2'>
 														{highlight(link.subtitle, resultQuery)}
 													</span>
 												)}
@@ -350,18 +350,18 @@ export default function SearchModal() {
 				{open ? (
 					<motion.div
 						key='search-modal-content'
-						className='flex h-full min-h-0 flex-col'
+						className='flex min-h-0 flex-1 flex-col'
 						variants={contentVariants}
 						initial='initial'
 						animate='animate'
 						exit='exit'
 					>
-						<motion.label
+						<motion.div
 							custom={0}
 							variants={itemVariants}
-							className='input input-lg flex w-full items-center gap-3 rounded-full border border-base-300'
+							className='flex items-center gap-3 border-b border-base-content/10 px-5 py-4 sm:px-6'
 						>
-							<Search className='size-5 shrink-0 opacity-70' aria-hidden />
+							<Search className='size-5 shrink-0 text-base-content/50' aria-hidden />
 							<input
 								ref={inputRef}
 								type='text'
@@ -370,14 +370,14 @@ export default function SearchModal() {
 								value={query}
 								onChange={e => searchStore.setQuery(e.target.value)}
 								onKeyDown={handleKeyDown}
-								placeholder='Введите запрос'
+								placeholder='Поиск по сайту'
 								aria-label='Поиск по сайту'
 								aria-expanded={flatLinks.length > 0}
 								aria-controls={flatLinks.length ? listboxId : undefined}
 								aria-activedescendant={
 									activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined
 								}
-								className='grow text-lg'
+								className='min-w-0 grow bg-transparent text-lg outline-none placeholder:text-base-content/40'
 							/>
 							{query && (
 								<button
@@ -386,21 +386,40 @@ export default function SearchModal() {
 										searchStore.setQuery('')
 										inputRef.current?.focus()
 									}}
-									className='shrink-0 transition-opacity hover:opacity-70'
-									aria-label='Очистить поиск'
+									className='shrink-0 text-xs text-base-content/50 transition-colors hover:text-base-content'
 								>
-									<X className='size-5' />
+									Очистить
 								</button>
 							)}
-						</motion.label>
+							<button
+								type='button'
+								onClick={handleClose}
+								className='btn btn-ghost btn-sm btn-circle -mr-1 shrink-0'
+								aria-label='Закрыть поиск'
+							>
+								<X className='size-5' />
+							</button>
+						</motion.div>
 
 						<motion.div
 							custom={1}
 							variants={itemVariants}
-							className='mt-8 min-h-0 flex-1 overflow-y-auto px-1'
+							className='min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-4 sm:px-3'
 						>
 							{renderBody()}
 						</motion.div>
+
+						<div className='hidden items-center gap-4 border-t border-base-content/10 px-6 py-2.5 text-xs text-base-content/50 sm:flex'>
+							<span>
+								<kbd className='kbd kbd-xs'>↑</kbd> <kbd className='kbd kbd-xs'>↓</kbd> выбор
+							</span>
+							<span>
+								<kbd className='kbd kbd-xs'>Enter</kbd> открыть
+							</span>
+							<span>
+								<kbd className='kbd kbd-xs'>Esc</kbd> закрыть
+							</span>
+						</div>
 					</motion.div>
 				) : null}
 			</AnimatePresence>
