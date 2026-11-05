@@ -4,7 +4,7 @@ import Burger from '@/components/burger/Burger'
 import { ContactsAndSocials } from '@/components/ContactsAndSocials'
 import { Logo } from '@/components/Logo'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
-import SearchInput from '@/components/SearchInput'
+import SearchModal from '@/components/search/SearchModal'
 import ThemeToggle from '@/components/ThemeToggle'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { DEFAULT_HEADER, getHeader } from '@/services/header.service'
@@ -13,7 +13,7 @@ import cn from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Search } from 'lucide-react'
 import Link from 'next/link'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import styles from './Header.module.scss'
 
 interface HeaderProps {
@@ -25,8 +25,6 @@ const Header = ({ headerData }: HeaderProps) => {
 	const [isSearchOpen, setIsSearchOpen] = useState(false)
 	const [header, setHeader] = useState<HeaderType | null>(headerData || null)
 	const [isLoading, setIsLoading] = useState(!headerData)
-	const searchWrapRef = useRef<HTMLDivElement>(null)
-	const searchInputRef = useRef<HTMLInputElement>(null)
 
 	const toggleMenu = () => {
 		setIsMenuActive(!isMenuActive)
@@ -62,24 +60,11 @@ const Header = ({ headerData }: HeaderProps) => {
 		return () => mq.removeEventListener('change', handler)
 	}, [])
 
-	useEffect(() => {
-		if (isSearchOpen) searchInputRef.current?.focus()
-	}, [isSearchOpen])
-
-	useEffect(() => {
-		const handleClickOutside = (e: MouseEvent) => {
-			if (
-				searchWrapRef.current &&
-				!searchWrapRef.current.contains(e.target as Node)
-			) {
-				setIsSearchOpen(false)
-			}
-		}
-		document.addEventListener('click', handleClickOutside)
-		return () => document.removeEventListener('click', handleClickOutside)
+	const openSearch = useCallback(() => {
+		setIsMenuActive(false)
+		setIsSearchOpen(true)
 	}, [])
-
-	const toggleSearch = useCallback(() => setIsSearchOpen(v => !v), [])
+	const closeSearch = useCallback(() => setIsSearchOpen(false), [])
 
 	// Сортируем меню по order (создаём копию, чтобы не мутировать оригинал)
 	const sortedMenu = header?.menu
@@ -145,42 +130,17 @@ const Header = ({ headerData }: HeaderProps) => {
 						</li>
 					))}
 				</ul>
-				<div
-					ref={searchWrapRef}
-					className='flex flex-shrink-0 items-center gap-1 overflow-hidden min-h-[3.5rem]'
-				>
+				<div className='flex flex-shrink-0 items-center gap-1 min-h-[3.5rem]'>
 					<button
 						type='button'
-						onClick={toggleSearch}
+						onClick={openSearch}
 						className='btn btn-ghost btn-sm btn-circle shrink-0'
-						aria-label={isSearchOpen ? 'Закрыть поиск' : 'Открыть поиск'}
+						aria-label='Открыть поиск'
+						aria-haspopup='dialog'
 						aria-expanded={isSearchOpen}
 					>
 						<Search className='size-5' />
 					</button>
-					<AnimatePresence initial={false}>
-						{isSearchOpen && (
-							<motion.div
-								initial={{ width: 0, opacity: 0 }}
-								animate={{ width: 224, opacity: 1 }}
-								transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-								exit={{
-									width: 0,
-									opacity: 0,
-									transition: { duration: 0.2, ease: 'easeOut' },
-								}}
-								className='overflow-hidden min-w-0 flex items-center p-2'
-							>
-								<div className='w-52 shrink-0'>
-									<SearchInput
-										ref={searchInputRef}
-										inputClassName='input input-bordered w-full input-sm rounded-full pr-10 placeholder:opacity-60 border border-base-300'
-										aria-label='Поиск'
-									/>
-								</div>
-							</motion.div>
-						)}
-					</AnimatePresence>
 					<ThemeToggle />
 				</div>
 			</nav>
@@ -275,6 +235,23 @@ const Header = ({ headerData }: HeaderProps) => {
 					/>
 				</>
 			)}
+
+			{/* Мобиле: кнопка поиска рядом с бургером */}
+			<button
+				type='button'
+				onClick={openSearch}
+				className={cn(
+					'md:hidden absolute inset-y-0 my-auto btn btn-ghost btn-sm btn-circle',
+					hasMenu ? 'right-14' : 'right-4',
+				)}
+				aria-label='Открыть поиск'
+				aria-haspopup='dialog'
+				aria-expanded={isSearchOpen}
+			>
+				<Search className='size-5' />
+			</button>
+
+			<SearchModal open={isSearchOpen} onClose={closeSearch} />
 		</header>
 	)
 }

@@ -1,0 +1,59 @@
+/* Модалка поиска (по образцу stomss): раскрытие сверху через clip-path */
+dialog.modal.modal--search .modal-shell {
+	opacity: 1;
+	transform: translateY(0);
+	clip-path: inset(0 0 0% 0);
+	transition:
+		clip-path 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+		transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+		opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+	will-change: clip-path, transform, opacity;
+}
+
+dialog.modal.modal--search.modal-exiting .modal-shell,
+dialog.modal.modal--search:not([open]) .modal-shell {
+	opacity: 0;
+	transform: translateY(-12px);
+	clip-path: inset(0 0 100% 0);
+	transition:
+		clip-path 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+		transform 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+		opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@starting-style {
+	dialog.modal.modal--search[open] .modal-shell {
+		opacity: 0;
+		transform: translateY(-16px);
+		clip-path: inset(0 0 100% 0);
+	}
+}
+
+@media (width >= 640px) {
+	/* Отрицательный inset — чтобы крестик снаружи коробки не обрезался */
+	dialog.modal.modal--search .modal-shell {
+		clip-path: inset(-3rem -4rem 0% -1rem);
+	}
+
+	dialog.modal.modal--search.modal-exiting .modal-shell,
+	dialog.modal.modal--search:not([open]) .modal-shell {
+		opacity: 0;
+		transform: translateY(-0.75rem) scale(0.98);
+		clip-path: inset(-3rem -4rem 8% -1rem);
+	}
+
+	@starting-style {
+		dialog.modal.modal--search[open] .modal-shell {
+			opacity: 0;
+			transform: translateY(-0.75rem) scale(0.98);
+			clip-path: inset(-3rem -4rem 8% -1rem);
+		}
+	}
+}
+
+/* DaisyUI не должен дублировать opacity/scale на нашем box */
+.modal-shell .modal-box {
+	opacity: 1;
+	scale: 1;
+	translate: none;
+}
