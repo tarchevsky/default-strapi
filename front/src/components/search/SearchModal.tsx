@@ -251,13 +251,13 @@ export default function SearchModal() {
 
 	const renderBody = () => {
 		if (!trimmed) {
-			return <p className='px-2 py-6 text-center text-base leading-relaxed text-base-content/60'>{SEARCH_HINT}</p>
+			return <p className='px-4 py-4 text-center text-base leading-relaxed text-base-content/60'>{SEARCH_HINT}</p>
 		}
 		if (!resultQuery || (loading && !flatLinks.length)) {
-			return <p className='px-2 py-6 text-center text-base leading-relaxed text-base-content/60'>Ищем…</p>
+			return <p className='px-4 py-4 text-center text-base leading-relaxed text-base-content/60'>Ищем…</p>
 		}
 		if (!sections.length) {
-			return <p className='px-2 py-6 text-center text-base leading-relaxed text-base-content/60'>Ничего не найдено</p>
+			return <p className='px-4 py-4 text-center text-base leading-relaxed text-base-content/60'>Ничего не найдено</p>
 		}
 
 		let rowIndex = 0
@@ -276,7 +276,7 @@ export default function SearchModal() {
 						<motion.p
 							custom={rowIndex++}
 							variants={itemVariants}
-							className='px-3 pb-1 font-sans text-xs font-semibold uppercase tracking-[0.08em] text-base-content/50'
+							className='px-4 pb-1 font-sans text-xs font-semibold uppercase tracking-[0.08em] text-base-content/50'
 						>
 							{section.label}
 						</motion.p>
@@ -286,7 +286,7 @@ export default function SearchModal() {
 									<motion.p
 										custom={rowIndex++}
 										variants={itemVariants}
-										className='px-3 pt-2 pb-0.5 text-sm font-semibold text-primary'
+										className='px-4 pt-2 pb-0.5 text-sm font-semibold text-primary'
 									>
 										{highlight(group.heading, resultQuery)}
 									</motion.p>
@@ -308,7 +308,7 @@ export default function SearchModal() {
 												aria-selected={isActive}
 												onClick={handleClose}
 												onMouseEnter={() => setActiveIndex(index)}
-												className={`block rounded-2xl px-3 py-2.5 transition-colors ${isActive ? 'bg-base-content/[0.07]' : ''}`}
+												className={`block rounded-2xl px-4 py-3 transition-colors hover:bg-base-content/[0.04] ${isActive ? 'bg-base-content/[0.07]' : ''}`}
 											>
 												<span
 													className='flex items-baseline justify-between gap-3 text-base font-medium leading-snug sm:text-lg'
@@ -359,57 +359,51 @@ export default function SearchModal() {
 						<motion.div
 							custom={0}
 							variants={itemVariants}
-							className='flex items-center gap-3 border-b border-base-content/10 px-5 py-4 sm:px-6'
+							className='shrink-0 border-b border-base-content/10 px-6 pt-6 pb-5 sm:px-8 sm:pt-8 sm:pb-6'
 						>
-							<Search className='size-5 shrink-0 text-base-content/50' aria-hidden />
-							<input
-								ref={inputRef}
-								type='text'
-								role='combobox'
-								autoComplete='off'
-								value={query}
-								onChange={e => searchStore.setQuery(e.target.value)}
-								onKeyDown={handleKeyDown}
-								placeholder='Поиск по сайту'
-								aria-label='Поиск по сайту'
-								aria-expanded={flatLinks.length > 0}
-								aria-controls={flatLinks.length ? listboxId : undefined}
-								aria-activedescendant={
-									activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined
-								}
-								className='min-w-0 grow bg-transparent text-lg outline-none placeholder:text-base-content/40'
-							/>
-							{query && (
+							<label className='flex h-12 w-full items-center gap-3 rounded-full border border-base-content/15 bg-base-200/60 pl-4 pr-1.5 transition-colors focus-within:border-primary/60 sm:h-14 sm:pl-5 sm:pr-2'>
+								<Search className='size-5 shrink-0 text-base-content/50' aria-hidden />
+								<input
+									ref={inputRef}
+									type='text'
+									role='combobox'
+									autoComplete='off'
+									value={query}
+									onChange={e => searchStore.setQuery(e.target.value)}
+									onKeyDown={handleKeyDown}
+									placeholder='Поиск по сайту'
+									aria-label='Поиск по сайту'
+									aria-expanded={flatLinks.length > 0}
+									aria-controls={flatLinks.length ? listboxId : undefined}
+									aria-activedescendant={
+										activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined
+									}
+									className='h-full min-w-0 grow bg-transparent text-base outline-none placeholder:text-base-content/40 sm:text-lg'
+								/>
 								<button
 									type='button'
 									onClick={() => {
 										searchStore.setQuery('')
 										inputRef.current?.focus()
 									}}
-									className='shrink-0 text-xs text-base-content/50 transition-colors hover:text-base-content'
+									className={`btn btn-ghost btn-sm btn-circle shrink-0 transition-opacity ${query ? '' : 'pointer-events-none opacity-0'}`}
+									aria-label='Очистить поиск'
+									tabIndex={query ? 0 : -1}
 								>
-									Очистить
+									<X className='size-5' />
 								</button>
-							)}
-							<button
-								type='button'
-								onClick={handleClose}
-								className='btn btn-ghost btn-sm btn-circle -mr-1 shrink-0'
-								aria-label='Закрыть поиск'
-							>
-								<X className='size-5' />
-							</button>
+							</label>
 						</motion.div>
 
 						<motion.div
 							custom={1}
 							variants={itemVariants}
-							className='min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-4 sm:px-3'
+							className='min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-6 sm:px-8'
 						>
 							{renderBody()}
 						</motion.div>
 
-						<div className='hidden items-center gap-4 border-t border-base-content/10 px-6 py-2.5 text-xs text-base-content/50 sm:flex'>
+						<div className='hidden shrink-0 items-center gap-4 border-t border-base-content/10 px-8 py-3 text-xs text-base-content/50 sm:flex'>
 							<span>
 								<kbd className='kbd kbd-xs'>↑</kbd> <kbd className='kbd kbd-xs'>↓</kbd> выбор
 							</span>
