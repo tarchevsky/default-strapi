@@ -5,9 +5,11 @@ import {
 	getAllPageSlugs,
 	getAllSeries,
 	getArticlePages,
+	getFavoriteArticles,
 	getFeaturedArticles,
 	getPageBySlug,
 	getSeriesRows,
+	hasFavoritePostsInDynamic,
 	hasFeaturedPostsInDynamic,
 	hasFeaturedSeriesInDynamic,
 } from '@/services/page.service'
@@ -61,9 +63,12 @@ export async function generateMetadata({
 export default async function Page({ params }: PageProps) {
 	const { slug } = await params
 	const page = await getPageBySlug(slug)
-	const [featuredArticles, seriesRows] = await Promise.all([
+	const [featuredArticles, favoriteArticles, seriesRows] = await Promise.all([
 		page?.dynamic && hasFeaturedPostsInDynamic(page.dynamic)
 			? getFeaturedArticles(10)
+			: Promise.resolve([]),
+		page?.dynamic && hasFavoritePostsInDynamic(page.dynamic)
+			? getFavoriteArticles()
 			: Promise.resolve([]),
 		page?.dynamic && hasFeaturedSeriesInDynamic(page.dynamic)
 			? getSeriesRows()
@@ -113,6 +118,7 @@ export default async function Page({ params }: PageProps) {
 							key={`${component.__component}-${component.id}-${index}`}
 							component={component}
 							featuredArticles={featuredArticles}
+							favoriteArticles={favoriteArticles}
 							seriesRows={seriesRows}
 							metaTitle={page.title}
 						/>

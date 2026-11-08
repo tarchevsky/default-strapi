@@ -76,6 +76,12 @@ export interface FeaturedPostsComponent {
 	FeaturedPosts: boolean
 }
 
+export interface FavoritePostsComponent {
+	__component: 'interactivity.favorite-posts'
+	id: number
+	FavoritePosts: boolean
+}
+
 export interface FeaturedSeriesComponent {
 	__component: 'interactivity.featured-series'
 	id: number
@@ -174,6 +180,7 @@ export type DynamicComponent =
 	| ParagraphComponent
 	| BlockquoteComponent
 	| FeaturedPostsComponent
+	| FavoritePostsComponent
 	| FeaturedSeriesComponent
 	| ImgComponent
 	| IconComponent

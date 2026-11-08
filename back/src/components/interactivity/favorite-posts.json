@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_interactivity_favorite_posts",
+  "info": {
+    "displayName": "FavoritePosts",
+    "icon": "star",
+    "description": "Избранные статьи (отмеченные полем Favorite в статье)"
+  },
+  "options": {},
+  "attributes": {
+    "FavoritePosts": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "config": {}
+}

@@ -1,6 +1,7 @@
 import { STRAPI_URL, STRAPI_URL_FALLBACK } from '@/constants/admin.constant'
 import type {
 	DynamicComponent,
+	FavoritePostsComponent,
 	FeaturedPostsComponent,
 	FeaturedSeriesComponent,
 } from '@/types/dynamic.types'
@@ -30,6 +31,9 @@ function rawPageFields(p: StrapiPagesResponse['data'][number]) {
 		SeriesSlug: series
 			? (series.SeriesSlug ?? series.seriesSlug) as string | undefined
 			: undefined,
+		SeriesName: series
+			? (series.SeriesName ?? series.seriesName) as string | undefined
+			: undefined,
 		Tags: Array.isArray(tags) ? tags : undefined,
 	}
 }
@@ -42,6 +46,17 @@ export const hasFeaturedPostsInDynamic = (
 			c =>
 				c.__component === 'interactivity.featured-posts' &&
 				(c as FeaturedPostsComponent).FeaturedPosts,
+		),
+	)
+
+export const hasFavoritePostsInDynamic = (
+	dynamic: DynamicComponent[],
+): boolean =>
+	Boolean(
+		dynamic?.some(
+			c =>
+				c.__component === 'interactivity.favorite-posts' &&
+				(c as FavoritePostsComponent).FavoritePosts,
 		),
 	)
 
@@ -117,6 +132,7 @@ const PAGE_POPULATE_BASE =
 	'&populate[Dynamic][on][img.icon][populate]=*' +
 	'&populate[Dynamic][on][decorative.line][populate]=*' +
 	'&populate[Dynamic][on][interactivity.featured-posts][populate]=*' +
+	'&populate[Dynamic][on][interactivity.favorite-posts][populate]=*' +
 	'&populate[Dynamic][on][interactivity.featured-series][populate]=*' +
 	'&populate[Dynamic][on][layout.grid][populate][Columns][populate][Img][populate]=*' +
 	'&populate[Dynamic][on][layout.grid][populate][Columns][populate][Heading][populate]=*' +
@@ -146,8 +162,12 @@ export const getPageBySlug = async (
 			opts,
 		)
 		if (!res) {
+			// Запасной запрос без компонентов, которые могут ещё не существовать в схеме Strapi
 			const withoutFeaturedSeries = PAGE_POPULATE_BASE.replace(
 				'&populate[Dynamic][on][interactivity.featured-series][populate]=*',
+				'',
+			).replace(
+				'&populate[Dynamic][on][interactivity.favorite-posts][populate]=*',
 				'',
 			)
 			res = await fetchWithFallback(
@@ -275,39 +295,66 @@ export const getAllSeries = async (): Promise<
 	}
 }
 
+const LIST_ITEM_QUERY =
+	'&fields[0]=Title&fields[1]=Slug&fields[2]=Category&fields[3]=Description&fields[4]=SeriesOrder' +
+	'&populate[Tags][fields][0]=Name' +
+	'&populate[Series][fields][0]=SeriesSlug&populate[Series][fields][1]=SeriesName'
+
+/** Статья из ответа Strapi → элемент ленты (с названием серии и описанием). */
+const toListItemWithSeries = (
+	p: StrapiPagesResponse['data'][number],
+): ArticleListItem => {
+	const f = rawPageFields(p)
+	return {
+		title: f.Title,
+		slug: f.Slug,
+		description: f.Description,
+		category: f.Category,
+		categorySlug: f.Category != null ? getCategorySlug(f.Category) : undefined,
+		seriesSlug: f.SeriesSlug ?? undefined,
+		seriesName: f.SeriesName ?? undefined,
+		seriesOrder: f.SeriesOrder,
+		tags: (f.Tags ?? []).map(t => t?.Name ?? t?.name ?? '').filter(Boolean),
+	}
+}
+
+const hasCategory = (p: StrapiPagesResponse['data'][number]) => {
+	const f = rawPageFields(p)
+	return f.Category != null && Boolean(getCategorySlug(f.Category))
+}
+
 /** Последние N статей (для блока избранного в dynamic). Только статьи с категорией — ссылки ведут в /blog/.... */
 export const getFeaturedArticles = async (
 	limit = 10,
 ): Promise<ArticleListItem[]> => {
 	try {
 		const res = await fetchWithFallback(
-			`/api/pages?filters[TypeOfPage][$eq]=статья&fields[0]=Title&fields[1]=Slug&fields[2]=Category&fields[3]=Description&fields[4]=SeriesOrder&sort[0]=publishedAt:desc&pagination[pageSize]=50&populate[Tags][fields][0]=Name&populate[Series][fields][0]=SeriesSlug`,
+			`/api/pages?filters[TypeOfPage][$eq]=статья${LIST_ITEM_QUERY}&sort[0]=publishedAt:desc&pagination[pageSize]=50`,
 			{ next: { tags: ['pages'], revalidate: 60 } },
 		)
 		if (!res) return []
 		const data: StrapiPagesResponse = await res.json()
 		if (!data.data?.length) return []
-		return data.data
-			.filter(p => {
-				const f = rawPageFields(p)
-				return f.Category != null && getCategorySlug(f.Category)
-			})
-			.slice(0, limit)
-			.map((p): ArticleListItem => {
-				const f = rawPageFields(p)
-				return {
-					title: f.Title,
-					slug: f.Slug,
-					description: f.Description,
-					category: f.Category,
-					categorySlug: f.Category != null ? getCategorySlug(f.Category) : undefined,
-					seriesSlug: f.SeriesSlug ?? undefined,
-					seriesOrder: f.SeriesOrder,
-					tags: (f.Tags ?? []).map(t => t?.Name ?? t?.name ?? '').filter(Boolean),
-				}
-			})
+		return data.data.filter(hasCategory).slice(0, limit).map(toListItemWithSeries)
 	} catch (error) {
 		console.error('Error fetching featured articles:', error)
+		return []
+	}
+}
+
+/** Статьи, отмеченные в админке как избранные (поле Favorite), от новых к старым. */
+export const getFavoriteArticles = async (): Promise<ArticleListItem[]> => {
+	try {
+		const res = await fetchWithFallback(
+			`/api/pages?filters[TypeOfPage][$eq]=статья&filters[Favorite][$eq]=true${LIST_ITEM_QUERY}&sort[0]=publishedAt:desc&pagination[pageSize]=100`,
+			{ next: { tags: ['pages'], revalidate: 60 } },
+		)
+		if (!res) return []
+		const data: StrapiPagesResponse = await res.json()
+		if (!data.data?.length) return []
+		return data.data.filter(hasCategory).map(toListItemWithSeries)
+	} catch (error) {
+		console.error('Error fetching favorite articles:', error)
 		return []
 	}
 }

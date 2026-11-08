@@ -1,9 +1,11 @@
 import { DynamicComponentRenderer } from '@/components/DynamicComponentRenderer'
 import FadeIn from '@/components/ui/FadeIn'
 import {
+	getFavoriteArticles,
 	getFeaturedArticles,
 	getPageBySlug,
 	getSeriesRows,
+	hasFavoritePostsInDynamic,
 	hasFeaturedPostsInDynamic,
 	hasFeaturedSeriesInDynamic,
 } from '@/services/page.service'
@@ -27,9 +29,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
 	const page = await getPageBySlug('home')
-	const [featuredArticles, seriesRows] = await Promise.all([
+	const [featuredArticles, favoriteArticles, seriesRows] = await Promise.all([
 		page?.dynamic && hasFeaturedPostsInDynamic(page.dynamic)
 			? getFeaturedArticles(10)
+			: Promise.resolve([]),
+		page?.dynamic && hasFavoritePostsInDynamic(page.dynamic)
+			? getFavoriteArticles()
 			: Promise.resolve([]),
 		page?.dynamic && hasFeaturedSeriesInDynamic(page.dynamic)
 			? getSeriesRows()
@@ -46,6 +51,7 @@ export default async function Home() {
 								key={`${component.__component}-${component.id}-${index}`}
 								component={component}
 								featuredArticles={featuredArticles}
+								favoriteArticles={favoriteArticles}
 								seriesRows={seriesRows}
 								metaTitle={page.title}
 							/>

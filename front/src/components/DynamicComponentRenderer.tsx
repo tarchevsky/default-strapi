@@ -22,6 +22,7 @@ import FeaturedPostsCarousel from './ui/carousel/FeaturedPostsCarousel'
 interface DynamicComponentRendererProps {
 	component: DynamicComponent
 	featuredArticles?: ArticleListItem[]
+	favoriteArticles?: ArticleListItem[]
 	seriesRows?: SeriesRow[]
 	metaTitle?: string
 }
@@ -115,6 +116,7 @@ const getHeadingSizes = (value: unknown): {
 export const DynamicComponentRenderer = ({
 	component,
 	featuredArticles,
+	favoriteArticles,
 	seriesRows,
 	metaTitle,
 }: DynamicComponentRendererProps) => {
@@ -229,6 +231,9 @@ export const DynamicComponentRenderer = ({
 		case 'interactivity.featured-posts':
 			if (!component.FeaturedPosts || !featuredArticles?.length) return null
 			return <FeaturedPostsCarousel articles={featuredArticles} />
+		case 'interactivity.favorite-posts':
+			if (!component.FavoritePosts || !favoriteArticles?.length) return null
+			return <FeaturedPostsCarousel articles={favoriteArticles} />
 		case 'interactivity.featured-series': {
 			const seriesComp = component as FeaturedSeriesComponent
 			if (!seriesComp.FeaturedSeries) return null

@@ -1,6 +1,7 @@
 import {
 	BlockquoteComponent,
 	DynamicComponent,
+	FavoritePostsComponent,
 	FeaturedPostsComponent,
 	FeaturedSeriesComponent,
 	HeadingComponent,
@@ -37,6 +38,13 @@ function mapStrapiDynamicItem(item: StrapiDynamicItem): DynamicComponent {
 			id: item.id,
 			FeaturedPosts: Boolean(item.FeaturedPosts),
 		} satisfies FeaturedPostsComponent
+	}
+	if (item.__component === 'interactivity.favorite-posts') {
+		return {
+			__component: 'interactivity.favorite-posts',
+			id: item.id,
+			FavoritePosts: item.FavoritePosts !== false,
+		} satisfies FavoritePostsComponent
 	}
 	if (item.__component === 'interactivity.featured-series') {
 		return {

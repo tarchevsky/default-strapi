@@ -7,10 +7,12 @@ import ReadingProgressBar from '@/components/ui/ReadingProgressBar'
 import {
 	getArticlePathParams,
 	getArticlesBySeries,
+	getFavoriteArticles,
 	getFeaturedArticles,
 	getPageBySlug,
 	getSeriesBySlug,
 	getSeriesRows,
+	hasFavoritePostsInDynamic,
 	hasFeaturedPostsInDynamic,
 	hasFeaturedSeriesInDynamic,
 } from '@/services/page.service'
@@ -60,9 +62,12 @@ export default async function Page({ params }: PageProps) {
 		getPageBySlug('blog'),
 		getSeriesBySlug(seriesSlug),
 	])
-	const [featuredArticles, seriesRows, seriesArticles] = await Promise.all([
+	const [featuredArticles, favoriteArticles, seriesRows, seriesArticles] = await Promise.all([
 		page?.dynamic && hasFeaturedPostsInDynamic(page.dynamic)
 			? getFeaturedArticles(10)
+			: Promise.resolve([]),
+		page?.dynamic && hasFavoritePostsInDynamic(page.dynamic)
+			? getFavoriteArticles()
 			: Promise.resolve([]),
 		page?.dynamic && hasFeaturedSeriesInDynamic(page.dynamic)
 			? getSeriesRows()
@@ -135,6 +140,7 @@ export default async function Page({ params }: PageProps) {
 									key={`${component.__component}-${component.id}-${index}`}
 									component={component}
 									featuredArticles={featuredArticles}
+									favoriteArticles={favoriteArticles}
 									seriesRows={seriesRows}
 									metaTitle={page.title}
 								/>

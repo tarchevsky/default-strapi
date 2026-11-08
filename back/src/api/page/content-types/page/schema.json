@@ -40,6 +40,7 @@
         "img.icon",
         "text.blockquote",
         "interactivity.featured-posts",
+        "interactivity.favorite-posts",
         "blocks.hero",
         "interactivity.featured-series",
         "steps.steps"
@@ -104,6 +105,20 @@
     },
     "SeriesOrder": {
       "type": "integer",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "TypeOfPage"
+            },
+            "статья"
+          ]
+        }
+      }
+    },
+    "Favorite": {
+      "type": "boolean",
+      "default": false,
       "conditions": {
         "visible": {
           "==": [
