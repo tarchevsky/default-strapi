@@ -1,9 +1,11 @@
+'use client'
+
 import { getArticleHref } from '@/services/page.service'
 import type { ArticleListItem } from '@/types/page.types'
-import { Star } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react'
 import Link from 'next/link'
+import { useRef } from 'react'
 import { getSeriesHref } from './ui/card/ArticleCard'
-import { SectionTitle } from './ui/SectionTitle'
 
 interface FavoritePostsProps {
 	articles: ArticleListItem[]
@@ -16,7 +18,7 @@ function FavoriteCard({ article }: { article: ArticleListItem }) {
 	const seriesName = article.seriesName?.trim() || article.seriesSlug
 
 	return (
-		<article className='group relative flex flex-col h-full overflow-hidden rounded-2xl bg-base-100 shadow-sm ring-1 ring-base-content/10 p-5 md:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:ring-accent/60'>
+		<article className='group relative flex flex-col flex-shrink-0 snap-start w-[280px] md:w-[380px] overflow-hidden rounded-2xl bg-base-100 shadow-sm ring-1 ring-base-content/10 p-5 md:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:ring-accent/60'>
 			<span
 				aria-hidden
 				className='absolute inset-x-0 top-0 h-1 bg-accent'
@@ -52,23 +54,60 @@ function FavoriteCard({ article }: { article: ArticleListItem }) {
 	)
 }
 
-/** Блок избранных статей (отмеченных полем Favorite) — сетка карточек. */
+const arrowClass =
+	'btn btn-circle btn-sm btn-ghost border border-base-content/15 hover:border-accent hover:text-accent'
+
+/** Блок избранных статей (отмеченных полем Favorite) — карусель крупных карточек со стрелками. */
 export function FavoritePosts({
 	articles,
 	title = 'Избранные статьи',
 }: FavoritePostsProps) {
+	const scrollerRef = useRef<HTMLDivElement>(null)
 	if (!articles.length) return null
+
+	const scrollBy = (dir: 1 | -1) => {
+		const el = scrollerRef.current
+		if (!el) return
+		el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: 'smooth' })
+	}
 
 	return (
 		<section className='not-prose my-6 md:my-10'>
-			<SectionTitle>{title}</SectionTitle>
-			<div className='cont grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-				{articles.map(a => (
-					<FavoriteCard
-						key={`${a.categorySlug ?? ''}-${a.seriesSlug ?? ''}-${a.slug}`}
-						article={a}
-					/>
-				))}
+			<div className='cont flex items-center justify-between gap-4 mb-3 md:mb-4'>
+				<h2 className='text-xl md:text-2xl font-bold'>{title}</h2>
+				{articles.length > 1 && (
+					<div className='hidden md:flex gap-2'>
+						<button
+							type='button'
+							aria-label='Назад'
+							className={arrowClass}
+							onClick={() => scrollBy(-1)}
+						>
+							<ChevronLeft className='w-4 h-4' />
+						</button>
+						<button
+							type='button'
+							aria-label='Вперёд'
+							className={arrowClass}
+							onClick={() => scrollBy(1)}
+						>
+							<ChevronRight className='w-4 h-4' />
+						</button>
+					</div>
+				)}
+			</div>
+			<div
+				ref={scrollerRef}
+				className='w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-px-[var(--cont-xs)] md:scroll-px-[var(--cont-sm)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+			>
+				<div className='flex items-stretch gap-5 md:gap-6 py-3 px-[var(--cont-xs)] md:px-[var(--cont-sm)] min-w-max'>
+					{articles.map(a => (
+						<FavoriteCard
+							key={`${a.categorySlug ?? ''}-${a.seriesSlug ?? ''}-${a.slug}`}
+							article={a}
+						/>
+					))}
+				</div>
 			</div>
 		</section>
 	)
