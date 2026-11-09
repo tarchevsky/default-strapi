@@ -7,7 +7,7 @@ interface ArticleCardProps {
 }
 
 /** Ссылка на страницу серии: /blog/[category]/series/[seriesSlug] */
-const getSeriesHref = (a: ArticleListItem): string | null =>
+export const getSeriesHref = (a: ArticleListItem): string | null =>
 	a.categorySlug && a.seriesSlug
 		? `/blog/${a.categorySlug}/series/${a.seriesSlug}`
 		: null

@@ -12,6 +12,7 @@ import { ArticleListItem } from '@/types/page.types'
 import Image from 'next/image'
 import type { JSX } from 'react'
 import { Blockquote } from './Blockquote'
+import { FavoritePosts } from './FavoritePosts'
 import { FeaturedSeries, type SeriesRow } from './FeaturedSeries'
 import { StepsTimeline } from './StepsTimeline'
 import Hero from './Hero'
@@ -233,7 +234,7 @@ export const DynamicComponentRenderer = ({
 			return <FeaturedPostsCarousel articles={featuredArticles} />
 		case 'interactivity.favorite-posts':
 			if (!component.FavoritePosts || !favoriteArticles?.length) return null
-			return <FeaturedPostsCarousel articles={favoriteArticles} />
+			return <FavoritePosts articles={favoriteArticles} />
 		case 'interactivity.featured-series': {
 			const seriesComp = component as FeaturedSeriesComponent
 			if (!seriesComp.FeaturedSeries) return null
