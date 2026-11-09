@@ -10,7 +10,7 @@ interface FeaturedPostsCarouselProps {
 /** Горизонтальная лента плашек последних статей. */
 export default function FeaturedPostsCarousel({
 	articles,
-	title = 'Последние статьи',
+	title = 'Последние посты',
 }: FeaturedPostsCarouselProps) {
 	if (!articles.length) return null
 
